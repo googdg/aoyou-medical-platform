@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标签页测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .tab-btn.active {
+            background: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .test-button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007cba;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+        .debug-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>标签页切换测试</h1>
+        
+        <h3>本地测试标签页：</h3>
+        <div class="test-tabs">
+            <button class="tab-btn active" data-tab="basic">基本信息</button>
+            <button class="tab-btn" data-tab="intro">个人介绍</button>
+            <button class="tab-btn" data-tab="experience">专业经历</button>
+            <button class="tab-btn" data-tab="community">社区活动</button>
+        </div>
+        
+        <div id="basic-tab" class="tab-content active">
+            <h4>基本信息</h4>
+            <p>这是基本信息标签页的内容</p>
+        </div>
+        
+        <div id="intro-tab" class="tab-content">
+            <h4>个人介绍</h4>
+            <p>这是个人介绍标签页的内容</p>
+        </div>
+        
+        <div id="experience-tab" class="tab-content">
+            <h4>专业经历</h4>
+            <p>这是专业经历标签页的内容</p>
+        </div>
+        
+        <div id="community-tab" class="tab-content">
+            <h4>社区活动</h4>
+            <p>这是社区活动标签页的内容</p>
+        </div>
+        
+        <h3>测试功能：</h3>
+        <button class="test-button" onclick="testTabSwitching()">测试标签页切换</button>
+        <button class="test-button" onclick="openAdminPanel()">打开管理后台</button>
+        <button class="test-button" onclick="checkElements()">检查页面元素</button>
+        
+        <div id="test-results" class="debug-info">
+            <h4>测试结果：</h4>
+            <div id="results-content">点击上方按钮开始测试</div>
+        </div>
+    </div>
+    
+    <script>
+        // 本地标签页切换功能（用于测试）
+        function switchTab(tabName) {
+            console.log('Local switching to tab:', tabName);
+            
+            // 移除所有活动状态
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // 激活选中的标签页
+            const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+            const activeContent = document.getElementById(`${tabName}-tab`);
+            
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+            
+            if (activeContent) {
+                activeContent.classList.add('active');
+            }
+        }
+        
+        // 绑定本地标签页事件
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                switchTab(e.target.dataset.tab);
+            });
+        });
+        
+        // 测试标签页切换
+        function testTabSwitching() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🔍 测试标签页切换功能...</p>';
+            
+            const tabs = ['basic', 'intro', 'experience', 'community'];
+            let index = 0;
+            
+            const testInterval = setInterval(() => {
+                switchTab(tabs[index]);
+                results.innerHTML += `<p>✓ 切换到: ${tabs[index]}</p>`;
+                index++;
+                
+                if (index >= tabs.length) {
+                    clearInterval(testInterval);
+                    results.innerHTML += '<p>✅ 本地标签页切换测试完成</p>';
+                }
+            }, 1000);
+        }
+        
+        // 打开管理后台
+        function openAdminPanel() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🚀 正在打开管理后台...</p>';
+            
+            window.open('index.html?username=admin&password=admin123', '_blank');
+            
+            results.innerHTML += '<p>✓ 管理后台已在新窗口打开</p>';
+            results.innerHTML += '<p>请在新窗口中测试"主页内容"模块的标签页切换</p>';
+        }
+        
+        // 检查页面元素
+        function checkElements() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🔍 检查页面元素...</p>';
+            
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            results.innerHTML += `<p>✓ 找到 ${tabBtns.length} 个标签按钮</p>`;
+            results.innerHTML += `<p>✓ 找到 ${tabContents.length} 个标签内容</p>`;
+            
+            tabBtns.forEach((btn, index) => {
+                const tabName = btn.dataset.tab;
+                results.innerHTML += `<p>- 标签 ${index + 1}: ${tabName}</p>`;
+            });
+        }
+    </script>
+</body>
+</html>

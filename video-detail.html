@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频详情 - 医学视频平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            line-height: 1.4;
+        }
+        
+        /* 顶部导航栏 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: #0f0f0f;
+            border-bottom: 1px solid #272727;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            margin-right: 16px;
+            transition: background 0.2s;
+        }
+        
+        .back-btn:hover {
+            background: #272727;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #fff;
+        }
+        
+        .logo-icon {
+            font-size: 24px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        
+        /* 主内容区域 */
+        .main-content {
+            margin-top: 56px;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 24px;
+        }
+        
+        /* 视频播放器区域 */
+        .video-player-section {
+            margin-bottom: 24px;
+        }
+        
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .video-player video {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 视频信息区域 */
+        .video-info-section {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .video-main-info {
+            min-width: 0;
+        }
+        
+        .video-title {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+        
+        .video-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        
+        .video-actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .action-btn {
+            background: #272727;
+            border: none;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        
+        .action-btn:hover {
+            background: #3f3f3f;
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+        }
+        
+        /* 频道信息 */
+        .channel-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 0;
+            border-bottom: 1px solid #272727;
+            margin-bottom: 16px;
+        }
+        
+        .channel-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .channel-details {
+            flex: 1;
+        }
+        
+        .channel-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .channel-subscribers {
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        .subscribe-btn {
+            background: #cc0000;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* 视频描述 */
+        .video-description {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .description-header {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        
+        .description-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        /* 侧边栏 */
+        .video-sidebar {
+            min-width: 0;
+        }
+        
+        .sidebar-section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .points-info {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .points-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        
+        .points-text {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        /* 相关视频 */
+        .related-video {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        
+        .related-video:hover {
+            background: #272727;
+        }
+        
+        .related-thumbnail {
+            width: 120px;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .related-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .related-title {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.3;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .related-meta {
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        /* 页面进入动画 */
+        .main-content {
+            margin-top: 56px;
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 24px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideInUp 0.6s ease-out 0.2s forwards;
+        }
+        
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 顶部导航栏滚动效果 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: #0f0f0f;
+            border-bottom: 1px solid #272727;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .header.scrolled {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 返回按钮动画 */
+        .back-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            margin-right: 16px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .back-btn:hover {
+            background: #272727;
+            transform: translateX(-2px);
+        }
+        
+        .back-btn:active {
+            transform: translateX(-2px) scale(0.95);
+        }
+        
+        /* 视频播放器动画 */
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.98);
+            animation: videoFadeIn 0.8s ease-out 0.4s forwards;
+        }
+        
+        @keyframes videoFadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* 操作按钮动画 */
+        .action-btn {
+            background: #272727;
+            border: none;
+            color: #fff;
+            padding: 10px 16px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn:hover {
+            background: #3f3f3f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .action-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .action-btn.primary:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* 相关视频悬停效果 */
+        .related-video {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .related-video:hover {
+            background: #272727;
+            transform: translateX(4px);
+        }
+        
+        /* 提示消息增强 */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #212121, #2a2a2a);
+            color: #fff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 3000;
+            transform: translateX(100%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid #667eea;
+            backdrop-filter: blur(10px);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast::before {
+            content: '🏥';
+            margin-right: 8px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .video-info-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-sidebar {
+                order: -1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .logo-text {
+                font-size: 14px;
+                max-width: 120px;
+            }
+            
+            .main-content {
+                padding: 16px;
+            }
+            
+            .video-actions {
+                flex-wrap: wrap;
+            }
+            
+            .action-btn {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none; /* 在很小的屏幕上隐藏文字，只显示图标 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <a href="./aoyou-youtube-style.html" class="logo">
+            <span class="logo-icon">🏥</span>
+            <span class="logo-text">优质医学科普及学术视频</span>
+        </a>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 视频播放器 -->
+        <div class="video-player-section">
+            <div class="video-player">
+                <video controls autoplay id="main-video">
+                    <source src="./videos/aoyou-demo-video-2.0.mp4" type="video/mp4">
+                    您的浏览器不支持视频播放。
+                </video>
+            </div>
+        </div>
+
+        <!-- 视频信息区域 -->
+        <div class="video-info-section">
+            <div class="video-main-info">
+                <!-- 视频标题和元信息 -->
+                <h1 class="video-title" id="video-title">奥友医学平台演示视频 2.0 - 完整功能展示</h1>
+                <div class="video-meta">
+                    <span id="video-views">2.8万 次观看</span>
+                    <span>•</span>
+                    <span id="video-date">2天前</span>
+                </div>
+
+                <!-- 视频操作按钮 -->
+                <div class="video-actions">
+                    <!-- 完成观看按钮暂时隐藏，第一期不开放积分功能 -->
+                    <!-- 
+                    <button class="action-btn primary" onclick="completeWatch()">
+                        <span>✓</span>
+                        <span>完成观看</span>
+                    </button>
+                    -->
+                    <button class="action-btn" onclick="likeVideo()">
+                        <span>👍</span>
+                        <span id="like-count">1.2千</span>
+                    </button>
+                    <button class="action-btn" onclick="shareVideo()">
+                        <span>📤</span>
+                        <span>分享</span>
+                    </button>
+                    <button class="action-btn" onclick="saveVideo()">
+                        <span>💾</span>
+                        <span>保存</span>
+                    </button>
+                </div>
+
+                <!-- 频道信息 -->
+                <div class="channel-info">
+                    <div class="channel-avatar" id="channel-avatar">奥</div>
+                    <div class="channel-details">
+                        <div class="channel-name" id="channel-name">医学视频团队</div>
+                        <div class="channel-subscribers">1.2万 订阅者</div>
+                    </div>
+                    <button class="subscribe-btn">订阅</button>
+                </div>
+
+                <!-- 视频描述 -->
+                <div class="video-description">
+                    <div class="description-header">
+                        <span id="video-category">平台演示</span> • <span id="video-duration">5:20</span>
+                    </div>
+                    <div class="description-text" id="video-description">
+                        欢迎观看优质医学科普及学术视频平台的完整功能演示！本视频将为您详细展示：
+                        <br><br>
+                        🎯 <strong>核心功能</strong><br>
+                        • 用户注册登录系统<br>
+                        • 视频学习和播放功能<br>
+                        • 积分等级系统<br>
+                        • 移动端响应式设计<br>
+                        <br>
+                        📚 <strong>医学分类</strong><br>
+                        • 临床医学、基础医学<br>
+                        • 外科手术、内科诊疗<br>
+                        • 药学治疗、前沿技术<br>
+                        • 伦理法规、继续教育<br>
+                        <br>
+                        💡 <strong>平台特色</strong><br>
+                        • 专业医学内容<br>
+                        • 互动学习体验<br>
+                        • 个性化学习路径<br>
+                        • 完善的激励机制<br>
+                        <br>
+                        感谢您对医学视频平台的关注和支持！
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏 -->
+            <div class="video-sidebar">
+                <!-- 积分奖励 - 第一期暂时隐藏 -->
+                <!-- 
+                <div class="sidebar-section">
+                    <div class="sidebar-title">🎁 观看奖励</div>
+                    <div class="points-info">
+                        <div class="points-badge" id="points-reward">+50 积分</div>
+                        <div class="points-text">完成观看即可获得积分奖励</div>
+                    </div>
+                </div>
+                -->
+
+                <!-- 相关视频 -->
+                <div class="sidebar-section">
+                    <div class="sidebar-title">📺 相关视频</div>
+                    <div class="related-video" onclick="playRelatedVideo('clinical_001')">
+                        <div class="related-thumbnail">❤️</div>
+                        <div class="related-info">
+                            <div class="related-title">心血管疾病诊断与治疗</div>
+                            <div class="related-meta">张教授 • 1.2万 观看</div>
+                        </div>
+                    </div>
+                    <div class="related-video" onclick="playRelatedVideo('basic_001')">
+                        <div class="related-thumbnail">🧠</div>
+                        <div class="related-info">
+                            <div class="related-title">人体解剖学基础</div>
+                            <div class="related-meta">李教授 • 8.5千 观看</div>
+                        </div>
+                    </div>
+                    <div class="related-video" onclick="playRelatedVideo('surgery_001')">
+                        <div class="related-thumbnail">🔬</div>
+                        <div class="related-info">
+                            <div class="related-title">腹腔镜手术技术</div>
+                            <div class="related-meta">王主任 • 6.2千 观看</div>
+                        </div>
+                    </div>
+                    <div class="related-video" onclick="playRelatedVideo('technology_001')">
+                        <div class="related-thumbnail">🤖</div>
+                        <div class="related-info">
+                            <div class="related-title">AI在医学影像中的应用</div>
+                            <div class="related-meta">刘博士 • 1.5万 观看</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        (function() {
+            'use strict';
+            
+            // 获取URL参数
+            function getUrlParameter(name) {
+                var urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            // 视频数据映射
+            var videoDataMap = {
+                'aoyou_demo_2_0': {
+                    title: '奥友医学平台演示视频 2.0 - 完整功能展示',
+                    category: '平台演示',
+                    instructor: '医学视频团队',
+                    avatar: '医',
+                    points: 50,
+                    views: '2.8万',
+                    date: '2天前',
+                    duration: '5:20',
+                    description: '欢迎观看奥友医学科普学习平台的完整功能演示！'
+                },
+                'clinical_001': {
+                    title: '心血管疾病诊断与治疗 - 临床实践指南',
+                    category: '临床医学',
+                    instructor: '张教授',
+                    avatar: '张',
+                    points: 15,
+                    views: '1.2万',
+                    date: '1周前',
+                    duration: '5:20',
+                    description: '系统学习心血管疾病的诊疗方法，包括诊断要点、治疗原则和临床实践经验分享。'
+                },
+                'basic_001': {
+                    title: '人体解剖学基础 - 循环系统详解',
+                    category: '基础医学',
+                    instructor: '李教授',
+                    avatar: '李',
+                    points: 12,
+                    views: '8.5千',
+                    date: '3天前',
+                    duration: '5:20',
+                    description: '深入了解人体循环系统的结构和功能，为临床学习打下坚实基础。'
+                },
+                'surgery_001': {
+                    title: '腹腔镜手术技术 - 微创手术新进展',
+                    category: '外科手术',
+                    instructor: '王主任',
+                    avatar: '王',
+                    points: 20,
+                    views: '6.2千',
+                    date: '5天前',
+                    duration: '5:20',
+                    description: '学习现代微创手术技术和操作要点，掌握腹腔镜手术的核心技能。'
+                },
+                'internal_001': {
+                    title: '呼吸系统疾病诊疗 - 常见病例分析',
+                    category: '内科诊疗',
+                    instructor: '陈医生',
+                    avatar: '陈',
+                    points: 18,
+                    views: '4.8千',
+                    date: '1周前',
+                    duration: '5:20',
+                    description: '掌握呼吸系统疾病的诊断和治疗方法，通过病例分析提升临床思维。'
+                },
+                'pharmacy_001': {
+                    title: '抗生素合理使用 - 临床用药指导',
+                    category: '药学治疗',
+                    instructor: '赵药师',
+                    avatar: '赵',
+                    points: 15,
+                    views: '7.1千',
+                    date: '4天前',
+                    duration: '5:20',
+                    description: '学习抗生素的正确使用原则和注意事项，提高临床用药安全性。'
+                },
+                'technology_001': {
+                    title: 'AI在医学影像中的应用 - 前沿技术解析',
+                    category: '前沿技术',
+                    instructor: '刘博士',
+                    avatar: '刘',
+                    points: 25,
+                    views: '1.5万',
+                    date: '2天前',
+                    duration: '5:20',
+                    description: '探索人工智能在医疗诊断中的最新应用，了解医学影像AI的发展趋势。'
+                },
+                'ethics_001': {
+                    title: '医学伦理学基础 - 临床决策中的伦理考量',
+                    category: '伦理法规',
+                    instructor: '孙教授',
+                    avatar: '孙',
+                    points: 10,
+                    views: '3.2千',
+                    date: '6天前',
+                    duration: '5:20',
+                    description: '了解医学伦理的基本原则和实践应用，提升临床决策的伦理素养。'
+                }
+            };
+
+            // 显示提示消息
+            function showToast(message, duration) {
+                duration = duration || 3000;
+                var toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+
+            // 返回上一页
+            function goBack() {
+                goBackWithAnimation();
+            }
+
+            // 完成观看 - 第一期暂时隐藏积分功能
+            function completeWatch() {
+                showToast('📚 感谢观看！');
+                // 积分功能将在后续版本中开放
+            }
+
+            // 点赞视频
+            function likeVideo() {
+                showToast('👍 已点赞！');
+            }
+
+            // 分享视频
+            function shareVideo() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: document.getElementById('video-title').textContent,
+                        url: window.location.href
+                    });
+                } else {
+                    // 复制链接到剪贴板
+                    navigator.clipboard.writeText(window.location.href).then(function() {
+                        showToast('📤 链接已复制到剪贴板');
+                    }).catch(function() {
+                        showToast('📤 分享功能');
+                    });
+                }
+            }
+
+            // 保存视频
+            function saveVideo() {
+                showToast('💾 已保存到稍后观看');
+            }
+
+            // 播放相关视频
+            function playRelatedVideo(videoId) {
+                // 添加页面切换动画
+                var transition = document.createElement('div');
+                transition.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #667eea, #764ba2);
+                    z-index: 8888;
+                    transform: translateX(-100%);
+                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                `;
+                
+                document.body.appendChild(transition);
+                
+                setTimeout(function() {
+                    transition.style.transform = 'translateX(0)';
+                    setTimeout(function() {
+                        window.location.href = './video-detail.html?id=' + videoId;
+                    }, 200);
+                }, 50);
+            }
+
+            // 暴露全局函数
+            window.goBack = goBack;
+            window.completeWatch = completeWatch;
+            window.likeVideo = likeVideo;
+            window.shareVideo = shareVideo;
+            window.saveVideo = saveVideo;
+            window.playRelatedVideo = playRelatedVideo;
+
+            // 设置滚动效果
+            function setupScrollEffects() {
+                var header = document.querySelector('.header');
+                
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 10) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                }, { passive: true });
+            }
+
+            // 返回动画
+            function goBackWithAnimation() {
+                var transition = document.createElement('div');
+                transition.className = 'page-transition active';
+                transition.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #667eea, #764ba2);
+                    z-index: 8888;
+                    transform: translateX(100%);
+                    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                `;
+                
+                document.body.appendChild(transition);
+                
+                setTimeout(function() {
+                    transition.style.transform = 'translateX(0)';
+                    setTimeout(function() {
+                        window.history.back();
+                    }, 200);
+                }, 50);
+            }
+
+            // 页面初始化
+            document.addEventListener('DOMContentLoaded', function() {
+                var videoId = getUrlParameter('id') || 'aoyou_demo_2_0';
+                
+                // 设置滚动效果
+                setupScrollEffects();
+                var videoData = videoDataMap[videoId];
+                
+                if (videoData) {
+                    // 更新页面内容
+                    document.getElementById('video-title').textContent = videoData.title;
+                    document.getElementById('video-views').textContent = videoData.views + ' 次观看';
+                    document.getElementById('video-date').textContent = videoData.date;
+                    document.getElementById('video-category').textContent = videoData.category;
+                    document.getElementById('video-duration').textContent = videoData.duration;
+                    document.getElementById('channel-name').textContent = videoData.instructor;
+                    document.getElementById('channel-avatar').textContent = videoData.avatar;
+                    // 积分功能暂时隐藏
+                    // document.getElementById('points-reward').textContent = '+' + videoData.points + ' 积分';
+                    
+                    // 更新页面标题
+                    document.title = videoData.title + ' - 医学视频平台';
+                }
+                
+                console.log('视频详情页已加载，视频ID:', videoId);
+            });
+
+            console.log('医学视频详情页初始化完成');
+        })();
+    </script>
+</body>
+</html>

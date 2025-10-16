@@ -1,0 +1,95 @@
+{
+  "name": "aoyou-medical-platform",
+  "version": "1.0.0",
+  "description": "奥友医学科普学习平台 - 专业医学知识学习平台",
+  "main": "aoyou-medical-platform.html",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "dev": "python3 -m http.server 3000",
+    "build": "./deploy.sh",
+    "test": "./deploy.sh test",
+    "clean": "./deploy.sh clean",
+    "deploy": "./deploy.sh && echo '部署完成，请上传 dist 目录到服务器'",
+    "serve": "cd dist && python3 -m http.server 8080",
+    "lint": "echo '代码检查功能需要安装相应工具'",
+    "format": "echo '代码格式化功能需要安装相应工具'"
+  },
+  "keywords": [
+    "medical",
+    "education",
+    "learning",
+    "platform",
+    "healthcare",
+    "mobile",
+    "pwa"
+  ],
+  "author": "Aoyou Digital",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aoyou-digital/medical-platform.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aoyou-digital/medical-platform/issues"
+  },
+  "homepage": "https://medical.aoyou.digital",
+  "devDependencies": {
+    "csso-cli": "^4.0.1",
+    "uglify-js": "^3.17.4",
+    "imagemin-cli": "^7.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "iOS >= 12",
+    "Android >= 70"
+  ],
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "pwa": {
+    "name": "奥友医学科普学习平台",
+    "short_name": "奥友医学",
+    "theme_color": "#667eea",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "start_url": "/",
+    "scope": "/"
+  },
+  "features": [
+    "邀请码注册系统",
+    "7个医学分类板块",
+    "视频播放和互动",
+    "积分等级系统",
+    "微信分享集成",
+    "移动端优化",
+    "数据持久化",
+    "性能优化",
+    "用户体验优化",
+    "数据统计分析"
+  ],
+  "technical_stack": {
+    "frontend": [
+      "HTML5",
+      "CSS3",
+      "JavaScript ES6+",
+      "Service Worker",
+      "IndexedDB",
+      "Web APIs"
+    ],
+    "mobile": [
+      "Responsive Design",
+      "Touch Events",
+      "PWA",
+      "WeChat Integration"
+    ],
+    "performance": [
+      "Lazy Loading",
+      "Image Optimization",
+      "Caching Strategy",
+      "Code Splitting"
+    ]
+  }
+}

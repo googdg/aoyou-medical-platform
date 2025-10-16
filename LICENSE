@@ -1,0 +1,59 @@
+MIT License
+
+Copyright (c) 2024 Aoyou Digital Medical Platform
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## 第三方许可证
+
+本项目使用了以下开源技术和资源：
+
+### JavaScript APIs
+- Web APIs (浏览器原生) - 公共领域
+- IndexedDB API - W3C标准
+- Service Worker API - W3C标准
+- Intersection Observer API - W3C标准
+
+### 图标和字体
+- 系统默认字体 - 操作系统提供
+- Emoji图标 - Unicode标准
+
+### 开发工具
+- Python HTTP Server - Python Software Foundation License
+- Git - GNU General Public License v2
+
+## 商标声明
+
+"奥友医学" 和相关标识是 Aoyou Digital 的商标。本许可证不授予使用这些商标的权利。
+
+## 免责声明
+
+本软件仅用于教育和学习目的。医学内容仅供参考，不能替代专业医疗建议、诊断或治疗。使用本软件时，请始终咨询合格的医疗专业人员。
+
+作者和贡献者不对因使用本软件而产生的任何医疗后果承担责任。
+
+## 数据隐私
+
+本软件在本地存储用户数据，不会未经用户同意向第三方传输个人信息。用户数据的处理遵循相关隐私法规。
+
+## 出口管制
+
+本软件可能受到出口管制法律的约束。用户有责任遵守适用的出口管制法律法规。

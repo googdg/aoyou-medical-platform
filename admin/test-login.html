@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        .success {
+            color: green;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>登录测试</h1>
+    <form id="test-login-form">
+        <div class="form-group">
+            <label for="test-username">用户名</label>
+            <input type="text" id="test-username" value="admin">
+        </div>
+        <div class="form-group">
+            <label for="test-password">密码</label>
+            <input type="password" id="test-password" value="admin123">
+        </div>
+        <button type="submit">登录</button>
+    </form>
+    <div id="test-message"></div>
+    
+    <script>
+        document.getElementById('test-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('test-username').value;
+            const password = document.getElementById('test-password').value;
+            const messageEl = document.getElementById('test-message');
+            
+            console.log('Test login attempt:', username, password);
+            
+            if (username === 'admin' && password === 'admin123') {
+                messageEl.innerHTML = '<div class="success">登录成功！</div>';
+                console.log('Login successful');
+                
+                // 跳转到主管理页面
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                messageEl.innerHTML = '<div class="error">用户名或密码错误</div>';
+                console.log('Login failed');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,583 @@
+/**
+ * 小鬼消消乐游戏样式
+ * Little Ghost Match-3 Game Styles
+ */
+
+/* 游戏容器样式 */
+.game-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: var(--card-background, #ffffff);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* 游戏标题区域 */
+.game-header-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+}
+
+.game-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.game-subtitle {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.game-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.95;
+}
+
+/* 游戏加载动画 */
+.game-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 游戏错误状态 */
+.game-error {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #e74c3c;
+}
+
+.error-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.retry-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.retry-btn:hover {
+    background: #5a67d8;
+}
+
+/* 游戏主界面 */
+.ghost-match3-game {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* 游戏头部信息 */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.game-info {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.game-info span {
+    font-weight: bold;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.game-info span span {
+    color: #667eea;
+    margin-left: 0.5rem;
+}
+
+/* 游戏网格 */
+.game-board {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto 1rem;
+    aspect-ratio: 1;
+    background: #ffffff;
+    border: 3px solid #667eea;
+    border-radius: 12px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 2px;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 游戏瓦片 */
+.game-tile {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    font-size: 1.5rem;
+    user-select: none;
+}
+
+.game-tile:hover {
+    transform: scale(1.05);
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.game-tile.selected {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+.game-tile.matched {
+    animation: matchPulse 0.5s ease-in-out;
+}
+
+.game-tile.falling {
+    animation: fallDown 0.3s ease-in;
+}
+
+/* 小鬼精灵样式 */
+.ghost-sprite {
+    font-size: 2rem;
+    transition: all 0.2s ease;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.ghost-sprite.special {
+    animation: specialGlow 2s ease-in-out infinite;
+}
+
+/* 动画效果 */
+@keyframes matchPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); background: #ffeb3b; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+@keyframes fallDown {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes specialGlow {
+    0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8)); }
+    50% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 1)); }
+}
+
+/* 游戏控制按钮 */
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.game-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.game-btn:active {
+    transform: translateY(0);
+}
+
+.game-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 游戏消息区域 */
+.game-messages {
+    min-height: 60px;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 8px;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    display: none;
+}
+
+.game-messages.show {
+    display: block;
+}
+
+/* 游戏结束屏幕 */
+.game-over-screen {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.game-over-screen h2 {
+    color: #667eea;
+    margin-bottom: 1rem;
+}
+
+.game-over-screen p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+/* 游戏说明区域 */
+.game-instructions {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.game-instructions h2 {
+    text-align: center;
+    color: #495057;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.instructions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.instruction-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.instruction-item:hover {
+    transform: translateY(-4px);
+}
+
+.instruction-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.instruction-item h3 {
+    color: #667eea;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.instruction-item p {
+    color: #6c757d;
+    line-height: 1.6;
+}
+
+/* 游戏统计区域 */
+.game-stats {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+}
+
+.game-stats h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+/* 粒子效果容器 */
+.particle-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #ffd700;
+    border-radius: 50%;
+    animation: particleFloat 1s ease-out forwards;
+}
+
+@keyframes particleFloat {
+    0% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5) translateY(-50px);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 2rem;
+    }
+    
+    .game-subtitle {
+        font-size: 1rem;
+    }
+    
+    .game-description {
+        font-size: 0.9rem;
+    }
+    
+    .game-container {
+        margin: 1rem;
+        padding: 0.5rem;
+    }
+    
+    .game-board {
+        max-width: 90vw;
+        padding: 4px;
+        gap: 1px;
+    }
+    
+    .game-tile {
+        border-width: 1px;
+        border-radius: 4px;
+        font-size: 1.2rem;
+    }
+    
+    .ghost-sprite {
+        font-size: 1.5rem;
+    }
+    
+    .game-info {
+        gap: 1rem;
+        justify-content: center;
+    }
+    
+    .game-info span {
+        font-size: 1rem;
+    }
+    
+    .instructions-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .game-controls {
+        gap: 0.5rem;
+    }
+    
+    .game-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-header-section {
+        padding: 1.5rem 0.5rem;
+    }
+    
+    .game-title {
+        font-size: 1.8rem;
+    }
+    
+    .game-board {
+        padding: 2px;
+        gap: 1px;
+    }
+    
+    .game-tile {
+        font-size: 1rem;
+        border-radius: 3px;
+    }
+    
+    .ghost-sprite {
+        font-size: 1.2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+    .game-container {
+        background: var(--card-background-dark, #2d3748);
+        color: var(--text-color-dark, #e2e8f0);
+    }
+    
+    .game-header {
+        background: #4a5568;
+        border-color: #718096;
+    }
+    
+    .game-board {
+        background: #2d3748;
+        border-color: #4a5568;
+    }
+    
+    .game-tile {
+        background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+        border-color: #718096;
+        color: #e2e8f0;
+    }
+    
+    .game-instructions {
+        background: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .instruction-item {
+        background: #4a5568;
+        color: #e2e8f0;
+    }
+    
+    .game-messages {
+        background: #4a5568;
+        border-color: #718096;
+        color: #e2e8f0;
+    }
+}
+
+/* 无障碍支持 */
+@media (prefers-reduced-motion: reduce) {
+    .game-tile,
+    .ghost-sprite,
+    .game-btn,
+    .instruction-item {
+        transition: none;
+    }
+    
+    .loading-spinner,
+    .matchPulse,
+    .fallDown,
+    .specialGlow,
+    .particleFloat {
+        animation: none;
+    }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+    .game-tile {
+        border-width: 3px;
+    }
+    
+    .game-tile.selected {
+        border-width: 4px;
+    }
+    
+    .game-btn {
+        border: 2px solid #000;
+    }
+}

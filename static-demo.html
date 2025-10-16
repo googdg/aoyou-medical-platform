@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人博客 - 静态演示版</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .demo-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .install-guide {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+        }
+        .install-guide h3 {
+            margin-top: 0;
+            color: #155724;
+        }
+        .install-guide code {
+            background: #f8f9fa;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .install-guide ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        .install-guide li {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-notice">
+        <strong>📢 这是静态演示版本</strong><br>
+        要使用完整的管理后台功能，请按照下面的说明安装Node.js
+    </div>
+
+    <div class="install-guide">
+        <h3>🚀 如何启动完整版本</h3>
+        <p><strong>您需要先安装Node.js才能运行后端管理系统</strong></p>
+        
+        <h4>步骤1: 安装Node.js</h4>
+        <ol>
+            <li>访问 <a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a></li>
+            <li>下载并安装LTS版本 (推荐)</li>
+            <li>安装完成后重启终端</li>
+        </ol>
+        
+        <h4>步骤2: 启动项目</h4>
+        <ol>
+            <li>在终端中进入项目目录</li>
+            <li>运行: <code>npm install</code> (安装依赖)</li>
+            <li>运行: <code>npm start</code> (启动服务器)</li>
+            <li>访问: <code>http://localhost:3001</code></li>
+        </ol>
+        
+        <h4>步骤3: 访问管理后台</h4>
+        <ol>
+            <li>管理后台地址: <code>http://localhost:3001/admin</code></li>
+            <li>默认账户: <code>admin</code> / <code>admin123</code></li>
+        </ol>
+        
+        <p><strong>💡 提示</strong>: 安装Node.js后，您将获得完整的博客管理功能，包括文章编辑、媒体上传、用户管理等。</p>
+    </div>
+
+    <!-- 原有的HTML内容 -->
+    <header class="site-header">
+        <h1 class="site-title" data-i18n="site.title">YOUR NAME</h1>
+        <p class="site-tagline" data-i18n="site.tagline">Since 1990 coding, studying, writing, talking and creating stuff online.</p>
+        
+        <nav class="main-navigation" role="navigation" aria-label="Main navigation">
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="nav-menu" id="nav-menu">
+                <a href="#main" class="nav-item" data-i18n="navigation.main" aria-label="Main page">Main</a>
+                <a href="#blog" class="nav-item" data-i18n="navigation.blog" aria-label="Blog posts">Blog</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="site-content" id="main" role="main">
+        <section class="welcome-section">
+            <h2 class="welcome-title" data-i18n="welcome.title">OH, HI. WELCOME!</h2>
+            <p class="welcome-subtitle" data-i18n="welcome.subtitle">I'm glad you found me!</p>
+            
+            <p class="navigation-guide" data-i18n="welcome.navigationGuide">
+                Use the menu bar above to quickly navigate to different sections of the website. 
+                You'll find my blog posts and other content.
+            </p>
+            
+            <div class="personal-intro">
+                <p data-i18n="welcome.intro1">
+                    I'm passionate about coding, writing, and creating digital experiences. 
+                    When I'm not behind a computer screen, you can find me exploring new technologies, 
+                    sharing knowledge through writing, or discussing ideas on various platforms.
+                </p>
+                
+                <p data-i18n="welcome.intro2">
+                    This website serves as my digital home where I share thoughts, projects, 
+                    and resources that I hope you'll find valuable. Feel free to explore and 
+                    don't hesitate to reach out if you'd like to connect!
+                </p>
+            </div>
+            
+            <div class="personal-image-placeholder">
+                <div class="image-placeholder" 
+                     aria-label="Personal photo placeholder" 
+                     data-i18n="welcome.photoPlaceholder">
+                    📸 Personal Photo
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Blog Section -->
+    <section class="blog-section" id="blog" role="region" aria-label="Blog posts">
+        <div class="section-container">
+            <header class="section-header">
+                <h2 class="section-title" data-i18n="blog.title">Blog Posts</h2>
+                <p class="section-subtitle" data-i18n="blog.subtitle">Thoughts, insights, and experiences from my journey in technology and development.</p>
+                
+                <div class="language-toggle" role="group" aria-label="Language selection">
+                    <button class="lang-btn active" data-lang="en" aria-pressed="true">English</button>
+                    <button class="lang-btn" data-lang="zh" aria-pressed="false">中文</button>
+                </div>
+            </header>
+
+            <div class="blog-posts-grid" id="blog-posts-container">
+                <div class="demo-notice">
+                    <p><strong>📝 博客功能演示</strong></p>
+                    <p>完整的博客功能需要Node.js后端支持。安装Node.js后，您可以：</p>
+                    <ul style="text-align: left; display: inline-block;">
+                        <li>创建和编辑文章</li>
+                        <li>管理分类和标签</li>
+                        <li>上传图片和媒体文件</li>
+                        <li>多语言内容管理</li>
+                        <li>文章搜索和过滤</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="tech-info">
+                <p data-i18n="footer.poweredBy">Built with HTML, CSS, and JavaScript</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 简化的演示脚本
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('静态演示版本已加载');
+            
+            // 移动端菜单切换
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            
+            if (mobileMenuToggle && navMenu) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    const isActive = navMenu.classList.contains('active');
+                    if (isActive) {
+                        navMenu.classList.remove('active');
+                        mobileMenuToggle.classList.remove('active');
+                        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    } else {
+                        navMenu.classList.add('active');
+                        mobileMenuToggle.classList.add('active');
+                        mobileMenuToggle.setAttribute('aria-expanded', 'true');
+                    }
+                });
+            }
+            
+            // 导航功能
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = this.getAttribute('href');
+                    const targetElement = document.querySelector(target);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                    
+                    // 关闭移动端菜单
+                    navMenu.classList.remove('active');
+                    mobileMenuToggle.classList.remove('active');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

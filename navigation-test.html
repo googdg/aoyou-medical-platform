@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Enhancement Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 测试页面特定样式 */
+        .test-section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            border-bottom: 2px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .test-section:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .test-content {
+            max-width: 800px;
+            text-align: center;
+        }
+        
+        .test-links {
+            margin: 2rem 0;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .test-link {
+            padding: 0.75rem 1.5rem;
+            background: var(--color-link);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-link:hover {
+            background: var(--color-link-hover);
+            transform: translateY(-2px);
+        }
+        
+        .demo-content {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1 class="site-title">Navigation Enhancement Test</h1>
+        <p class="site-tagline">Testing smooth scrolling, page transitions, and back-to-top functionality</p>
+        
+        <nav class="main-navigation">
+            <a href="#section1" class="nav-item">Section 1</a>
+            <a href="#section2" class="nav-item">Section 2</a>
+            <a href="#section3" class="nav-item">Section 3</a>
+            <a href="#section4" class="nav-item">Section 4</a>
+            <a href="#top" class="nav-item">Back to Top</a>
+        </nav>
+    </header>
+
+    <main class="site-content">
+        <section id="section1" class="test-section">
+            <div class="test-content">
+                <h2>Section 1: Smooth Scrolling Test</h2>
+                <p>This section tests the smooth scrolling functionality. Click on the navigation links above to see the smooth scrolling effect in action.</p>
+                
+                <div class="demo-content scroll-animate">
+                    <h3>Features Being Tested:</h3>
+                    <ul style="text-align: left; display: inline-block;">
+                        <li>Smooth scrolling to sections</li>
+                        <li>Navigation active state updates</li>
+                        <li>URL hash updates</li>
+                        <li>Keyboard navigation support</li>
+                    </ul>
+                </div>
+                
+                <div class="test-links">
+                    <a href="#section2" class="test-link">Go to Section 2</a>
+                    <a href="#section3" class="test-link">Jump to Section 3</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="section2" class="test-section">
+            <div class="test-content">
+                <h2>Section 2: Page Transition Effects</h2>
+                <p>This section demonstrates page transition animations. Notice the subtle fade effects when navigating between sections.</p>
+                
+                <div class="demo-content scroll-animate">
+                    <h3>Transition Features:</h3>
+                    <ul style="text-align: left; display: inline-block;">
+                        <li>Fade in/out animations</li>
+                        <li>Content sliding effects</li>
+                        <li>Smooth state changes</li>
+                        <li>Accessibility-friendly animations</li>
+                    </ul>
+                </div>
+                
+                <div class="test-links">
+                    <a href="#section1" class="test-link">Back to Section 1</a>
+                    <a href="#section4" class="test-link">Skip to Section 4</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="section3" class="test-section">
+            <div class="test-content">
+                <h2>Section 3: Scroll-to-Top Button</h2>
+                <p>Scroll down to see the "Back to Top" button appear. It should show up after scrolling past a certain threshold.</p>
+                
+                <div class="demo-content scroll-animate">
+                    <h3>Back-to-Top Features:</h3>
+                    <ul style="text-align: left; display: inline-block;">
+                        <li>Appears after scrolling threshold</li>
+                        <li>Smooth animation on show/hide</li>
+                        <li>Keyboard accessible</li>
+                        <li>Mobile-friendly sizing</li>
+                    </ul>
+                </div>
+                
+                <div class="test-links">
+                    <a href="#section2" class="test-link">Previous Section</a>
+                    <a href="#section4" class="test-link">Next Section</a>
+                </div>
+                
+                <div style="margin-top: 3rem;">
+                    <p><strong>Scroll down more to test the back-to-top button!</strong></p>
+                    <div style="height: 50vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(45deg, #f0f0f0, #e0e0e0);">
+                        <p>Extra content to enable scrolling...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section4" class="test-section">
+            <div class="test-content">
+                <h2>Section 4: Keyboard Navigation</h2>
+                <p>Test keyboard navigation using Tab, Arrow keys, Enter, and Space. Also try Ctrl+Home and Ctrl+End for quick navigation.</p>
+                
+                <div class="demo-content scroll-animate">
+                    <h3>Keyboard Shortcuts:</h3>
+                    <ul style="text-align: left; display: inline-block;">
+                        <li><kbd>Tab</kbd> - Navigate through links</li>
+                        <li><kbd>Enter</kbd> / <kbd>Space</kbd> - Activate links</li>
+                        <li><kbd>Ctrl+Home</kbd> - Scroll to top</li>
+                        <li><kbd>Ctrl+End</kbd> - Scroll to bottom</li>
+                        <li><kbd>Page Up</kbd> / <kbd>Page Down</kbd> - Smooth page scrolling</li>
+                    </ul>
+                </div>
+                
+                <div class="test-links">
+                    <a href="#section1" class="test-link">Back to Start</a>
+                    <a href="#top" class="test-link">Scroll to Top</a>
+                </div>
+                
+                <div style="margin-top: 3rem;">
+                    <h3>Test Complete!</h3>
+                    <p>All navigation enhancement features have been demonstrated. The back-to-top button should be visible now.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>Navigation Enhancement Test Page</p>
+            <p>Built with HTML, CSS, and JavaScript</p>
+        </div>
+    </footer>
+
+    <!-- 加载导航增强脚本 -->
+    <script src="js/navigation-enhancer.js"></script>
+    
+    <script>
+        // 测试页面特定的初始化代码
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Navigation Enhancement Test Page Loaded');
+            
+            // 添加一些测试日志
+            if (window.navigationEnhancer) {
+                console.log('Navigation Enhancer initialized successfully');
+                
+                // 测试滚动动画
+                setTimeout(() => {
+                    window.navigationEnhancer.addScrollAnimations();
+                    console.log('Scroll animations added');
+                }, 500);
+            } else {
+                console.error('Navigation Enhancer not found');
+            }
+        });
+    </script>
+</body>
+</html>

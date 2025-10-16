@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang=\"zh-CN\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>快速测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-item { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>主页内容同步快速测试</h1>
+    
+    <div class=\"test-item\">
+        <h3>1. JavaScript加载测试</h3>
+        <div id=\"js-test\" class=\"info\">等待JavaScript加载...</div>
+    </div>
+    
+    <div class=\"test-item\">
+        <h3>2. API连接测试</h3>
+        <div id=\"api-test\" class=\"info\">等待API测试...</div>
+    </div>
+    
+    <div class=\"test-item\">
+        <h3>3. DOM更新测试</h3>
+        <div class=\"test-content\">
+            <h2 class=\"welcome-title\">原始标题</h2>
+            <p class=\"welcome-subtitle\">原始副标题</p>
+            <p class=\"navigation-guide\">原始导航指南</p>
+        </div>
+        <div id=\"dom-test\" class=\"info\">等待DOM更新测试...</div>
+    </div>
+    
+    <div class=\"test-item\">
+        <h3>4. 主页链接</h3>
+        <a href=\"/\" target=\"_blank\">打开主页查看结果</a>
+    </div>
+    
+    <script>
+        // 测试1: JavaScript加载
+        document.getElementById('js-test').innerHTML = '<span class=\"success\">✅ JavaScript已加载</span>';
+        
+        // 测试2: API连接
+        async function testAPI() {
+            try {
+                const response = await fetch('/api/homepage');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('api-test').innerHTML = '<span class=\"success\">✅ API连接成功，数据已获取</span>';
+                    
+                    // 测试3: DOM更新
+                    testDOMUpdate(data.content);
+                } else {
+                    document.getElementById('api-test').innerHTML = '<span class=\"error\">❌ API返回错误: ' + data.message + '</span>';
+                }
+            } catch (error) {
+                document.getElementById('api-test').innerHTML = '<span class=\"error\">❌ API连接失败: ' + error.message + '</span>';
+            }
+        }
+        
+        // 测试3: DOM更新
+        function testDOMUpdate(content) {
+            try {
+                let updateCount = 0;
+                
+                if (content['welcome-title']) {
+                    const element = document.querySelector('.welcome-title');
+                    if (element) {
+                        element.textContent = content['welcome-title'];
+                        updateCount++;
+                    }
+                }
+                
+                if (content['welcome-subtitle']) {
+                    const element = document.querySelector('.welcome-subtitle');
+                    if (element) {
+                        element.textContent = content['welcome-subtitle'];
+                        updateCount++;
+                    }
+                }
+                
+                if (content['navigation-guide']) {
+                    const element = document.querySelector('.navigation-guide');
+                    if (element) {
+                        element.textContent = content['navigation-guide'];
+                        updateCount++;
+                    }
+                }
+                
+                if (updateCount > 0) {
+                    document.getElementById('dom-test').innerHTML = '<span class=\"success\">✅ DOM更新成功，已更新 ' + updateCount + ' 个元素</span>';
+                } else {
+                    document.getElementById('dom-test').innerHTML = '<span class=\"error\">❌ DOM更新失败，没有找到可更新的元素</span>';
+                }
+            } catch (error) {
+                document.getElementById('dom-test').innerHTML = '<span class=\"error\">❌ DOM更新出错: ' + error.message + '</span>';
+            }
+        }
+        
+        // 页面加载后运行测试
+        window.onload = function() {
+            setTimeout(testAPI, 1000);
+        };
+    </script>
+</body>
+</html>"

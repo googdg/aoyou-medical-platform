@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鬼消消乐 - Little Ghost Match-3</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/ghost-match3.css">
+    <meta name="description" content="小鬼消消乐 - 有趣的三消益智游戏，挑战你的策略思维">
+    <meta name="keywords" content="消消乐,三消游戏,益智游戏,小鬼,puzzle game">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="index.html">Stevn's Blog</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="loadContent('blog')">博客</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="ghost-match3.html" class="nav-link">小鬼消消乐</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="loadContent('about')">关于</a>
+                </li>
+            </ul>
+            <div class="nav-toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <div class="container">
+            <!-- 游戏标题 -->
+            <header class="game-header-section">
+                <h1 class="game-title">小鬼消消乐</h1>
+                <p class="game-subtitle">Little Ghost Match-3 Puzzle Game</p>
+                <p class="game-description">
+                    欢迎来到小鬼消消乐！这是一个有趣的三消益智游戏，你需要通过交换相邻的小鬼来创造三个或更多相同小鬼的连线。
+                    挑战你的策略思维，获得更高的分数！
+                </p>
+            </header>
+
+            <!-- 游戏容器 -->
+            <div class="game-container" id="game-container">
+                <!-- 游戏将在这里加载 -->
+                <div class="game-loading">
+                    <div class="loading-spinner"></div>
+                    <p>正在加载游戏...</p>
+                </div>
+            </div>
+
+            <!-- 游戏说明 -->
+            <section class="game-instructions">
+                <h2>游戏说明</h2>
+                <div class="instructions-grid">
+                    <div class="instruction-item">
+                        <div class="instruction-icon">🎯</div>
+                        <h3>游戏目标</h3>
+                        <p>通过交换相邻的小鬼，创造三个或更多相同小鬼的连线来消除它们并获得分数。</p>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon">🎮</div>
+                        <h3>操作方式</h3>
+                        <p>点击一个小鬼，然后点击相邻的小鬼来交换它们的位置。在移动设备上可以滑动操作。</p>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon">⭐</div>
+                        <h3>特殊道具</h3>
+                        <p>匹配4个或更多小鬼可以创造特殊道具，它们有强大的消除效果。</p>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon">🏆</div>
+                        <h3>关卡进度</h3>
+                        <p>达到目标分数即可完成关卡，每个关卡都有移动次数限制。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 游戏统计 -->
+            <section class="game-stats" id="game-stats" style="display: none;">
+                <h2>游戏统计</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">最高分数</span>
+                        <span class="stat-value" id="high-score">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">游戏次数</span>
+                        <span class="stat-value" id="games-played">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">最高关卡</span>
+                        <span class="stat-value" id="highest-level">1</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">总消除数</span>
+                        <span class="stat-value" id="total-matches">0</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Stevn's Blog. 小鬼消消乐游戏 - 寓教于乐，挑战智慧。</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript 文件 -->
+    <script src="js/api-client.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/content-loader.js"></script>
+    <script src="js/performance-optimizer.js"></script>
+    <script src="js/accessibility-enhancer.js"></script>
+    
+    <!-- 游戏相关 JavaScript -->
+    <script src="js/grid-manager.js"></script>
+    <script src="js/ghost-manager.js"></script>
+    <script src="js/ghost-match3-engine.js"></script>
+    
+    <!-- 游戏初始化脚本 -->
+    <script>
+        // 游戏初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('小鬼消消乐页面加载完成');
+            
+            // 初始化导航
+            if (typeof initializeNavigation === 'function') {
+                initializeNavigation();
+            }
+            
+            // 初始化游戏
+            initializeGame();
+            
+            // 加载游戏统计
+            loadGameStats();
+        });
+        
+        let gameEngine = null;
+        
+        /**
+         * 初始化游戏
+         */
+        function initializeGame() {
+            const gameContainer = document.getElementById('game-container');
+            
+            if (!gameContainer) {
+                console.error('游戏容器未找到');
+                return;
+            }
+            
+            try {
+                // 创建游戏引擎实例
+                gameEngine = new GhostMatch3Engine(gameContainer, {
+                    gridSize: { width: 8, height: 8 },
+                    ghostTypes: 6
+                });
+                
+                // 监听游戏事件
+                gameEngine.on('engineInitialized', () => {
+                    console.log('游戏引擎初始化完成');
+                    hideLoadingScreen();
+                    showGameStats();
+                });
+                
+                gameEngine.on('gameStarted', () => {
+                    console.log('游戏开始');
+                });
+                
+                gameEngine.on('gameEnded', (data) => {
+                    console.log('游戏结束', data);
+                    updateGameStats(data);
+                });
+                
+                gameEngine.on('levelCompleted', (data) => {
+                    console.log('关卡完成', data);
+                });
+                
+                gameEngine.on('gameError', (error) => {
+                    console.error('游戏错误', error);
+                    showErrorMessage('游戏发生错误，请刷新页面重试');
+                });
+                
+            } catch (error) {
+                console.error('游戏初始化失败:', error);
+                showErrorMessage('游戏初始化失败，请刷新页面重试');
+            }
+        }
+        
+        /**
+         * 隐藏加载屏幕
+         */
+        function hideLoadingScreen() {
+            const loadingElement = document.querySelector('.game-loading');
+            if (loadingElement) {
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        /**
+         * 显示游戏统计
+         */
+        function showGameStats() {
+            const statsElement = document.getElementById('game-stats');
+            if (statsElement) {
+                statsElement.style.display = 'block';
+            }
+        }
+        
+        /**
+         * 加载游戏统计
+         */
+        function loadGameStats() {
+            try {
+                const stats = JSON.parse(localStorage.getItem('ghostMatch3_stats') || '{}');
+                
+                document.getElementById('high-score').textContent = stats.highScore || 0;
+                document.getElementById('games-played').textContent = stats.gamesPlayed || 0;
+                document.getElementById('highest-level').textContent = stats.highestLevel || 1;
+                document.getElementById('total-matches').textContent = stats.totalMatches || 0;
+                
+            } catch (error) {
+                console.error('加载游戏统计失败:', error);
+            }
+        }
+        
+        /**
+         * 更新游戏统计
+         */
+        function updateGameStats(gameData) {
+            try {
+                const stats = JSON.parse(localStorage.getItem('ghostMatch3_stats') || '{}');
+                
+                stats.gamesPlayed = (stats.gamesPlayed || 0) + 1;
+                stats.highScore = Math.max(stats.highScore || 0, gameData.score || 0);
+                stats.highestLevel = Math.max(stats.highestLevel || 1, gameEngine.level || 1);
+                
+                localStorage.setItem('ghostMatch3_stats', JSON.stringify(stats));
+                loadGameStats();
+                
+            } catch (error) {
+                console.error('更新游戏统计失败:', error);
+            }
+        }
+        
+        /**
+         * 显示错误消息
+         */
+        function showErrorMessage(message) {
+            const gameContainer = document.getElementById('game-container');
+            if (gameContainer) {
+                gameContainer.innerHTML = `
+                    <div class="game-error">
+                        <div class="error-icon">⚠️</div>
+                        <h3>游戏加载失败</h3>
+                        <p>${message}</p>
+                        <button onclick="location.reload()" class="retry-btn">重新加载</button>
+                    </div>
+                `;
+            }
+        }
+        
+        /**
+         * 开始新游戏
+         */
+        function startNewGame() {
+            if (gameEngine) {
+                gameEngine.startNewGame();
+            }
+        }
+        
+        /**
+         * 重新开始游戏
+         */
+        function restartGame() {
+            if (gameEngine) {
+                gameEngine.restartGame();
+            }
+        }
+        
+        // 页面卸载时清理资源
+        window.addEventListener('beforeunload', function() {
+            if (gameEngine) {
+                gameEngine.destroy();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容同步测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background: #007cba;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .content-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 内容同步测试</h1>
+        <p>测试管理后台和前端主页的内容同步功能</p>
+        
+        <div class="section">
+            <h3>📊 当前状态</h3>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="checkStoredContent()">检查存储内容</button>
+                <button class="btn btn-success" onclick="testSyncToFrontend()">测试同步到前端</button>
+                <button class="btn btn-warning" onclick="createSampleContent()">创建示例内容</button>
+                <button class="btn btn-danger" onclick="clearStoredContent()">清除存储内容</button>
+            </div>
+            <div id="status-display" class="status info">点击按钮开始测试</div>
+        </div>
+        
+        <div class="section">
+            <h3>💾 存储的主页内容</h3>
+            <div id="stored-content" class="content-display">暂无内容</div>
+        </div>
+        
+        <div class="section">
+            <h3>🌐 前端页面预览</h3>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="openMainPage()">打开主页</button>
+                <button class="btn btn-primary" onclick="openAdminPage()">打开管理后台</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>🔧 同步操作</h3>
+            <div class="btn-group">
+                <button class="btn btn-success" onclick="forceSyncContent()">强制同步内容</button>
+                <button class="btn btn-warning" onclick="reloadMainPage()">重新加载主页</button>
+            </div>
+            <div id="sync-results" class="content-display">同步结果将显示在这里</div>
+        </div>
+    </div>
+    
+    <script>
+        // 检查存储的内容
+        function checkStoredContent() {
+            const statusDiv = document.getElementById('status-display');
+            const contentDiv = document.getElementById('stored-content');
+            
+            try {
+                const storedContent = localStorage.getItem('homepage_content');
+                
+                if (storedContent) {
+                    const parsedContent = JSON.parse(storedContent);
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ 找到存储的主页内容';
+                    contentDiv.textContent = JSON.stringify(parsedContent, null, 2);
+                } else {
+                    statusDiv.className = 'status warning';
+                    statusDiv.textContent = '⚠️ 未找到存储的主页内容';
+                    contentDiv.textContent = '暂无存储内容';
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ 读取存储内容时出错：' + error.message;
+                contentDiv.textContent = '错误：' + error.message;
+            }
+        }
+        
+        // 创建示例内容
+        function createSampleContent() {
+            const sampleContent = {
+                siteTitle: 'Stevn',
+                siteTagline: '产品经理 & 数字健康专家 | 构建创新医疗解决方案，通过数据驱动策略推动增长。',
+                siteDescription: 'Stevn的个人博客 - 专注于数字医疗、新媒体运营和数据分析的产品经理',
+                welcomeTitle: '嗨，欢迎！',
+                welcomeSubtitle: '我是Stevn，很高兴认识你！',
+                introText1: '我对移动医疗行业有着深刻的认识，目标是让国人在健康就诊服务环节中体验爽。我专注于构建覆盖患者从入院到出院全流程的数字医疗产品，包括预约、挂号、导诊、排队候诊、咨询支付、报告查询、住院费用清单等一系列产品逻辑和模块设计，见证产品从第1用户到800万用户的快速增长过程。',
+                introText2: '作为上海谷歌开发者社区的核心组织者，我会利用业余时间为创业者、产品经理、技术开发、设计师们搭建自由交流的平台，喜欢研究及体验各种各样的新鲜事物。我主导并参与了2017~2019年三届的Women Techmarkers上海女性开发者大会、2015~2019年5届Devfest上海谷歌开发者大会等多个技术社区活动。',
+                currentRole: '产品经理',
+                currentCompany: '小苹果昆育互联网医院 (2023-至今)',
+                currentDesc: '负责新媒体运营和数字医疗业务',
+                previousRole: '产品经理',
+                previousCompany: '多家医疗公司 (2016-2023)',
+                previousDesc: '9年以上数字医疗和产品策略经验',
+                techCommunityDesc: 'Women Techmarkers、Devfest上海等技术大会的组织者',
+                personalInterestsDesc: '美食爱好者，热爱下厨房亲自制作美食，与身边的亲朋好友品尝',
+                lastSaved: new Date().toISOString()
+            };
+            
+            localStorage.setItem('homepage_content', JSON.stringify(sampleContent));
+            
+            const statusDiv = document.getElementById('status-display');
+            statusDiv.className = 'status success';
+            statusDiv.textContent = '✅ 示例内容已创建并保存';
+            
+            checkStoredContent();
+        }
+        
+        // 清除存储内容
+        function clearStoredContent() {
+            localStorage.removeItem('homepage_content');
+            
+            const statusDiv = document.getElementById('status-display');
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '🗑️ 存储内容已清除';
+            
+            checkStoredContent();
+        }
+        
+        // 测试同步到前端
+        function testSyncToFrontend() {
+            const resultsDiv = document.getElementById('sync-results');
+            resultsDiv.textContent = '正在测试同步功能...\n';
+            
+            try {
+                const storedContent = localStorage.getItem('homepage_content');
+                if (!storedContent) {
+                    resultsDiv.textContent += '❌ 没有找到存储的内容，请先创建示例内容\n';
+                    return;
+                }
+                
+                const homepageData = JSON.parse(storedContent);
+                resultsDiv.textContent += '✅ 成功读取存储内容\n';
+                resultsDiv.textContent += '📝 内容包含以下字段：\n';
+                
+                Object.keys(homepageData).forEach(key => {
+                    if (key !== 'lastSaved') {
+                        resultsDiv.textContent += `  - ${key}: ${homepageData[key].substring(0, 50)}...\n`;
+                    }
+                });
+                
+                resultsDiv.textContent += '\n🔄 同步功能已在主页的script.js中实现\n';
+                resultsDiv.textContent += '💡 请打开主页查看同步效果\n';
+                
+            } catch (error) {
+                resultsDiv.textContent += '❌ 同步测试失败：' + error.message + '\n';
+            }
+        }
+        
+        // 强制同步内容
+        function forceSyncContent() {
+            const resultsDiv = document.getElementById('sync-results');
+            resultsDiv.textContent = '正在强制同步内容...\n';
+            
+            // 触发自定义事件通知主页重新加载内容
+            window.dispatchEvent(new CustomEvent('homepageContentUpdated'));
+            
+            resultsDiv.textContent += '✅ 已发送内容更新事件\n';
+            resultsDiv.textContent += '💡 如果主页已打开，内容应该会自动更新\n';
+        }
+        
+        // 打开主页
+        function openMainPage() {
+            window.open('/', '_blank');
+        }
+        
+        // 打开管理后台
+        function openAdminPage() {
+            window.open('/admin', '_blank');
+        }
+        
+        // 重新加载主页
+        function reloadMainPage() {
+            const resultsDiv = document.getElementById('sync-results');
+            resultsDiv.textContent = '正在重新加载主页...\n';
+            
+            // 尝试重新加载主页窗口
+            try {
+                const mainWindow = window.open('/', '_blank');
+                resultsDiv.textContent += '✅ 主页已在新窗口打开\n';
+            } catch (error) {
+                resultsDiv.textContent += '❌ 无法重新加载主页：' + error.message + '\n';
+            }
+        }
+        
+        // 页面加载时自动检查内容
+        window.onload = function() {
+            checkStoredContent();
+        };
+    </script>
+</body>
+</html>

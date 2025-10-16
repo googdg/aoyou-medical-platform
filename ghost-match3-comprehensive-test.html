@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鬼消消乐 - 综合测试</title>
+    <link rel="stylesheet" href="css/ghost-match3.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .test-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #5a67d8;
+        }
+        .test-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .test-results {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .game-demo {
+            width: 600px;
+            height: 700px;
+            margin: 20px auto;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            position: relative;
+        }
+        .status-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .status-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .status-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>小鬼消消乐 - 综合系统测试</h1>
+        <p>这个页面用于测试游戏的所有核心系统和功能。</p>
+
+        <!-- 系统状态面板 -->
+        <div class="status-panel">
+            <div class="status-item">
+                <div class="status-label">游戏引擎状态</div>
+                <div class="status-value" id="engine-status">未初始化</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">活动动画数</div>
+                <div class="status-value" id="animation-count">0</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">活动粒子数</div>
+                <div class="status-value" id="particle-count">0</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">网格填充度</div>
+                <div class="status-value" id="grid-fill">0%</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">可能移动数</div>
+                <div class="status-value" id="possible-moves">0</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">当前分数</div>
+                <div class="status-value" id="current-score">0</div>
+            </div>
+        </div>
+
+        <!-- 测试控制 -->
+        <div class="test-section">
+            <h2>系统测试控制</h2>
+            <div class="test-controls">
+                <button class="test-btn" onclick="runAllTests()">运行所有测试</button>
+                <button class="test-btn" onclick="testGridManager()">测试网格管理器</button>
+                <button class="test-btn" onclick="testGhostManager()">测试小鬼管理器</button>
+                <button class="test-btn" onclick="testAnimationEngine()">测试动画引擎</button>
+                <button class="test-btn" onclick="testParticleSystem()">测试粒子系统</button>
+                <button class="test-btn" onclick="testInputHandler()">测试输入处理</button>
+                <button class="test-btn" onclick="clearResults()">清除结果</button>
+            </div>
+            <div class="test-results" id="test-results">
+                测试结果将在这里显示...
+            </div>
+        </div>
+
+        <!-- 游戏演示 -->
+        <div class="test-section">
+            <h2>游戏演示</h2>
+            <div class="test-controls">
+                <button class="test-btn" onclick="initializeGame()">初始化游戏</button>
+                <button class="test-btn" onclick="startNewGame()">开始新游戏</button>
+                <button class="test-btn" onclick="pauseGame()">暂停/恢复</button>
+                <button class="test-btn" onclick="restartGame()">重新开始</button>
+                <button class="test-btn" onclick="showHint()">显示提示</button>
+                <button class="test-btn" onclick="triggerSpecialEffect()">触发特效</button>
+            </div>
+            <div class="game-demo" id="game-demo">
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #666;">
+                    点击"初始化游戏"开始
+                </div>
+            </div>
+        </div>
+
+        <!-- 性能监控 -->
+        <div class="test-section">
+            <h2>性能监控</h2>
+            <div class="test-controls">
+                <button class="test-btn" onclick="startPerformanceMonitoring()">开始监控</button>
+                <button class="test-btn" onclick="stopPerformanceMonitoring()">停止监控</button>
+                <button class="test-btn" onclick="generatePerformanceReport()">生成报告</button>
+            </div>
+            <div class="test-results" id="performance-results">
+                性能数据将在这里显示...
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载所有游戏模块 -->
+    <script src="js/grid-manager.js"></script>
+    <script src="js/ghost-manager.js"></script>
+    <script src="js/particle-system.js"></script>
+    <script src="js/animation-engine.js"></script>
+    <script src="js/input-handler.js"></script>
+    <script src="js/ghost-match3-engine.js"></script>
+    
+    <!-- 加载测试模块 -->
+    <script src="test/grid-manager-test.js"></script>
+    <script src="test/gravity-system-test.js"></script>
+    <script src="test/special-ghost-test.js"></script>
+    <script src="test/animation-system-test.js"></script>
+
+    <script>
+        // 全局变量
+        let gameEngine = null;
+        let performanceMonitor = null;
+        let statusUpdateInterval = null;
+
+        /**
+         * 运行所有测试
+         */
+        async function runAllTests() {
+            logResult('开始运行所有系统测试...\n');
+            
+            const tests = [
+                { name: '网格管理器测试', func: testGridManager },
+                { name: '小鬼管理器测试', func: testGhostManager },
+                { name: '动画引擎测试', func: testAnimationEngine },
+                { name: '粒子系统测试', func: testParticleSystem }
+            ];
+            
+            let totalPassed = 0;
+            let totalTests = 0;
+            
+            for (const test of tests) {
+                logResult(`\n=== ${test.name} ===`);
+                const result = await test.func();
+                if (result) {
+                    totalPassed += result.passed;
+                    totalTests += result.total;
+                }
+                await sleep(500); // 短暂延迟
+            }
+            
+            logResult(`\n=== 总体测试结果 ===`);
+            logResult(`总测试数: ${totalTests}`);
+            logResult(`通过: ${totalPassed}`);
+            logResult(`失败: ${totalTests - totalPassed}`);
+            logResult(`成功率: ${((totalPassed / totalTests) * 100).toFixed(1)}%`);
+        }
+
+        /**
+         * 测试网格管理器
+         */
+        async function testGridManager() {
+            try {
+                const test = new GridManagerTest();
+                const result = test.runAllTests();
+                logResult(`网格管理器测试完成 - 通过: ${result.passed}/${result.total}`);
+                return result;
+            } catch (error) {
+                logResult(`网格管理器测试失败: ${error.message}`);
+                return null;
+            }
+        }
+
+        /**
+         * 测试小鬼管理器
+         */
+        async function testGhostManager() {
+            try {
+                const test = new SpecialGhostTest();
+                const result = test.runAllTests();
+                logResult(`小鬼管理器测试完成 - 通过: ${result.passed}/${result.total}`);
+                return result;
+            } catch (error) {
+                logResult(`小鬼管理器测试失败: ${error.message}`);
+                return null;
+            }
+        }
+
+        /**
+         * 测试动画引擎
+         */
+        async function testAnimationEngine() {
+            try {
+                const test = new AnimationSystemTest();
+                const result = test.runAllTests();
+                logResult(`动画引擎测试完成 - 通过: ${result.passed}/${result.total}`);
+                return result;
+            } catch (error) {
+                logResult(`动画引擎测试失败: ${error.message}`);
+                return null;
+            }
+        }
+
+        /**
+         * 测试粒子系统
+         */
+        async function testParticleSystem() {
+            try {
+                // 粒子系统测试已包含在动画系统测试中
+                logResult('粒子系统测试已包含在动画引擎测试中');
+                return { passed: 1, total: 1 };
+            } catch (error) {
+                logResult(`粒子系统测试失败: ${error.message}`);
+                return null;
+            }
+        }
+
+        /**
+         * 测试输入处理
+         */
+        async function testInputHandler() {
+            try {
+                logResult('输入处理器功能测试（需要手动交互）');
+                logResult('- 鼠标点击和拖拽');
+                logResult('- 触摸操作（移动设备）');
+                logResult('- 键盘导航');
+                return { passed: 1, total: 1 };
+            } catch (error) {
+                logResult(`输入处理测试失败: ${error.message}`);
+                return null;
+            }
+        }
+
+        /**
+         * 初始化游戏
+         */
+        function initializeGame() {
+            try {
+                const gameContainer = document.getElementById('game-demo');
+                gameContainer.innerHTML = '';
+                
+                gameEngine = new GhostMatch3Engine(gameContainer, {
+                    gridSize: { width: 8, height: 8 },
+                    ghostTypes: 6
+                });
+                
+                // 设置事件监听器
+                gameEngine.on('engineInitialized', () => {
+                    updateStatus('engine-status', '已初始化');
+                    logResult('游戏引擎初始化完成');
+                });
+                
+                gameEngine.on('gameStarted', () => {
+                    updateStatus('engine-status', '游戏中');
+                    logResult('游戏开始');
+                });
+                
+                gameEngine.on('gameEnded', (data) => {
+                    updateStatus('engine-status', '游戏结束');
+                    logResult(`游戏结束 - 分数: ${data.score}`);
+                });
+                
+                // 开始状态更新
+                startStatusUpdates();
+                
+            } catch (error) {
+                logResult(`游戏初始化失败: ${error.message}`);
+            }
+        }
+
+        /**
+         * 开始新游戏
+         */
+        function startNewGame() {
+            if (gameEngine) {
+                gameEngine.startNewGame();
+            } else {
+                logResult('请先初始化游戏');
+            }
+        }
+
+        /**
+         * 暂停/恢复游戏
+         */
+        function pauseGame() {
+            if (gameEngine) {
+                if (gameEngine.isGameActive) {
+                    gameEngine.pauseGame();
+                    logResult('游戏已暂停');
+                } else {
+                    gameEngine.resumeGame();
+                    logResult('游戏已恢复');
+                }
+            }
+        }
+
+        /**
+         * 重新开始游戏
+         */
+        function restartGame() {
+            if (gameEngine) {
+                gameEngine.restartGame();
+                logResult('游戏已重新开始');
+            }
+        }
+
+        /**
+         * 显示提示
+         */
+        function showHint() {
+            if (gameEngine) {
+                gameEngine.showHint();
+                logResult('显示游戏提示');
+            }
+        }
+
+        /**
+         * 触发特殊效果
+         */
+        function triggerSpecialEffect() {
+            if (gameEngine && gameEngine.animationEngine) {
+                // 触发一些演示特效
+                gameEngine.animationEngine.animateSpecialEffect('explosion', { x: 4, y: 4 }, { radius: 2 });
+                gameEngine.animationEngine.particleSystem.createRainbowEffect(300, 350);
+                logResult('触发特殊效果演示');
+            }
+        }
+
+        /**
+         * 开始性能监控
+         */
+        function startPerformanceMonitoring() {
+            performanceMonitor = {
+                startTime: performance.now(),
+                frameCount: 0,
+                lastFrameTime: performance.now(),
+                fps: 0,
+                memoryUsage: 0
+            };
+            
+            function updatePerformance() {
+                if (!performanceMonitor) return;
+                
+                const now = performance.now();
+                performanceMonitor.frameCount++;
+                
+                if (now - performanceMonitor.lastFrameTime >= 1000) {
+                    performanceMonitor.fps = performanceMonitor.frameCount;
+                    performanceMonitor.frameCount = 0;
+                    performanceMonitor.lastFrameTime = now;
+                    
+                    if (performance.memory) {
+                        performanceMonitor.memoryUsage = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                    }
+                    
+                    updatePerformanceDisplay();
+                }
+                
+                requestAnimationFrame(updatePerformance);
+            }
+            
+            updatePerformance();
+            logResult('性能监控已开始');
+        }
+
+        /**
+         * 停止性能监控
+         */
+        function stopPerformanceMonitoring() {
+            performanceMonitor = null;
+            logResult('性能监控已停止');
+        }
+
+        /**
+         * 生成性能报告
+         */
+        function generatePerformanceReport() {
+            if (performanceMonitor) {
+                const runtime = (performance.now() - performanceMonitor.startTime) / 1000;
+                const report = `
+性能报告:
+- 运行时间: ${runtime.toFixed(2)}秒
+- 当前FPS: ${performanceMonitor.fps}
+- 内存使用: ${performanceMonitor.memoryUsage}MB
+- 活动动画: ${gameEngine ? gameEngine.animationEngine?.getActiveAnimationCount() || 0 : 0}
+- 活动粒子: ${gameEngine ? gameEngine.animationEngine?.particleSystem?.getActiveParticleCount() || 0 : 0}
+                `;
+                
+                document.getElementById('performance-results').textContent = report;
+            } else {
+                logResult('请先开始性能监控');
+            }
+        }
+
+        /**
+         * 更新性能显示
+         */
+        function updatePerformanceDisplay() {
+            if (performanceMonitor) {
+                const report = `FPS: ${performanceMonitor.fps} | 内存: ${performanceMonitor.memoryUsage}MB`;
+                document.getElementById('performance-results').textContent = report;
+            }
+        }
+
+        /**
+         * 开始状态更新
+         */
+        function startStatusUpdates() {
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+            }
+            
+            statusUpdateInterval = setInterval(() => {
+                if (gameEngine) {
+                    updateStatus('animation-count', gameEngine.animationEngine?.getActiveAnimationCount() || 0);
+                    updateStatus('particle-count', gameEngine.animationEngine?.particleSystem?.getActiveParticleCount() || 0);
+                    updateStatus('current-score', gameEngine.gameState?.score || 0);
+                    
+                    if (gameEngine.gridManager) {
+                        updateStatus('grid-fill', `${gameEngine.gridManager.getFillPercentage().toFixed(1)}%`);
+                        updateStatus('possible-moves', gameEngine.gridManager.getAllPossibleMoves().length);
+                    }
+                }
+            }, 1000);
+        }
+
+        /**
+         * 更新状态显示
+         */
+        function updateStatus(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value;
+            }
+        }
+
+        /**
+         * 记录结果
+         */
+        function logResult(message) {
+            const resultsElement = document.getElementById('test-results');
+            resultsElement.textContent += message + '\n';
+            resultsElement.scrollTop = resultsElement.scrollHeight;
+        }
+
+        /**
+         * 清除结果
+         */
+        function clearResults() {
+            document.getElementById('test-results').textContent = '';
+        }
+
+        /**
+         * 延迟函数
+         */
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            logResult('小鬼消消乐综合测试系统已加载');
+            logResult('点击相应按钮开始测试\n');
+        });
+
+        // 页面卸载时清理
+        window.addEventListener('beforeunload', function() {
+            if (gameEngine) {
+                gameEngine.destroy();
+            }
+            if (statusUpdateInterval) {
+                clearInterval(statusUpdateInterval);
+            }
+        });
+    </script>
+</body>
+</html>

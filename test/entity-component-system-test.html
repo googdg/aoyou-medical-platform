@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实体组件系统测试 - ECS Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #testCanvas {
+            border: 2px solid #333;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 实体组件系统测试</h1>
+    
+    <div class="test-container">
+        <h2>📋 测试结果</h2>
+        <div id="testResults"></div>
+        <button onclick="runAllTests()">🚀 运行所有测试</button>
+        <button onclick="clearResults()">🧹 清除结果</button>
+    </div>
+
+    <div class="test-container">
+        <h2>🎮 可视化测试</h2>
+        <canvas id="testCanvas" width="400" height="300"></canvas>
+        <br>
+        <button onclick="createTestEntity()">➕ 创建实体</button>
+        <button onclick="removeTestEntity()">➖ 移除实体</button>
+        <button onclick="testCollision()">💥 测试碰撞</button>
+        <button onclick="clearCanvas()">🧹 清除画布</button>
+    </div>
+
+    <div class="test-container">
+        <h2>📊 实时信息</h2>
+        <div id="liveInfo">
+            <p>实体数量: <span id="entityCount">0</span></p>
+            <p>组件总数: <span id="componentCount">0</span></p>
+            <p>碰撞检测: <span id="collisionInfo">无</span></p>
+        </div>
+    </div>
+
+    <!-- 引入实体组件系统 -->
+    <script src="../js/entity-component-system.js"></script>
+    
+    <script>
+        // 测试管理器
+        class TestManager {
+            constructor() {
+                this.results = [];
+                this.entityManager = new ECS.EntityManager();
+                this.collisionSystem = new ECS.CollisionSystem(this.entityManager);
+                this.canvas = document.getElementById('testCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.testEntities = [];
+                
+                this.startRenderLoop();
+            }
+
+            // 添加测试结果
+            addResult(testName, passed, message = '') {
+                this.results.push({
+                    name: testName,
+                    passed: passed,
+                    message: message,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                this.updateResultsDisplay();
+            }
+
+            // 更新结果显示
+            updateResultsDisplay() {
+                const container = document.getElementById('testResults');
+                container.innerHTML = '';
+                
+                this.results.forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = `test-result ${result.passed ? 'test-pass' : 'test-fail'}`;
+                    div.innerHTML = `
+                        <strong>${result.passed ? '✅' : '❌'} ${result.name}</strong>
+                        <br><small>${result.timestamp}</small>
+                        ${result.message ? `<br>${result.message}` : ''}
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            // 清除结果
+            clearResults() {
+                this.results = [];
+                this.updateResultsDisplay();
+            }
+
+            // 开始渲染循环
+            startRenderLoop() {
+                const render = () => {
+                    this.update();
+                    this.render();
+                    this.updateLiveInfo();
+                    requestAnimationFrame(render);
+                };
+                render();
+            }
+
+            // 更新
+            update() {
+                this.entityManager.update(16);
+                this.collisionSystem.update();
+            }
+
+            // 渲染
+            render() {
+                // 清空画布
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 渲染所有实体
+                this.entityManager.render(this.ctx);
+            }
+
+            // 更新实时信息
+            updateLiveInfo() {
+                document.getElementById('entityCount').textContent = this.entityManager.getEntityCount();
+                
+                let componentCount = 0;
+                for (const entity of this.entityManager.entities.values()) {
+                    componentCount += entity.components.size;
+                }
+                document.getElementById('componentCount').textContent = componentCount;
+                
+                const collisionPairs = this.collisionSystem.getCollisionPairs();
+                document.getElementById('collisionInfo').textContent = 
+                    collisionPairs.length > 0 ? `${collisionPairs.length} 个碰撞对` : '无碰撞';
+            }
+        }
+
+        // 全局测试管理器
+        let testManager;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            testManager = new TestManager();
+            console.log('🧪 测试管理器初始化完成');
+        });
+
+        // 测试函数
+        function testEntityCreation() {
+            try {
+                const entity = new ECS.Entity('TestEntity');
+                const passed = entity.id && entity.name === 'TestEntity' && entity.components.size === 0;
+                testManager.addResult('实体创建测试', passed, 
+                    passed ? '实体创建成功' : '实体创建失败');
+                return passed;
+            } catch (error) {
+                testManager.addResult('实体创建测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testComponentSystem() {
+            try {
+                const entity = new ECS.Entity('ComponentTest');
+                const transform = new ECS.Transform(100, 100);
+                const renderer = new ECS.Renderer(null, 32, 32, '#FF0000');
+                
+                entity.addComponent(transform);
+                entity.addComponent(renderer);
+                
+                const hasTransform = entity.hasComponent('Transform');
+                const hasRenderer = entity.hasComponent('Renderer');
+                const retrievedTransform = entity.getComponent('Transform');
+                
+                const passed = hasTransform && hasRenderer && 
+                              retrievedTransform === transform &&
+                              entity.components.size === 2;
+                
+                testManager.addResult('组件系统测试', passed,
+                    passed ? '组件添加和获取成功' : '组件系统测试失败');
+                return passed;
+            } catch (error) {
+                testManager.addResult('组件系统测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testTransformComponent() {
+            try {
+                const transform = new ECS.Transform(50, 75, Math.PI / 4);
+                
+                // 测试位置设置
+                transform.setPosition(100, 200);
+                const positionCorrect = transform.x === 100 && transform.y === 200;
+                
+                // 测试旋转
+                transform.setRotationDegrees(90);
+                const rotationCorrect = Math.abs(transform.rotation - Math.PI / 2) < 0.001;
+                
+                // 测试移动
+                transform.translate(10, 20);
+                const translateCorrect = transform.x === 110 && transform.y === 220;
+                
+                const passed = positionCorrect && rotationCorrect && translateCorrect;
+                testManager.addResult('Transform组件测试', passed,
+                    passed ? '位置、旋转、移动功能正常' : 'Transform组件功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('Transform组件测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testCollisionDetection() {
+            try {
+                const entity1 = new ECS.Entity('Collider1');
+                const entity2 = new ECS.Entity('Collider2');
+                
+                entity1.addComponent(new ECS.Transform(100, 100));
+                entity1.addComponent(new ECS.Collider(32, 32));
+                
+                entity2.addComponent(new ECS.Transform(110, 110));
+                entity2.addComponent(new ECS.Collider(32, 32));
+                
+                const collider1 = entity1.getComponent('Collider');
+                const collider2 = entity2.getComponent('Collider');
+                
+                const collision = collider1.checkCollision(collider2);
+                
+                // 测试无碰撞情况
+                entity2.getComponent('Transform').setPosition(200, 200);
+                const noCollision = !collider1.checkCollision(collider2);
+                
+                const passed = collision && noCollision;
+                testManager.addResult('碰撞检测测试', passed,
+                    passed ? '碰撞检测功能正常' : '碰撞检测功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('碰撞检测测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testMovementComponent() {
+            try {
+                const entity = new ECS.Entity('MovementTest');
+                const transform = new ECS.Transform(100, 100);
+                const movement = new ECS.Movement(200);
+                
+                entity.addComponent(transform);
+                entity.addComponent(movement);
+                
+                // 设置速度
+                movement.setVelocity(100, 0);
+                
+                // 模拟更新
+                movement.update(100); // 0.1秒
+                
+                // 检查位置是否改变
+                const moved = transform.x !== 100;
+                
+                const passed = moved;
+                testManager.addResult('Movement组件测试', passed,
+                    passed ? '移动组件功能正常' : '移动组件功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('Movement组件测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testEntityManager() {
+            try {
+                const manager = new ECS.EntityManager();
+                const entity1 = new ECS.Entity('Entity1');
+                const entity2 = new ECS.Entity('Entity2');
+                
+                entity1.addTag('player');
+                entity2.addTag('enemy');
+                
+                manager.addEntity(entity1);
+                manager.addEntity(entity2);
+                
+                // 更新管理器以处理待添加的实体
+                manager.update(16);
+                
+                const countCorrect = manager.getEntityCount() === 2;
+                const retrieveById = manager.getEntity(entity1.id) === entity1;
+                const retrieveByName = manager.getEntityByName('Entity1') === entity1;
+                const retrieveByTag = manager.getEntitiesByTag('player').includes(entity1);
+                
+                const passed = countCorrect && retrieveById && retrieveByName && retrieveByTag;
+                testManager.addResult('EntityManager测试', passed,
+                    passed ? '实体管理器功能正常' : '实体管理器功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('EntityManager测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        // 运行所有测试
+        function runAllTests() {
+            testManager.clearResults();
+            
+            const tests = [
+                testEntityCreation,
+                testComponentSystem,
+                testTransformComponent,
+                testCollisionDetection,
+                testMovementComponent,
+                testEntityManager
+            ];
+            
+            let passedCount = 0;
+            tests.forEach(test => {
+                if (test()) passedCount++;
+            });
+            
+            const allPassed = passedCount === tests.length;
+            testManager.addResult('总体测试结果', allPassed,
+                `${passedCount}/${tests.length} 个测试通过`);
+            
+            console.log(`🧪 测试完成: ${passedCount}/${tests.length} 通过`);
+        }
+
+        // 清除结果
+        function clearResults() {
+            testManager.clearResults();
+        }
+
+        // 创建测试实体
+        function createTestEntity() {
+            const entity = new ECS.Entity('VisualTest');
+            
+            const x = Math.random() * (testManager.canvas.width - 32) + 16;
+            const y = Math.random() * (testManager.canvas.height - 32) + 16;
+            
+            entity.addComponent(new ECS.Transform(x, y));
+            entity.addComponent(new ECS.Renderer(null, 32, 32, 
+                `hsl(${Math.random() * 360}, 70%, 50%)`));
+            entity.addComponent(new ECS.Collider(32, 32));
+            
+            const movement = new ECS.Movement(50);
+            movement.setVelocity(
+                (Math.random() - 0.5) * 100,
+                (Math.random() - 0.5) * 100
+            );
+            entity.addComponent(movement);
+            
+            entity.addTag('visual-test');
+            
+            testManager.entityManager.addEntity(entity);
+            testManager.testEntities.push(entity);
+            
+            console.log('➕ 创建测试实体:', entity.id);
+        }
+
+        // 移除测试实体
+        function removeTestEntity() {
+            if (testManager.testEntities.length > 0) {
+                const entity = testManager.testEntities.pop();
+                testManager.entityManager.removeEntity(entity);
+                console.log('➖ 移除测试实体:', entity.id);
+            }
+        }
+
+        // 测试碰撞
+        function testCollision() {
+            const entities = testManager.entityManager.getEntitiesByTag('visual-test');
+            if (entities.length < 2) {
+                alert('需要至少2个实体来测试碰撞');
+                return;
+            }
+            
+            // 将前两个实体移动到相近位置
+            const entity1 = entities[0];
+            const entity2 = entities[1];
+            
+            const transform1 = entity1.getComponent('Transform');
+            const transform2 = entity2.getComponent('Transform');
+            
+            if (transform1 && transform2) {
+                transform2.setPosition(transform1.x + 20, transform1.y + 20);
+                console.log('💥 强制碰撞测试');
+            }
+        }
+
+        // 清除画布
+        function clearCanvas() {
+            const entities = testManager.entityManager.getEntitiesByTag('visual-test');
+            entities.forEach(entity => {
+                testManager.entityManager.removeEntity(entity);
+            });
+            testManager.testEntities = [];
+            console.log('🧹 清除所有可视化测试实体');
+        }
+    </script>
+</body>
+</html>

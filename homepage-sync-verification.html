@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主页内容同步验证</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+            line-height: 1.6;
+        }
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #007cba 0%, #0056b3 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        .test-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 0.5rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #007cba;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #005a87;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #1e7e34;
+        }
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        .status {
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .test-form {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .form-group input,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .debug-info {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .comparison-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+        .comparison-item h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔄 主页内容同步验证</h1>
+        <p>验证管理后台的主页内容是否正确同步到前端显示</p>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 测试主页内容同步</h2>
+        <p>在下面编辑内容，然后测试是否能正确同步到主页：</p>
+        
+        <form class="test-form" id="test-form">
+            <div class="form-group">
+                <label for="site-title">网站标题</label>
+                <input type="text" id="site-title" name="site-title" placeholder="输入网站标题" value="测试网站标题">
+            </div>
+            
+            <div class="form-group">
+                <label for="site-tagline">网站标语</label>
+                <input type="text" id="site-tagline" name="site-tagline" placeholder="输入网站标语" value="这是一个测试标语">
+            </div>
+            
+            <div class="form-group">
+                <label for="welcome-title">欢迎标题</label>
+                <input type="text" id="welcome-title" name="welcome-title" placeholder="输入欢迎标题" value="欢迎来到我的网站！">
+            </div>
+            
+            <div class="form-group">
+                <label for="welcome-subtitle">欢迎副标题</label>
+                <input type="text" id="welcome-subtitle" name="welcome-subtitle" placeholder="输入欢迎副标题" value="很高兴你找到了我！">
+            </div>
+            
+            <div class="form-group">
+                <label for="navigation-guide">导航指南</label>
+                <textarea id="navigation-guide" name="navigation-guide" placeholder="输入导航指南">使用上方菜单栏快速导航到网站的不同部分。你可以找到我的博客文章、社交媒体链接和有用的资源。</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="intro1">个人介绍1</label>
+                <textarea id="intro1" name="intro1" placeholder="输入第一段个人介绍">我热衷于编程、写作和创造数字体验。当我不在电脑屏幕前时，你可以发现我在探索新技术、通过写作分享知识，或在各种平台上讨论想法。</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="intro2">个人介绍2</label>
+                <textarea id="intro2" name="intro2" placeholder="输入第二段个人介绍">这个网站是我的数字家园，我在这里分享想法、项目和资源，希望你会觉得有价值。随时探索，如果你想联系，请不要犹豫！</textarea>
+            </div>
+        </form>
+        
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="loadCurrentContent()">📥 加载当前内容</button>
+            <button class="btn btn-success" onclick="saveAndSync()">💾 保存并同步</button>
+            <button class="btn btn-warning" onclick="testAPIDirectly()">🔧 直接测试API</button>
+            <button class="btn btn-primary" onclick="openMainPage()">🌐 打开主页</button>
+        </div>
+        
+        <div id="status-message"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔍 同步状态检查</h2>
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="checkAPIStatus()">🔍 检查API状态</button>
+            <button class="btn btn-success" onclick="compareContent()">📊 对比内容</button>
+            <button class="btn btn-warning" onclick="clearCache()">🗑️ 清除缓存</button>
+        </div>
+        
+        <div class="comparison" id="content-comparison" style="display: none;">
+            <div class="comparison-item">
+                <h4>API中的内容</h4>
+                <div id="api-content" class="debug-info">加载中...</div>
+            </div>
+            <div class="comparison-item">
+                <h4>localStorage中的内容</h4>
+                <div id="local-content" class="debug-info">加载中...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 调试信息</h2>
+        <div id="debug-info" class="debug-info">点击上方按钮开始测试...</div>
+    </div>
+
+    <script>
+        let authToken = localStorage.getItem('admin_token');
+        
+        // 页面加载时检查状态
+        window.onload = function() {
+            checkAPIStatus();
+            loadCurrentContent();
+        };
+        
+        // 显示状态消息
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusDiv.innerHTML = '';
+                }, 3000);
+            }
+        }
+        
+        // 添加调试信息
+        function addDebugInfo(message) {
+            const debugDiv = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();\n            debugDiv.textContent += `[${timestamp}] ${message}\\n`;\n            debugDiv.scrollTop = debugDiv.scrollHeight;\n        }\n        \n        // 加载当前内容\n        async function loadCurrentContent() {\n            addDebugInfo('开始加载当前内容...');\n            \n            try {\n                const response = await fetch('/api/homepage');\n                const data = await response.json();\n                \n                if (data.success) {\n                    populateForm(data.content || {});\n                    addDebugInfo('✅ 内容加载成功');\n                    showStatus('内容加载成功！', 'success');\n                } else {\n                    addDebugInfo('❌ 加载失败: ' + data.message);\n                    showStatus('加载失败: ' + data.message, 'error');\n                }\n            } catch (error) {\n                addDebugInfo('❌ 加载错误: ' + error.message);\n                showStatus('加载失败: ' + error.message, 'error');\n            }\n        }\n        \n        // 填充表单\n        function populateForm(content) {\n            const fields = ['site-title', 'site-tagline', 'welcome-title', 'welcome-subtitle', 'navigation-guide', 'intro1', 'intro2'];\n            \n            fields.forEach(field => {\n                const element = document.getElementById(field);\n                if (element && content[field]) {\n                    element.value = content[field];\n                }\n            });\n        }\n        \n        // 收集表单数据\n        function collectFormData() {\n            const data = {};\n            const fields = ['site-title', 'site-tagline', 'welcome-title', 'welcome-subtitle', 'navigation-guide', 'intro1', 'intro2'];\n            \n            fields.forEach(field => {\n                const element = document.getElementById(field);\n                if (element) {\n                    data[field] = element.value;\n                }\n            });\n            \n            return data;\n        }\n        \n        // 保存并同步\n        async function saveAndSync() {\n            if (!authToken) {\n                // 尝试获取认证令牌\n                await getAuthToken();\n                if (!authToken) {\n                    showStatus('请先登录管理后台获取认证令牌', 'error');\n                    return;\n                }\n            }\n            \n            addDebugInfo('开始保存内容...');\n            showStatus('正在保存内容...', 'info');\n            \n            const content = collectFormData();\n            \n            try {\n                const response = await fetch('/api/homepage', {\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json',\n                        'Authorization': `Bearer ${authToken}`\n                    },\n                    body: JSON.stringify(content)\n                });\n                \n                const data = await response.json();\n                \n                if (data.success) {\n                    addDebugInfo('✅ 内容保存成功');\n                    showStatus('内容保存成功！现在测试同步...', 'success');\n                    \n                    // 测试同步到主页\n                    setTimeout(() => {\n                        testSyncToMainPage(content);\n                    }, 1000);\n                } else {\n                    addDebugInfo('❌ 保存失败: ' + data.message);\n                    showStatus('保存失败: ' + data.message, 'error');\n                }\n            } catch (error) {\n                addDebugInfo('❌ 保存错误: ' + error.message);\n                showStatus('保存失败: ' + error.message, 'error');\n            }\n        }\n        \n        // 获取认证令牌\n        async function getAuthToken() {\n            try {\n                const response = await fetch('/api/auth/login', {\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json'\n                    },\n                    body: JSON.stringify({\n                        username: 'admin',\n                        password: 'admin123'\n                    })\n                });\n                \n                const data = await response.json();\n                \n                if (data.success && data.token) {\n                    authToken = data.token;\n                    localStorage.setItem('admin_token', authToken);\n                    addDebugInfo('✅ 认证成功');\n                } else {\n                    addDebugInfo('❌ 认证失败: ' + data.message);\n                }\n            } catch (error) {\n                addDebugInfo('❌ 认证错误: ' + error.message);\n            }\n        }\n        \n        // 测试同步到主页\n        function testSyncToMainPage(content) {\n            addDebugInfo('测试向主页发送同步消息...');\n            \n            // 尝试向主页发送消息\n            const mainWindow = window.open('/', 'mainPage');\n            \n            setTimeout(() => {\n                mainWindow.postMessage({\n                    type: 'homepage-update',\n                    content: content\n                }, '*');\n                \n                addDebugInfo('✅ 同步消息已发送到主页');\n                showStatus('同步消息已发送！请检查主页是否更新。', 'success');\n            }, 1000);\n        }\n        \n        // 直接测试API\n        async function testAPIDirectly() {\n            addDebugInfo('直接测试API...');\n            \n            try {\n                // 测试GET\n                const getResponse = await fetch('/api/homepage');\n                const getData = await getResponse.json();\n                addDebugInfo('GET API响应: ' + JSON.stringify(getData, null, 2));\n                \n                // 测试POST（如果有认证令牌）\n                if (authToken) {\n                    const testContent = {\n                        'site-title': '直接API测试标题',\n                        'site-tagline': '直接API测试标语'\n                    };\n                    \n                    const postResponse = await fetch('/api/homepage', {\n                        method: 'POST',\n                        headers: {\n                            'Content-Type': 'application/json',\n                            'Authorization': `Bearer ${authToken}`\n                        },\n                        body: JSON.stringify(testContent)\n                    });\n                    \n                    const postData = await postResponse.json();\n                    addDebugInfo('POST API响应: ' + JSON.stringify(postData, null, 2));\n                }\n                \n                showStatus('API测试完成，请查看调试信息', 'success');\n            } catch (error) {\n                addDebugInfo('❌ API测试错误: ' + error.message);\n                showStatus('API测试失败: ' + error.message, 'error');\n            }\n        }\n        \n        // 检查API状态\n        async function checkAPIStatus() {\n            addDebugInfo('检查API状态...');\n            \n            try {\n                const response = await fetch('/api/homepage');\n                if (response.ok) {\n                    addDebugInfo('✅ API状态正常');\n                    showStatus('API状态正常', 'success');\n                } else {\n                    addDebugInfo('❌ API状态异常: ' + response.status);\n                    showStatus('API状态异常: ' + response.status, 'error');\n                }\n            } catch (error) {\n                addDebugInfo('❌ API连接失败: ' + error.message);\n                showStatus('API连接失败: ' + error.message, 'error');\n            }\n        }\n        \n        // 对比内容\n        async function compareContent() {\n            addDebugInfo('开始对比内容...');\n            \n            try {\n                // 获取API内容\n                const response = await fetch('/api/homepage');\n                const apiData = await response.json();\n                \n                // 获取localStorage内容\n                const localData = localStorage.getItem('homepage_content');\n                \n                // 显示对比\n                document.getElementById('api-content').textContent = JSON.stringify(apiData.content || {}, null, 2);\n                document.getElementById('local-content').textContent = localData || '无数据';\n                document.getElementById('content-comparison').style.display = 'grid';\n                \n                addDebugInfo('✅ 内容对比完成');\n                showStatus('内容对比完成，请查看下方对比结果', 'success');\n            } catch (error) {\n                addDebugInfo('❌ 对比失败: ' + error.message);\n                showStatus('对比失败: ' + error.message, 'error');\n            }\n        }\n        \n        // 清除缓存\n        function clearCache() {\n            localStorage.removeItem('homepage_content');\n            addDebugInfo('✅ 缓存已清除');\n            showStatus('缓存已清除', 'success');\n        }\n        \n        // 打开主页\n        function openMainPage() {\n            window.open('/', '_blank');\n            addDebugInfo('已打开主页');\n        }\n    </script>\n</body>\n</html>"

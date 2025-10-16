@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>菜单测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007cba;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+        .test-button:hover {
+            background: #005a87;
+        }
+        .debug-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>管理后台菜单测试</h1>
+        
+        <div class="info status">
+            <h3>测试说明：</h3>
+            <p>这个页面用于测试管理后台的菜单导航功能</p>
+        </div>
+        
+        <h3>快速测试：</h3>
+        <button class="test-button" onclick="testMenuItems()">测试菜单项</button>
+        <button class="test-button" onclick="testNavigation()">测试导航功能</button>
+        <button class="test-button" onclick="checkConsole()">检查控制台</button>
+        <button class="test-button" onclick="clearStorage()">清除存储</button>
+        
+        <div id="test-results" class="debug-info">
+            <h4>测试结果：</h4>
+            <div id="results-content">点击上方按钮开始测试</div>
+        </div>
+        
+        <h3>直接访问链接：</h3>
+        <a href="index.html?username=admin&password=admin123" class="test-button">
+            直接登录管理后台
+        </a>
+        
+        <div class="debug-info">
+            <h4>调试信息：</h4>
+            <p>当前时间: <span id="current-time"></span></p>
+            <p>浏览器: <span id="browser-info"></span></p>
+            <p>localStorage token: <span id="token-info"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        // 更新调试信息
+        function updateDebugInfo() {
+            document.getElementById('current-time').textContent = new Date().toLocaleString();
+            document.getElementById('browser-info').textContent = navigator.userAgent.split(' ').pop();
+            document.getElementById('token-info').textContent = localStorage.getItem('admin_token') || '无';
+        }
+        
+        // 测试菜单项
+        function testMenuItems() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '';
+            
+            // 打开管理后台页面进行测试
+            const testWindow = window.open('index.html?username=admin&password=admin123', '_blank');
+            
+            results.innerHTML += '<p>✓ 已打开管理后台测试窗口</p>';
+            results.innerHTML += '<p>请在新窗口中测试菜单功能</p>';
+            results.innerHTML += '<p>检查浏览器控制台的日志信息</p>';
+        }
+        
+        // 测试导航功能
+        function testNavigation() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🔍 检查导航功能...</p>';
+            
+            setTimeout(() => {
+                results.innerHTML += '<p>✓ 菜单项应该包含: 仪表板、主页内容、文章管理、媒体库、分类管理</p>';
+                results.innerHTML += '<p>✓ 点击菜单项应该切换页面内容</p>';
+                results.innerHTML += '<p>✓ 活动菜单项应该有高亮显示</p>';
+            }, 1000);
+        }
+        
+        // 检查控制台
+        function checkConsole() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>📋 请检查浏览器控制台 (F12) 的以下信息:</p>';
+            results.innerHTML += '<ul>';
+            results.innerHTML += '<li>Admin script loaded</li>';
+            results.innerHTML += '<li>AdminApp constructor called</li>';
+            results.innerHTML += '<li>Binding events</li>';
+            results.innerHTML += '<li>Menu item clicked: [页面名称]</li>';
+            results.innerHTML += '<li>Navigating to: [页面名称]</li>';
+            results.innerHTML += '</ul>';
+        }
+        
+        // 清除存储
+        function clearStorage() {
+            localStorage.clear();
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p class="success">✓ 本地存储已清除</p>';
+            updateDebugInfo();
+        }
+        
+        // 初始化
+        updateDebugInfo();
+        setInterval(updateDebugInfo, 5000); // 每5秒更新一次
+    </script>
+</body>
+</html>

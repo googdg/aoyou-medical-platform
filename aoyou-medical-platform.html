@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Aoyou Digital - 医学科普学习平台</title>
+    
+    <!-- 微信分享配置 -->
+    <meta property="og:title" content="Aoyou Digital - 医学科普学习平台">
+    <meta property="og:description" content="专业医学科普学习平台，提供优质医学视频内容">
+    <meta property="og:image" content="./images/share-logo.png">
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="./css/aoyou-medical.css">
+    
+    <!-- 微信 JS-SDK -->
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    
+    <!-- 错误修复脚本 -->
+    <script src="./fix-errors.js"></script>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="medical-cross"></div>
+            <p>加载中...</p>
+        </div>
+    </div>
+
+    <!-- 主应用容器 -->
+    <div id="app" class="app-container">
+        <!-- 顶部导航栏 -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="./images/logo.png" alt="Aoyou Digital" class="app-logo">
+                    <h1 class="app-title">医学科普学习</h1>
+                </div>
+                <div class="user-section">
+                    <div id="user-info" class="user-info hidden">
+                        <span class="user-level">Lv.<span id="user-level-num">1</span></span>
+                        <span class="user-points"><span id="user-points-num">0</span>积分</span>
+                        <img id="user-avatar" src="./images/default-avatar.png" alt="用户头像" class="user-avatar">
+                    </div>
+                    <button id="login-btn" class="login-btn">登录/注册</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 登录/注册页面 -->
+            <section id="auth-section" class="auth-section">
+                <div class="auth-container">
+                    <div class="auth-header">
+                        <h2>欢迎来到医学科普学习平台</h2>
+                        <p>请使用邀请码注册或登录</p>
+                    </div>
+                    
+
+                    
+                    <!-- 简化的邀请码表单 -->
+                    <div id="register-form" class="auth-form">
+                        <div class="form-group">
+                            <label for="invite-code">邀请码</label>
+                            <input type="text" id="invite-code" placeholder="请输入4位数字邀请码" maxlength="4" required>
+                            <button type="button" id="verify-code-btn" class="verify-btn">验证并进入</button>
+                        </div>
+                        <div class="invite-code-hint">
+                            <p>💡 提示：邀请码为4位数字，如：1234、5678、9999等</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 登录表单 -->
+                    <div id="login-form" class="auth-form hidden">
+                        <div class="form-group">
+                            <label for="login-username">邀请码</label>
+                            <input type="text" id="login-username" placeholder="请输入4位数字邀请码" maxlength="4" required>
+                        </div>
+                        <button type="button" id="login-submit-btn" class="submit-btn">登录</button>
+                    </div>
+                    
+                    <div class="auth-switch">
+                        <span id="switch-to-login" class="switch-link">已有账号？点击登录</span>
+                        <span id="switch-to-register" class="switch-link hidden">没有账号？使用邀请码注册</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 主页面内容 -->
+            <section id="main-section" class="main-section hidden">
+                <!-- 医学分类导航 -->
+                <nav class="category-nav">
+                    <div class="category-scroll">
+                        <div class="category-item active" data-category="all">
+                            <div class="category-icon">🏥</div>
+                            <span>全部</span>
+                            <div class="category-count" id="count-all">0</div>
+                        </div>
+                        <div class="category-item" data-category="basic">
+                            <div class="category-icon">📚</div>
+                            <span>基础医学</span>
+                            <div class="category-count" id="count-basic">0</div>
+                        </div>
+                        <div class="category-item" data-category="clinical">
+                            <div class="category-icon">🩺</div>
+                            <span>临床医学</span>
+                            <div class="category-count" id="count-clinical">0</div>
+                        </div>
+                        <div class="category-item" data-category="imaging">
+                            <div class="category-icon">🔬</div>
+                            <span>医学影像</span>
+                            <div class="category-count" id="count-imaging">0</div>
+                        </div>
+                        <div class="category-item" data-category="pharmacy">
+                            <div class="category-icon">💊</div>
+                            <span>药学治疗</span>
+                            <div class="category-count" id="count-pharmacy">0</div>
+                        </div>
+                        <div class="category-item" data-category="technology">
+                            <div class="category-icon">🤖</div>
+                            <span>前沿技术</span>
+                            <div class="category-count" id="count-technology">0</div>
+                        </div>
+                        <div class="category-item" data-category="ethics">
+                            <div class="category-icon">⚖️</div>
+                            <span>伦理法规</span>
+                            <div class="category-count" id="count-ethics">0</div>
+                        </div>
+                        <div class="category-item" data-category="education">
+                            <div class="category-icon">🎓</div>
+                            <span>继续教育</span>
+                            <div class="category-count" id="count-education">0</div>
+                        </div>
+                    </div>
+                </nav>
+                
+                <!-- 分类信息面板 -->
+                <div id="category-info" class="category-info hidden">
+                    <div class="category-info-content">
+                        <h3 id="category-info-title">分类名称</h3>
+                        <p id="category-info-description">分类描述</p>
+                        <div class="category-stats">
+                            <span id="category-video-count">0 个视频</span>
+                            <span id="category-total-duration">0 分钟</span>
+                        </div>
+                    </div>
+                    <button id="close-category-info" class="close-btn">×</button>
+                </div>
+
+                <!-- 搜索栏 -->
+                <div class="search-section">
+                    <div class="search-container">
+                        <input type="text" id="search-input" placeholder="搜索医学视频..." class="search-input">
+                        <button id="search-btn" class="search-btn">🔍</button>
+                    </div>
+                </div>
+
+                <!-- 视频列表 -->
+                <div class="video-section">
+                    <div id="video-list" class="video-list">
+                        <!-- 视频卡片将通过 JavaScript 动态生成 -->
+                    </div>
+                    
+                    <!-- 加载更多 -->
+                    <div id="load-more" class="load-more hidden">
+                        <button class="load-more-btn">加载更多</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 视频播放页面 -->
+            <section id="video-section" class="video-section hidden">
+                <div class="video-header">
+                    <button id="back-btn" class="back-btn">← 返回</button>
+                    <h3 id="video-title" class="video-title"></h3>
+                </div>
+                
+                <div class="video-player-container">
+                    <video id="video-player" class="video-player" controls preload="metadata">
+                        您的浏览器不支持视频播放
+                    </video>
+                </div>
+                
+                <div class="video-info">
+                    <div class="video-meta">
+                        <span id="video-duration" class="video-duration"></span>
+                        <span id="video-category" class="video-category"></span>
+                        <span id="video-views" class="video-views"></span>
+                    </div>
+                    
+                    <div class="video-description">
+                        <p id="video-desc"></p>
+                    </div>
+                    
+                    <!-- 视频互动按钮 -->
+                    <div class="video-actions">
+                        <button id="like-btn" class="action-btn">
+                            <span class="action-icon">👍</span>
+                            <span class="action-text">点赞</span>
+                            <span id="like-count" class="action-count">0</span>
+                        </button>
+                        <button id="favorite-btn" class="action-btn">
+                            <span class="action-icon">⭐</span>
+                            <span class="action-text">收藏</span>
+                            <span id="favorite-count" class="action-count">0</span>
+                        </button>
+                        <button id="share-btn" class="action-btn">
+                            <span class="action-icon">📤</span>
+                            <span class="action-text">分享</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 个人中心页面 -->
+            <section id="profile-section" class="profile-section hidden">
+                <div class="profile-header">
+                    <button id="profile-back-btn" class="back-btn">← 返回</button>
+                    <h3>个人中心</h3>
+                </div>
+                
+                <div class="profile-content">
+                    <div class="user-card">
+                        <img id="profile-avatar" src="./images/default-avatar.png" alt="头像" class="profile-avatar">
+                        <div class="user-details">
+                            <h4 id="profile-name">用户名</h4>
+                            <p>邀请码：<span id="profile-invite-code">----</span></p>
+                            <p>加入时间：<span id="profile-join-date">----</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="total-points">0</div>
+                            <div class="stat-label">总积分</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="current-level">1</div>
+                            <div class="stat-label">当前等级</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="watched-videos">0</div>
+                            <div class="stat-label">观看视频</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="favorite-videos">0</div>
+                            <div class="stat-label">收藏视频</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="liked-videos">0</div>
+                            <div class="stat-label">点赞视频</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number" id="total-watch-time">0</div>
+                            <div class="stat-label">观看时长(分钟)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="level-progress">
+                        <div class="level-info">
+                            <span id="level-name">初学者</span>
+                            <span id="level-progress-text">0/100</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <button id="level-details-btn" class="level-details-btn">查看等级详情</button>
+                    </div>
+                    
+                    <!-- 等级详情面板 -->
+                    <div id="level-details-panel" class="level-details-panel hidden">
+                        <div class="level-details-header">
+                            <h4>等级系统</h4>
+                            <button id="level-details-close" class="close-btn">×</button>
+                        </div>
+                        <div class="level-details-content">
+                            <div class="current-level-info">
+                                <div class="level-badge">
+                                    <span id="current-level-number">1</span>
+                                </div>
+                                <div class="level-text">
+                                    <h5 id="current-level-name">初学者</h5>
+                                    <p id="current-level-desc">医学学习的起点，开始您的专业成长之路</p>
+                                </div>
+                            </div>
+                            
+                            <div class="level-privileges">
+                                <h6>当前等级特权</h6>
+                                <ul id="current-privileges">
+                                    <li>✅ 观看基础医学视频</li>
+                                    <li>✅ 参与视频互动（点赞、收藏、分享）</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="next-level-info" id="next-level-info">
+                                <h6>下一等级：<span id="next-level-name">学习者</span></h6>
+                                <p>还需 <span id="points-to-next">100</span> 积分</p>
+                                <div class="next-privileges">
+                                    <h6>解锁特权</h6>
+                                    <ul id="next-privileges">
+                                        <li>🔓 访问进阶医学内容</li>
+                                        <li>🔓 获得学习徽章</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="all-levels">
+                                <h6>所有等级</h6>
+                                <div id="levels-list" class="levels-list">
+                                    <!-- 等级列表将通过JavaScript生成 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 功能按钮 -->
+                    <div class="profile-actions">
+                        <button id="clear-history-btn" class="action-button secondary">清除观看记录</button>
+                        <button id="logout-btn" class="action-button danger">退出登录</button>
+                    </div>
+                    
+                    <!-- 收藏列表 -->
+                    <div class="favorites-section">
+                        <h4>我的收藏</h4>
+                        <div id="favorites-list" class="favorites-list">
+                            <!-- 收藏的视频列表 -->
+                        </div>
+                    </div>
+                    
+                    <!-- 最近观看 -->
+                    <div class="recent-watch-section">
+                        <h4>最近观看</h4>
+                        <div id="recent-watch-list" class="recent-watch-list">
+                            <!-- 最近观看的视频列表 -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 底部导航栏 -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-page="main">
+                <div class="nav-icon">🏠</div>
+                <span class="nav-label">首页</span>
+            </div>
+            <div class="nav-item" data-page="profile">
+                <div class="nav-icon">👤</div>
+                <span class="nav-label">我的</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="toast hidden">
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- 确认对话框 -->
+    <div id="confirm-dialog" class="dialog-overlay hidden">
+        <div class="dialog">
+            <h4 id="confirm-title">确认</h4>
+            <p id="confirm-message">确定要执行此操作吗？</p>
+            <div class="dialog-actions">
+                <button id="confirm-cancel" class="dialog-btn cancel">取消</button>
+                <button id="confirm-ok" class="dialog-btn confirm">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 文件 -->
+    <script src="./js/aoyou-medical-storage.js"></script>
+    <script src="./js/aoyou-medical-performance.js"></script>
+    <script src="./js/aoyou-medical-ux.js"></script>
+    <script src="./js/aoyou-medical-analytics.js"></script>
+    <script src="./js/aoyou-medical-auth.js"></script>
+    <script src="./js/aoyou-medical-points.js"></script>
+    <script src="./js/aoyou-medical-video.js"></script>
+    <script src="./js/aoyou-medical-wechat.js"></script>
+    <script src="./js/aoyou-medical-mobile.js"></script>
+    <script src="./js/aoyou-medical-app.js"></script>
+</body>
+</html>
+</script>

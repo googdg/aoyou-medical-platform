@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang=\"zh-CN\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>主页内容同步测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .btn {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #005a87;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .content-demo {
+            border: 2px solid #007cba;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>主页内容同步测试</h1>
+    
+    <div class=\"test-section\">
+        <h2>API测试</h2>
+        <button class=\"btn\" onclick=\"testAPI()\">测试API</button>
+        <button class=\"btn\" onclick=\"testUpdate()\">测试内容更新</button>
+        <button class=\"btn\" onclick=\"openMainPage()\">打开主页</button>
+        <div id=\"api-result\"></div>
+    </div>
+    
+    <div class=\"test-section\">
+        <h2>内容演示区域</h2>
+        <div class=\"content-demo\">
+            <h1 class=\"site-title\">原始标题</h1>
+            <p class=\"site-tagline\">原始标语</p>
+            <h2 class=\"welcome-title\">原始欢迎标题</h2>
+            <p class=\"welcome-subtitle\">原始欢迎副标题</p>
+            <p class=\"navigation-guide\">原始导航指南</p>
+            <div class=\"personal-intro\">
+                <p>原始介绍1</p>
+                <p>原始介绍2</p>
+            </div>
+            <div class=\"current-role\">原始职位</div>
+            <div class=\"current-company\">原始公司</div>
+            <div class=\"current-desc\">原始描述</div>
+        </div>
+    </div>
+    
+    <script>
+        let apiData = null;
+        
+        async function testAPI() {
+            const resultDiv = document.getElementById('api-result');
+            resultDiv.innerHTML = '<div class=\"info\">正在测试API...</div>';
+            
+            try {
+                const response = await fetch('/api/homepage');
+                const data = await response.json();
+                
+                if (data.success) {
+                    apiData = data.content;
+                    resultDiv.innerHTML = `
+                        <div class=\"success\">API测试成功</div>
+                        <pre>${JSON.stringify(data.content, null, 2)}</pre>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class=\"error\">API返回错误: ${data.message}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class=\"error\">API请求失败: ${error.message}</div>`;
+            }
+        }
+        
+        function testUpdate() {
+            if (!apiData) {
+                document.getElementById('api-result').innerHTML = '<div class=\"error\">请先运行API测试</div>';
+                return;
+            }
+            
+            // 使用相同的更新逻辑
+            updateHomepageContent(apiData);
+            document.getElementById('api-result').innerHTML = '<div class=\"success\">内容更新完成，请查看上方演示区域</div>';
+        }
+        
+        function openMainPage() {
+            window.open('/', '_blank');
+        }
+        
+        // 更新主页内容到DOM（复制自script-simple.js）
+        function updateHomepageContent(content) {
+            console.log('Updating homepage content in DOM...', content);
+            
+            // 更新网站标题和标语
+            if (content['site-title']) {
+                const titleElement = document.querySelector('.site-title');
+                if (titleElement) {
+                    titleElement.textContent = content['site-title'];
+                    console.log('Updated site title:', content['site-title']);
+                }
+            }
+            
+            if (content['site-tagline']) {
+                const taglineElement = document.querySelector('.site-tagline');
+                if (taglineElement) {
+                    taglineElement.textContent = content['site-tagline'];
+                    console.log('Updated site tagline:', content['site-tagline']);
+                }
+            }
+            
+            // 更新欢迎区域
+            if (content['welcome-title']) {
+                const welcomeTitleElement = document.querySelector('.welcome-title');
+                if (welcomeTitleElement) {
+                    welcomeTitleElement.textContent = content['welcome-title'];
+                    console.log('Updated welcome title:', content['welcome-title']);
+                }
+            }
+            
+            if (content['welcome-subtitle']) {
+                const welcomeSubtitleElement = document.querySelector('.welcome-subtitle');
+                if (welcomeSubtitleElement) {
+                    welcomeSubtitleElement.textContent = content['welcome-subtitle'];
+                    console.log('Updated welcome subtitle:', content['welcome-subtitle']);
+                }
+            }
+            
+            if (content['navigation-guide']) {
+                const navigationGuideElement = document.querySelector('.navigation-guide');
+                if (navigationGuideElement) {
+                    navigationGuideElement.textContent = content['navigation-guide'];
+                    console.log('Updated navigation guide:', content['navigation-guide']);
+                }
+            }
+            
+            // 更新个人介绍
+            if (content['intro1']) {
+                const intro1Element = document.querySelector('.personal-intro p:first-child');
+                if (intro1Element) {
+                    intro1Element.textContent = content['intro1'];
+                    console.log('Updated intro1:', content['intro1']);
+                }
+            }
+            
+            if (content['intro2']) {
+                const intro2Element = document.querySelector('.personal-intro p:last-child');
+                if (intro2Element) {
+                    intro2Element.textContent = content['intro2'];
+                    console.log('Updated intro2:', content['intro2']);
+                }
+            }
+            
+            // 更新专业经历
+            if (content['current-role']) {
+                const currentRoleElement = document.querySelector('.current-role');
+                if (currentRoleElement) {
+                    currentRoleElement.textContent = content['current-role'];
+                    console.log('Updated current role:', content['current-role']);
+                }
+            }
+            
+            if (content['current-company']) {
+                const currentCompanyElement = document.querySelector('.current-company');
+                if (currentCompanyElement) {
+                    currentCompanyElement.textContent = content['current-company'];
+                    console.log('Updated current company:', content['current-company']);
+                }
+            }
+            
+            if (content['current-desc']) {
+                const currentDescElement = document.querySelector('.current-desc');
+                if (currentDescElement) {
+                    currentDescElement.textContent = content['current-desc'];
+                    console.log('Updated current desc:', content['current-desc']);
+                }
+            }
+            
+            console.log('Homepage content updated successfully!');
+        }
+        
+        // 页面加载时自动测试API
+        window.onload = function() {
+            testAPI();
+        };
+    </script>
+</body>
+</html>"

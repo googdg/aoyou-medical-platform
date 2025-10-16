@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI系统测试 - AI System Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #aiCanvas {
+            border: 2px solid #333;
+            background: #000;
+        }
+        .controls {
+            margin: 10px 0;
+        }
+        .ai-info {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .ai-behaviors {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .behavior-sample {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .behavior-color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #333;
+        }
+        .ai-status {
+            font-family: monospace;
+            font-size: 12px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧠 AI系统测试</h1>
+    
+    <div class="test-container">
+        <h2>📋 测试结果</h2>
+        <div id="testResults"></div>
+        <button onclick="runAllTests()">🚀 运行所有测试</button>
+        <button onclick="clearResults()">🧹 清除结果</button>
+    </div>
+
+    <div class="test-container">
+        <h2>🎮 AI可视化测试</h2>
+        <canvas id="aiCanvas" width="800" height="600"></canvas>
+        <div class="controls">
+            <button onclick="createAITank('aggressive')">😡 激进型AI</button>
+            <button onclick="createAITank('defensive')">🛡️ 防守型AI</button>
+            <button onclick="createAITank('balanced')">⚖️ 平衡型AI</button>
+            <button onclick="createAITank('coward')">😨 胆小型AI</button>
+            <button onclick="createAITank('berserker')">😤 狂暴型AI</button>
+        </div>
+        <div class="controls">
+            <button onclick="createPlayerTank()">🚗 创建玩家坦克</button>
+            <button onclick="testPathfinding()">🗺️ 测试寻路</button>
+            <button onclick="showAIStates()">📊 显示AI状态</button>
+            <button onclick="clearAll()">🧹 清除所有</button>
+        </div>
+        <div class="controls">
+            <p><strong>说明：</strong> 创建AI坦克后，它们会自动寻找和攻击玩家坦克</p>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>📊 AI信息</h2>
+        <div class="ai-info" id="aiInfo">
+            <p>AI实体数量: <span id="aiCount">0</span></p>
+            <p>玩家坦克数量: <span id="playerCount">0</span></p>
+        </div>
+        
+        <h3>AI行为类型</h3>
+        <div class="ai-behaviors">
+            <div class="behavior-sample">
+                <div class="behavior-color" style="background: #FF5722;"></div>
+                <span>激进型 - 主动攻击</span>
+            </div>
+            <div class="behavior-sample">
+                <div class="behavior-color" style="background: #2196F3;"></div>
+                <span>防守型 - 保守战斗</span>
+            </div>
+            <div class="behavior-sample">
+                <div class="behavior-color" style="background: #4CAF50;"></div>
+                <span>平衡型 - 均衡策略</span>
+            </div>
+            <div class="behavior-sample">
+                <div class="behavior-color" style="background: #FFC107;"></div>
+                <span>胆小型 - 容易撤退</span>
+            </div>
+            <div class="behavior-sample">
+                <div class="behavior-color" style="background: #9C27B0;"></div>
+                <span>狂暴型 - 疯狂攻击</span>
+            </div>
+        </div>
+        
+        <h3>AI状态监控</h3>
+        <div class="ai-status" id="aiStatus">
+            等待AI创建...
+        </div>
+    </div>
+
+    <!-- 引入依赖 -->
+    <script src="../js/entity-component-system.js"></script>
+    <script src="../js/map-system.js"></script>
+    <script src="../js/tank-system.js"></script>
+    <script src="../js/bullet-system.js"></script>
+    <script src="../js/ai-system.js"></script>
+    
+    <script>
+        // 测试管理器
+        class AITestManager {
+            constructor() {
+                this.results = [];
+                this.entityManager = new ECS.EntityManager();
+                this.tankManager = new TankSystem.TankManager(this.entityManager);
+                this.aiManager = new AISystem.AIManager(this.entityManager);
+                this.fireSystem = new BulletSystem.FireSystem();
+                this.canvas = document.getElementById('aiCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.imageSmoothingEnabled = false;
+                
+                // 创建简单地图
+                this.gameMap = new MapSystem.GameMap(25, 19, 32);
+                this.setupTestMap();
+                
+                // 设置全局引用
+                window.game = {
+                    entityManager: this.entityManager,
+                    canvas: this.canvas,
+                    currentMap: this.gameMap,
+                    inputManager: { isKeyDown: () => false, isKeyPressed: () => false },
+                    createBullet: (bulletData) => this.createBullet(bulletData),
+                    createExplosion: (x, y, radius) => this.createExplosion(x, y, radius),
+                    onPlayerTankDestroyed: () => console.log('玩家坦克被摧毁'),
+                    onEnemyTankDestroyed: () => console.log('敌方坦克被摧毁')
+                };
+                
+                this.pathVisualization = [];
+                this.showPaths = false;
+                
+                this.startRenderLoop();
+            }
+
+            setupTestMap() {
+                // 创建边框
+                this.gameMap.drawBorder(MapSystem.TileType.STEEL);
+                
+                // 添加一些障碍物
+                for (let i = 0; i < 15; i++) {
+                    const x = Math.floor(Math.random() * (this.gameMap.width - 4)) + 2;
+                    const y = Math.floor(Math.random() * (this.gameMap.height - 4)) + 2;
+                    this.gameMap.setTile(x, y, MapSystem.TileType.BRICK);
+                }
+                
+                // 添加生成点
+                this.gameMap.setTile(2, this.gameMap.height - 3, MapSystem.TileType.SPAWN_PLAYER);
+                this.gameMap.setTile(this.gameMap.width - 3, 2, MapSystem.TileType.SPAWN_ENEMY);
+            }
+
+            createBullet(bulletData) {
+                const bullet = this.fireSystem.createBullet(bulletData);
+                this.entityManager.addEntity(bullet);
+                
+                // 简单的边界检查
+                const originalUpdate = bullet.update.bind(bullet);
+                bullet.update = (deltaTime) => {
+                    originalUpdate(deltaTime);
+                    
+                    const transform = bullet.getComponent('Transform');
+                    if (transform) {
+                        if (transform.x < 0 || transform.x > this.canvas.width ||
+                            transform.y < 0 || transform.y > this.canvas.height) {
+                            this.entityManager.removeEntity(bullet);
+                        }
+                    }
+                };
+                
+                return bullet;
+            }
+
+            createExplosion(x, y, radius = 50) {
+                const explosion = new ECS.Entity('Explosion');
+                explosion.addComponent(new ECS.Transform(x, y, 0));
+                explosion.addComponent(new BulletSystem.Explosion(radius, 1000));
+                explosion.addComponent(new BulletSystem.ExplosionRenderer());
+                explosion.addTag('explosion');
+                this.entityManager.addEntity(explosion);
+                return explosion;
+            }
+
+            // 添加测试结果
+            addResult(testName, passed, message = '') {
+                this.results.push({
+                    name: testName,
+                    passed: passed,
+                    message: message,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                this.updateResultsDisplay();
+            }
+
+            // 更新结果显示
+            updateResultsDisplay() {
+                const container = document.getElementById('testResults');
+                container.innerHTML = '';
+                
+                this.results.forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = `test-result ${result.passed ? 'test-pass' : 'test-fail'}`;
+                    div.innerHTML = `
+                        <strong>${result.passed ? '✅' : '❌'} ${result.name}</strong>
+                        <br><small>${result.timestamp}</small>
+                        ${result.message ? `<br>${result.message}` : ''}
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            // 清除结果
+            clearResults() {
+                this.results = [];
+                this.updateResultsDisplay();
+            }
+
+            // 开始渲染循环
+            startRenderLoop() {
+                const render = () => {
+                    this.update();
+                    this.render();
+                    this.updateInfo();
+                    requestAnimationFrame(render);
+                };
+                render();
+            }
+
+            // 更新
+            update() {
+                this.entityManager.update(16);
+                this.fireSystem.update(16);
+                this.aiManager.update(16);
+            }
+
+            // 渲染
+            render() {
+                // 清空画布
+                this.ctx.fillStyle = '#111';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 渲染地图
+                this.gameMap.render(this.ctx);
+                
+                // 渲染路径可视化
+                if (this.showPaths) {
+                    this.renderPathVisualization();
+                }
+                
+                // 渲染所有实体
+                this.entityManager.render(this.ctx);
+                
+                // 渲染AI状态信息
+                this.renderAIInfo();
+            }
+
+            // 渲染路径可视化
+            renderPathVisualization() {
+                this.ctx.strokeStyle = '#00FF00';
+                this.ctx.lineWidth = 2;
+                
+                const aiTanks = this.entityManager.getEntitiesByTag('enemy');
+                for (const tank of aiTanks) {
+                    const aiController = tank.getComponent('AIController');
+                    const transform = tank.getComponent('Transform');
+                    
+                    if (aiController && transform && aiController.currentPath.length > 0) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(transform.x, transform.y);
+                        
+                        for (const point of aiController.currentPath) {
+                            this.ctx.lineTo(point.x, point.y);
+                        }
+                        
+                        this.ctx.stroke();
+                        
+                        // 绘制路径点
+                        this.ctx.fillStyle = '#00FF00';
+                        for (const point of aiController.currentPath) {
+                            this.ctx.beginPath();
+                            this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+                            this.ctx.fill();
+                        }
+                    }
+                }
+            }
+
+            // 渲染AI信息
+            renderAIInfo() {
+                const aiTanks = this.entityManager.getEntitiesByTag('enemy');
+                
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = '12px Arial';
+                
+                let y = 20;
+                for (const tank of aiTanks) {
+                    const aiController = tank.getComponent('AIController');
+                    const transform = tank.getComponent('Transform');
+                    
+                    if (aiController && transform) {
+                        const status = aiController.getStatus();
+                        const text = `${status.behavior}: ${status.state} (${status.visibleEnemies} enemies)`;
+                        this.ctx.fillText(text, 10, y);
+                        y += 15;
+                    }
+                }
+            }
+
+            // 更新信息显示
+            updateInfo() {
+                const aiTanks = this.entityManager.getEntitiesByTag('enemy');
+                const playerTanks = this.entityManager.getEntitiesByTag('player');
+                
+                document.getElementById('aiCount').textContent = aiTanks.length;
+                document.getElementById('playerCount').textContent = playerTanks.length;
+                
+                // 更新AI状态
+                this.updateAIStatus();
+            }
+
+            // 更新AI状态显示
+            updateAIStatus() {
+                const statusEl = document.getElementById('aiStatus');
+                const aiTanks = this.entityManager.getEntitiesByTag('enemy');
+                
+                if (aiTanks.length === 0) {
+                    statusEl.textContent = '没有AI坦克';
+                    return;
+                }
+                
+                let statusText = '';
+                aiTanks.forEach((tank, index) => {
+                    const aiController = tank.getComponent('AIController');
+                    const transform = tank.getComponent('Transform');
+                    const health = tank.getComponent('Health');
+                    
+                    if (aiController && transform && health) {
+                        const status = aiController.getStatus();
+                        statusText += `AI${index + 1} [${status.behavior}]: ${status.state}\n`;
+                        statusText += `  位置: (${Math.round(transform.x)}, ${Math.round(transform.y)})\n`;
+                        statusText += `  生命: ${health.currentHealth}/${health.maxHealth}\n`;
+                        statusText += `  目标: ${status.hasTarget ? '有' : '无'}\n`;
+                        statusText += `  路径: ${status.pathLength}点\n`;
+                        statusText += `  可见敌人: ${status.visibleEnemies}\n\n`;
+                    }
+                });
+                
+                statusEl.textContent = statusText;
+            }
+        }
+
+        // 全局测试管理器
+        let testManager;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            testManager = new AITestManager();
+            console.log('🧠 AI测试管理器初始化完成');
+        });
+
+        // 测试函数
+        function testAIController() {
+            try {
+                const aiController = new AISystem.AIController(AISystem.AIBehavior.BALANCED);
+                
+                const hasConfig = aiController.config !== null;
+                const correctBehavior = aiController.behavior === AISystem.AIBehavior.BALANCED;
+                const hasState = aiController.currentState === AISystem.AIState.IDLE;
+                
+                const passed = hasConfig && correctBehavior && hasState;
+                testManager.addResult('AI控制器测试', passed, 
+                    passed ? 'AI控制器创建成功' : 'AI控制器创建失败');
+                return passed;
+            } catch (error) {
+                testManager.addResult('AI控制器测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testAIBehaviors() {
+            try {
+                const behaviors = [
+                    AISystem.AIBehavior.AGGRESSIVE,
+                    AISystem.AIBehavior.DEFENSIVE,
+                    AISystem.AIBehavior.BALANCED,
+                    AISystem.AIBehavior.COWARD,
+                    AISystem.AIBehavior.BERSERKER
+                ];
+                
+                let allConfigsExist = true;
+                for (const behavior of behaviors) {
+                    if (!AISystem.AIConfig[behavior]) {
+                        allConfigsExist = false;
+                        break;
+                    }
+                }
+                
+                const passed = allConfigsExist && behaviors.length === 5;
+                testManager.addResult('AI行为类型测试', passed,
+                    passed ? '所有AI行为配置完整' : 'AI行为配置缺失');
+                return passed;
+            } catch (error) {
+                testManager.addResult('AI行为类型测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testPathFinding() {
+            try {
+                const pathFinding = new AISystem.PathFinding(testManager.gameMap);
+                
+                const path = pathFinding.findPath(50, 50, 200, 200);
+                const hasPath = path.length > 0;
+                const validPath = path.every(point => 
+                    typeof point.x === 'number' && typeof point.y === 'number'
+                );
+                
+                const passed = hasPath && validPath;
+                testManager.addResult('路径寻找测试', passed,
+                    passed ? `找到${path.length}个路径点` : '路径寻找失败');
+                return passed;
+            } catch (error) {
+                testManager.addResult('路径寻找测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testAIStates() {
+            try {
+                const states = [
+                    AISystem.AIState.IDLE,
+                    AISystem.AIState.PATROL,
+                    AISystem.AIState.CHASE,
+                    AISystem.AIState.ATTACK,
+                    AISystem.AIState.RETREAT
+                ];
+                
+                const passed = states.length === 5;
+                testManager.addResult('AI状态测试', passed,
+                    passed ? 'AI状态枚举完整' : 'AI状态枚举缺失');
+                return passed;
+            } catch (error) {
+                testManager.addResult('AI状态测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testAIManager() {
+            try {
+                const aiManager = new AISystem.AIManager(testManager.entityManager);
+                
+                // 创建测试AI实体
+                const tank = new ECS.Entity('TestTank');
+                tank.addComponent(new AISystem.AIController());
+                
+                aiManager.addAI(tank);
+                const stats = aiManager.getStats();
+                
+                const passed = stats.totalAI === 1;
+                testManager.addResult('AI管理器测试', passed,
+                    passed ? 'AI管理器功能正常' : 'AI管理器功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('AI管理器测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testAIPerception() {
+            try {
+                const aiController = new AISystem.AIController();
+                
+                const hasPerceptionMethods = 
+                    typeof aiController.updatePerception === 'function' &&
+                    typeof aiController.hasLineOfSight === 'function';
+                
+                const hasPerceptionData = 
+                    Array.isArray(aiController.visibleEnemies);
+                
+                const passed = hasPerceptionMethods && hasPerceptionData;
+                testManager.addResult('AI感知系统测试', passed,
+                    passed ? 'AI感知系统完整' : 'AI感知系统缺失');
+                return passed;
+            } catch (error) {
+                testManager.addResult('AI感知系统测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        // 运行所有测试
+        function runAllTests() {
+            testManager.clearResults();
+            
+            const tests = [
+                testAIController,
+                testAIBehaviors,
+                testPathFinding,
+                testAIStates,
+                testAIManager,
+                testAIPerception
+            ];
+            
+            let passedCount = 0;
+            tests.forEach(test => {
+                if (test()) passedCount++;
+            });
+            
+            const allPassed = passedCount === tests.length;
+            testManager.addResult('总体测试结果', allPassed,
+                `${passedCount}/${tests.length} 个测试通过`);
+            
+            console.log(`🧠 AI系统测试完成: ${passedCount}/${tests.length} 通过`);
+        }
+
+        // 清除结果
+        function clearResults() {
+            testManager.clearResults();
+        }
+
+        // 创建AI坦克
+        function createAITank(behaviorType) {
+            const spawn = testManager.gameMap.getRandomEnemySpawn();
+            const tank = testManager.tankManager.createEnemyTank(spawn.x, spawn.y, TankSystem.TankType.ENEMY_BASIC);
+            
+            const behavior = AISystem.AIBehavior[behaviorType.toUpperCase()];
+            const aiController = new AISystem.AIController(behavior);
+            
+            tank.addComponent(aiController);
+            testManager.aiManager.addAI(tank);
+            
+            console.log('🧠 创建AI坦克:', behaviorType);
+        }
+
+        // 创建玩家坦克
+        function createPlayerTank() {
+            const spawn = testManager.gameMap.getRandomPlayerSpawn();
+            testManager.tankManager.createPlayerTank(spawn.x, spawn.y, 1);
+            console.log('🚗 创建玩家坦克');
+        }
+
+        // 测试寻路
+        function testPathfinding() {
+            testManager.showPaths = !testManager.showPaths;
+            console.log('🗺️ 路径可视化:', testManager.showPaths ? '开启' : '关闭');
+        }
+
+        // 显示AI状态
+        function showAIStates() {
+            const aiStats = testManager.aiManager.getStats();
+            console.log('📊 AI统计:', aiStats);
+            
+            let message = `AI实体总数: ${aiStats.totalAI}\n\n`;
+            
+            if (aiStats.stateDistribution) {
+                message += '状态分布:\n';
+                for (const [state, count] of Object.entries(aiStats.stateDistribution)) {
+                    message += `  ${state}: ${count}\n`;
+                }
+            }
+            
+            if (aiStats.behaviorDistribution) {
+                message += '\n行为分布:\n';
+                for (const [behavior, count] of Object.entries(aiStats.behaviorDistribution)) {
+                    message += `  ${behavior}: ${count}\n`;
+                }
+            }
+            
+            alert(message);
+        }
+
+        // 清除所有
+        function clearAll() {
+            testManager.tankManager.clearAll();
+            testManager.aiManager.clearAll();
+            testManager.fireSystem.clearAll();
+            
+            // 清除爆炸效果
+            const explosions = testManager.entityManager.getEntitiesByTag('explosion');
+            explosions.forEach(explosion => {
+                testManager.entityManager.removeEntity(explosion);
+            });
+            
+            console.log('🧹 清除所有实体');
+        }
+    </script>
+</body>
+</html>

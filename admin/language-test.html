@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语言切换功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007cba;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+        .test-button:hover {
+            background: #005a87;
+        }
+        .lang-demo {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .lang-btn {
+            padding: 8px 16px;
+            background: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lang-btn.active {
+            background: #007cba;
+            color: white;
+            border-color: #007cba;
+        }
+        .lang-btn:hover {
+            background: #dee2e6;
+        }
+        .lang-btn.active:hover {
+            background: #0056b3;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        .debug-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🌐 语言切换功能测试</h1>
+        
+        <div class="section">
+            <h3>本地演示</h3>
+            <p>这是一个本地的语言切换演示：</p>
+            <div class="lang-demo">
+                <button id="demo-lang-zh" class="lang-btn active" onclick="switchDemoLanguage('zh')">中文</button>
+                <button id="demo-lang-en" class="lang-btn" onclick="switchDemoLanguage('en')">English</button>
+            </div>
+            <div id="demo-content">
+                <p id="demo-text">当前语言：中文</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>🔧 修复内容</h3>
+            <div class="status success">
+                <h4>已修复的问题：</h4>
+                <ul>
+                    <li>✅ 在 bindEvents() 中添加了语言切换事件绑定</li>
+                    <li>✅ 在 bindMenuEvents() 中添加了语言切换事件重新绑定</li>
+                    <li>✅ 添加了 switchLanguage() 方法处理语言切换逻辑</li>
+                    <li>✅ 添加了语言设置的localStorage保存</li>
+                    <li>✅ 添加了切换成功的通知提示</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>🧪 测试功能</h3>
+            <button class="test-button" onclick="openAdminPanel()">打开管理后台测试</button>
+            <button class="test-button" onclick="testLanguageButtons()">测试语言按钮</button>
+            <button class="test-button" onclick="checkLocalStorage()">检查存储状态</button>
+            <button class="test-button" onclick="clearLanguageSettings()">清除语言设置</button>
+        </div>
+        
+        <div id="test-results" class="debug-info">
+            <h4>测试结果：</h4>
+            <div id="results-content">点击上方按钮开始测试</div>
+        </div>
+        
+        <div class="section">
+            <h3>📋 测试步骤</h3>
+            <div class="status info">
+                <ol>
+                    <li>点击"打开管理后台测试"</li>
+                    <li>在管理后台右上角找到语言切换按钮</li>
+                    <li>点击"中文"和"English"按钮</li>
+                    <li>观察按钮状态变化和通知提示</li>
+                    <li>检查浏览器控制台的日志输出</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 本地演示的语言切换
+        function switchDemoLanguage(lang) {
+            // 更新按钮状态
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`demo-lang-${lang}`).classList.add('active');
+            
+            // 更新文本内容
+            const demoText = document.getElementById('demo-text');
+            if (lang === 'zh') {
+                demoText.textContent = '当前语言：中文';
+            } else {
+                demoText.textContent = 'Current Language: English';
+            }
+            
+            console.log('Demo language switched to:', lang);
+        }
+        
+        // 打开管理后台
+        function openAdminPanel() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🚀 正在打开管理后台...</p>';
+            
+            window.open('index.html?username=admin&password=admin123', '_blank');
+            
+            results.innerHTML += '<p>✓ 管理后台已在新窗口打开</p>';
+            results.innerHTML += '<p>请在新窗口右上角测试语言切换功能</p>';
+        }
+        
+        // 测试语言按钮
+        function testLanguageButtons() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🔍 测试语言按钮功能...</p>';
+            
+            results.innerHTML += '<p>✅ 预期行为：</p>';
+            results.innerHTML += '<ul>';
+            results.innerHTML += '<li>点击"中文"按钮 - 按钮变为活动状态，显示切换成功提示</li>';
+            results.innerHTML += '<li>点击"English"按钮 - 按钮变为活动状态，显示切换成功提示</li>';
+            results.innerHTML += '<li>控制台显示：Language button clicked: [zh/en]</li>';
+            results.innerHTML += '<li>控制台显示：Switching language to: [zh/en]</li>';
+            results.innerHTML += '</ul>';
+        }
+        
+        // 检查localStorage
+        function checkLocalStorage() {
+            const results = document.getElementById('results-content');
+            const savedLang = localStorage.getItem('admin_language');
+            
+            results.innerHTML = '<p>🔍 检查语言设置存储...</p>';
+            
+            if (savedLang) {
+                results.innerHTML += `<p>✅ 当前保存的语言设置：${savedLang}</p>`;
+            } else {
+                results.innerHTML += '<p>⚠️ 未找到保存的语言设置</p>';
+            }
+            
+            results.innerHTML += '<p>语言设置会在切换时自动保存到localStorage</p>';
+        }
+        
+        // 清除语言设置
+        function clearLanguageSettings() {
+            localStorage.removeItem('admin_language');
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p class="success">✅ 已清除保存的语言设置</p>';
+        }
+        
+        // 初始化
+        window.onload = function() {
+            checkLocalStorage();
+        };
+    </script>
+</body>
+</html>

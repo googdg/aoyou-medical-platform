@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道具系统测试 - 坦克大战</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        
+        .danger { background-color: #f44336; }
+        .danger:hover { background-color: #da190b; }
+        
+        .warning { background-color: #ff9800; }
+        .warning:hover { background-color: #e68900; }
+        
+        .info { background-color: #2196F3; }
+        .info:hover { background-color: #1976D2; }
+        
+        canvas {
+            border: 2px solid #444;
+            background-color: #000;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+        
+        .powerup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .powerup-card {
+            background-color: #333;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .powerup-card:hover {
+            background-color: #444;
+            transform: translateY(-2px);
+        }
+        
+        .powerup-card.common { border-color: #808080; }
+        .powerup-card.uncommon { border-color: #00ff00; }
+        .powerup-card.rare { border-color: #0080ff; }
+        .powerup-card.epic { border-color: #8000ff; }
+        .powerup-card.legendary { border-color: #ffd700; }
+        
+        .powerup-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .powerup-name {
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .powerup-rarity {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        
+        .effects-panel {
+            background-color: #1a1a2e;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .effect-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #16213e;
+            border-radius: 4px;
+        }
+        
+        .effect-name {
+            font-weight: bold;
+        }
+        
+        .effect-timer {
+            font-size: 12px;
+            color: #ffd700;
+        }
+        
+        .progress-bar {
+            width: 100px;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+        
+        .log {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✨ 道具系统测试</h1>
+            <p>测试坦克大战游戏的道具和武器升级系统</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🎮 游戏控制</h2>
+            <div class="controls">
+                <button id="startTest">开始测试</button>
+                <button id="pauseTest">暂停/继续</button>
+                <button id="resetTest" class="warning">重置测试</button>
+                <button id="stopTest" class="danger">停止测试</button>
+            </div>
+            
+            <div class="controls">
+                <button id="spawnRandomPowerUp" class="info">生成随机道具</button>
+                <button id="clearPowerUps" class="warning">清除所有道具</button>
+                <button id="giveAllEffects" class="info">获得所有效果</button>
+                <button id="clearEffects" class="warning">清除所有效果</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 游戏画面</h2>
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+            <div class="controls">
+                <p>使用 WASD 移动坦克，空格键射击，靠近道具自动收集</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 道具统计</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalSpawned">0</div>
+                    <div class="stat-label">总生成数量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCollected">0</div>
+                    <div class="stat-label">总收集数量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activePowerUps">0</div>
+                    <div class="stat-label">场景中道具</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="activeEffects">0</div>
+                    <div class="stat-label">激活效果</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="weaponLevel">0</div>
+                    <div class="stat-label">武器等级</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="collectionRate">0%</div>
+                    <div class="stat-label">收集成功率</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎁 道具类型</h2>
+            <p>点击道具卡片可以直接生成该道具</p>
+            <div id="powerUpGrid" class="powerup-grid">
+                <!-- 道具卡片将在这里动态生成 -->
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>⚡ 当前效果</h2>
+            <div id="effectsPanel" class="effects-panel">
+                <p>当前没有激活的道具效果</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 系统日志</h2>
+            <div class="controls">
+                <button id="clearLog" class="warning">清除日志</button>
+                <button id="exportLog" class="info">导出日志</button>
+            </div>
+            <div id="systemLog" class="log"></div>
+        </div>
+    </div>
+
+    <!-- 引入依赖 -->
+    <script src="../js/entity-component-system.js"></script>
+    <script src="../js/map-system.js"></script>
+    <script src="../js/tank-system.js"></script>
+    <script src="../js/powerup-system.js"></script>
+
+    <script>
+        // 道具系统测试类
+        class PowerUpSystemTest {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.isRunning = false;
+                this.isPaused = false;
+                
+                // 游戏系统
+                this.entityManager = new EntityManager();
+                this.gameMap = null;
+                this.powerUpManager = null;
+                this.weaponUpgradeSystem = new PowerUpSystem.WeaponUpgradeSystem();
+                this.playerTank = null;
+                
+                // 输入处理
+                this.keys = new Set();
+                
+                this.lastTime = 0;
+                
+                this.initializeUI();
+                this.initializeGame();
+                this.setupInputHandlers();
+            }
+
+            initializeUI() {
+                // 绑定控制按钮
+                document.getElementById('startTest').addEventListener('click', () => this.startTest());
+                document.getElementById('pauseTest').addEventListener('click', () => this.togglePause());
+                document.getElementById('resetTest').addEventListener('click', () => this.resetTest());
+                document.getElementById('stopTest').addEventListener('click', () => this.stopTest());
+                
+                document.getElementById('spawnRandomPowerUp').addEventListener('click', () => this.spawnRandomPowerUp());
+                document.getElementById('clearPowerUps').addEventListener('click', () => this.clearPowerUps());
+                document.getElementById('giveAllEffects').addEventListener('click', () => this.giveAllEffects());
+                document.getElementById('clearEffects').addEventListener('click', () => this.clearEffects());
+                
+                document.getElementById('clearLog').addEventListener('click', () => this.clearLog());
+                document.getElementById('exportLog').addEventListener('click', () => this.exportLog());
+                
+                // 生成道具卡片
+                this.generatePowerUpCards();
+                
+                this.log('道具系统测试初始化完成');
+            }
+
+            generatePowerUpCards() {
+                const grid = document.getElementById('powerUpGrid');
+                
+                for (const [type, config] of Object.entries(PowerUpSystem.PowerUpConfig)) {
+                    const card = document.createElement('div');
+                    card.className = `powerup-card ${config.rarity}`;
+                    card.innerHTML = `
+                        <div class="powerup-icon">${config.icon}</div>
+                        <div class="powerup-name">${config.name}</div>
+                        <div class="powerup-rarity">${config.rarity}</div>
+                    `;
+                    
+                    card.addEventListener('click', () => {
+                        if (this.isRunning && this.playerTank) {
+                            const transform = this.playerTank.getComponent('Transform');
+                            if (transform) {
+                                // 在玩家附近生成道具
+                                const x = transform.x + (Math.random() - 0.5) * 100;
+                                const y = transform.y + (Math.random() - 0.5) * 100;
+                                this.powerUpManager.forceSpawnPowerUp(type, x, y);
+                                this.log(`手动生成道具: ${config.name}`);
+                            }
+                        }
+                    });
+                    
+                    grid.appendChild(card);
+                }
+            }
+
+            initializeGame() {
+                // 创建游戏地图
+                this.gameMap = new GameMap(25, 19, 32);
+                this.gameMap.generateRandomMap();
+                
+                // 创建道具管理器
+                this.powerUpManager = new PowerUpSystem.PowerUpManager(this.entityManager, this.gameMap);
+                
+                // 创建玩家坦克
+                this.createPlayerTank();
+                
+                this.log('游戏环境初始化完成');
+            }
+
+            createPlayerTank() {
+                const playerEntity = this.entityManager.createEntity();
+                playerEntity.addTag('player');
+                
+                // 添加组件
+                playerEntity.addComponent(new Transform(400, 300, 0));
+                playerEntity.addComponent(new Movement(120));
+                playerEntity.addComponent(new Health(100, 100));
+                playerEntity.addComponent(new Weapon('normal', 25, 500, 300));
+                
+                // 添加渲染组件
+                const renderer = new Renderer('#00ff00', 24, 24);
+                renderer.shape = 'tank';
+                playerEntity.addComponent(renderer);
+                
+                // 添加碰撞体
+                playerEntity.addComponent(new Collider(24, 24, 'player'));
+                
+                this.playerTank = playerEntity;
+                this.log('玩家坦克创建完成');
+            }
+
+            setupInputHandlers() {
+                document.addEventListener('keydown', (e) => {
+                    this.keys.add(e.code);
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys.delete(e.code);
+                });
+                
+                // 监听道具收集事件
+                window.addEventListener('powerUpCollected', (e) => {
+                    const { type } = e.detail;
+                    const config = PowerUpSystem.PowerUpConfig[type];
+                    this.log(`🎁 收集道具: ${config.name}`);
+                    this.updateStats();
+                });
+            }
+
+            startTest() {
+                if (this.isRunning) return;
+                
+                this.isRunning = true;
+                this.isPaused = false;
+                
+                this.gameLoop();
+                this.log('测试开始');
+            }
+
+            togglePause() {
+                if (!this.isRunning) return;
+                
+                this.isPaused = !this.isPaused;
+                if (!this.isPaused) {
+                    this.gameLoop();
+                }
+                this.log(this.isPaused ? '测试暂停' : '测试继续');
+            }
+
+            resetTest() {
+                this.stopTest();
+                this.powerUpManager.clear();
+                this.weaponUpgradeSystem = new PowerUpSystem.WeaponUpgradeSystem();
+                
+                // 重置玩家坦克
+                if (this.playerTank) {
+                    const health = this.playerTank.getComponent('Health');
+                    const weapon = this.playerTank.getComponent('Weapon');
+                    if (health) {
+                        health.current = health.max;
+                    }
+                    if (weapon) {
+                        weapon.damage = 25;
+                        weapon.fireRate = 500;
+                        weapon.range = 300;
+                    }
+                }
+                
+                this.updateStats();
+                this.log('测试重置');
+            }
+
+            stopTest() {
+                this.isRunning = false;
+                this.isPaused = false;
+                this.log('测试停止');
+            }
+
+            spawnRandomPowerUp() {
+                if (this.powerUpManager) {
+                    this.powerUpManager.spawnRandomPowerUp();
+                    this.log('生成随机道具');
+                }
+            }
+
+            clearPowerUps() {
+                if (this.powerUpManager) {
+                    // 只清除道具，不清除效果
+                    for (const [id, entity] of this.powerUpManager.activePowerUps) {
+                        this.entityManager.removeEntity(entity);
+                    }
+                    this.powerUpManager.activePowerUps.clear();
+                    this.log('清除所有道具');
+                }
+            }
+
+            giveAllEffects() {
+                if (this.playerTank && this.powerUpManager) {
+                    const types = Object.keys(PowerUpSystem.PowerUpType);
+                    for (const type of types) {
+                        this.powerUpManager.givePlayerEffect(this.playerTank, PowerUpSystem.PowerUpType[type]);
+                    }
+                    this.log('获得所有道具效果');
+                }
+            }
+
+            clearEffects() {
+                if (this.powerUpManager) {
+                    this.powerUpManager.playerEffects.clear();
+                    this.log('清除所有效果');
+                }
+            }
+
+            gameLoop(currentTime = 0) {
+                if (!this.isRunning || this.isPaused) return;
+                
+                const deltaTime = currentTime - this.lastTime;
+                this.lastTime = currentTime;
+                
+                // 更新游戏逻辑
+                this.update(deltaTime);
+                
+                // 渲染
+                this.render();
+                
+                // 更新UI
+                this.updateStats();
+                this.updateEffectsPanel();
+                
+                requestAnimationFrame((time) => this.gameLoop(time));
+            }
+
+            update(deltaTime) {
+                // 处理输入
+                this.handleInput(deltaTime);
+                
+                // 更新道具管理器
+                if (this.powerUpManager) {
+                    this.powerUpManager.update(deltaTime);
+                }
+                
+                // 更新所有实体
+                const entities = this.entityManager.getAllEntities();
+                for (const entity of entities) {
+                    // 更新移动
+                    const movement = entity.getComponent('Movement');
+                    const transform = entity.getComponent('Transform');
+                    if (movement && transform) {
+                        transform.x += movement.velocity.x * deltaTime / 1000;
+                        transform.y += movement.velocity.y * deltaTime / 1000;
+                        
+                        // 边界检查
+                        transform.x = Math.max(12, Math.min(this.canvas.width - 12, transform.x));
+                        transform.y = Math.max(12, Math.min(this.canvas.height - 12, transform.y));
+                    }
+                    
+                    // 更新道具效果
+                    const powerUpEffect = entity.getComponent('PowerUpEffect');
+                    if (powerUpEffect) {
+                        powerUpEffect.update(deltaTime);
+                    }
+                }
+            }
+
+            handleInput(deltaTime) {
+                if (!this.playerTank) return;
+                
+                const transform = this.playerTank.getComponent('Transform');
+                const movement = this.playerTank.getComponent('Movement');
+                
+                if (!transform || !movement) return;
+                
+                // 重置速度
+                movement.velocity.x = 0;
+                movement.velocity.y = 0;
+                
+                // 获取速度加成
+                let speedMultiplier = 1;
+                const speedEffect = this.powerUpManager.playerEffects.get(PowerUpSystem.PowerUpType.SPEED_BOOST);
+                if (speedEffect && speedEffect.active) {
+                    speedMultiplier = speedEffect.effects.speedMultiplier;
+                }
+                
+                const speed = movement.speed * speedMultiplier;
+                
+                // 处理移动
+                if (this.keys.has('KeyW')) {
+                    movement.velocity.y = -speed;
+                    transform.rotation = -Math.PI / 2;
+                }
+                if (this.keys.has('KeyS')) {
+                    movement.velocity.y = speed;
+                    transform.rotation = Math.PI / 2;
+                }
+                if (this.keys.has('KeyA')) {
+                    movement.velocity.x = -speed;
+                    transform.rotation = Math.PI;
+                }
+                if (this.keys.has('KeyD')) {
+                    movement.velocity.x = speed;
+                    transform.rotation = 0;
+                }
+                
+                // 处理射击
+                if (this.keys.has('Space')) {
+                    this.handleShooting();
+                }
+            }
+
+            handleShooting() {
+                // 简化的射击逻辑
+                const weapon = this.playerTank.getComponent('Weapon');
+                if (weapon && Date.now() - (weapon.lastFire || 0) > weapon.fireRate) {
+                    weapon.lastFire = Date.now();
+                    this.log('🔫 玩家射击');
+                    
+                    // 检查多重射击效果
+                    const multiShotEffect = this.powerUpManager.playerEffects.get(PowerUpSystem.PowerUpType.MULTI_SHOT);
+                    if (multiShotEffect && multiShotEffect.active) {
+                        this.log('🎆 多重射击激活');
+                    }
+                }
+            }
+
+            render() {
+                // 清空画布
+                this.ctx.fillStyle = '#000000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 渲染地图
+                if (this.gameMap) {
+                    this.renderMap();
+                }
+                
+                // 渲染所有实体
+                const entities = this.entityManager.getAllEntities();
+                for (const entity of entities) {
+                    this.renderEntity(entity);
+                }
+                
+                // 渲染道具效果
+                this.renderPowerUpEffects();
+            }
+
+            renderMap() {
+                const tileSize = this.gameMap.tileSize;
+                
+                for (let y = 0; y < this.gameMap.height; y++) {
+                    for (let x = 0; x < this.gameMap.width; x++) {
+                        const tile = this.gameMap.getTile(x, y);
+                        const pixelX = x * tileSize;
+                        const pixelY = y * tileSize;
+                        
+                        switch (tile) {
+                            case 1: // 墙壁
+                                this.ctx.fillStyle = '#8B4513';
+                                this.ctx.fillRect(pixelX, pixelY, tileSize, tileSize);
+                                break;
+                            case 2: // 钢墙
+                                this.ctx.fillStyle = '#696969';
+                                this.ctx.fillRect(pixelX, pixelY, tileSize, tileSize);
+                                break;
+                        }
+                    }
+                }
+            }
+
+            renderEntity(entity) {
+                const transform = entity.getComponent('Transform');
+                const renderer = entity.getComponent('Renderer');
+                
+                if (!transform || !renderer) return;
+                
+                this.ctx.save();
+                this.ctx.translate(transform.x, transform.y);
+                this.ctx.rotate(transform.rotation);
+                
+                // 检查无敌效果
+                const invincibilityEffect = this.powerUpManager.playerEffects.get(PowerUpSystem.PowerUpType.INVINCIBILITY);
+                if (invincibilityEffect && invincibilityEffect.active && entity === this.playerTank) {
+                    // 闪烁效果
+                    const alpha = 0.5 + 0.5 * Math.sin(Date.now() * 0.01);
+                    this.ctx.globalAlpha = alpha;
+                    
+                    // 发光效果
+                    this.ctx.shadowColor = '#FFD700';
+                    this.ctx.shadowBlur = 20;
+                }
+                
+                // 检查隐身效果
+                const stealthEffect = this.powerUpManager.playerEffects.get(PowerUpSystem.PowerUpType.STEALTH);
+                if (stealthEffect && stealthEffect.active && entity === this.playerTank) {
+                    this.ctx.globalAlpha = stealthEffect.effects.transparency;
+                }
+                
+                this.ctx.fillStyle = renderer.color;
+                
+                if (renderer.shape === 'tank') {
+                    // 绘制坦克
+                    this.ctx.fillRect(-renderer.width/2, -renderer.height/2, 
+                                    renderer.width, renderer.height);
+                    
+                    // 绘制炮管
+                    this.ctx.fillRect(0, -2, renderer.width/2, 4);
+                } else if (renderer.shape === 'powerup') {
+                    // 绘制道具
+                    const powerUp = entity.getComponent('PowerUp');
+                    if (powerUp) {
+                        const scale = powerUp.getPulseScale();
+                        const bobOffset = powerUp.getBobOffset();
+                        
+                        this.ctx.translate(0, bobOffset);
+                        this.ctx.scale(scale, scale);
+                        
+                        // 绘制道具背景
+                        this.ctx.fillRect(-renderer.width/2, -renderer.height/2, 
+                                        renderer.width, renderer.height);
+                        
+                        // 绘制图标
+                        this.ctx.fillStyle = '#ffffff';
+                        this.ctx.font = '16px Arial';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(renderer.icon || '?', 0, 0);
+                    }
+                } else {
+                    // 默认矩形
+                    this.ctx.fillRect(-renderer.width/2, -renderer.height/2, 
+                                    renderer.width, renderer.height);
+                }
+                
+                this.ctx.restore();
+            }
+
+            renderPowerUpEffects() {
+                if (!this.playerTank) return;
+                
+                const transform = this.playerTank.getComponent('Transform');
+                if (!transform) return;
+                
+                // 渲染护盾效果
+                const shieldEffect = this.powerUpManager.playerEffects.get(PowerUpSystem.PowerUpType.SHIELD);
+                if (shieldEffect && shieldEffect.active) {
+                    this.ctx.strokeStyle = '#00BFFF';
+                    this.ctx.lineWidth = 3;
+                    this.ctx.beginPath();
+                    this.ctx.arc(transform.x, transform.y, 35, 0, Math.PI * 2);
+                    this.ctx.stroke();
+                }
+                
+                // 渲染雷达效果
+                const radarEffect = this.powerUpManager.playerEffects.get(PowerUpSystem.PowerUpType.RADAR);
+                if (radarEffect && radarEffect.active) {
+                    this.ctx.strokeStyle = 'rgba(0, 255, 0, 0.3)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.beginPath();
+                    this.ctx.arc(transform.x, transform.y, radarEffect.effects.radarRange, 0, Math.PI * 2);
+                    this.ctx.stroke();
+                }
+            }
+
+            updateStats() {
+                if (!this.powerUpManager) return;
+                
+                const stats = this.powerUpManager.getStats();
+                
+                document.getElementById('totalSpawned').textContent = stats.totalSpawned;
+                document.getElementById('totalCollected').textContent = stats.totalCollected;
+                document.getElementById('activePowerUps').textContent = stats.activePowerUps;
+                document.getElementById('activeEffects').textContent = stats.activeEffects;
+                
+                const weaponLevel = this.weaponUpgradeSystem.getWeaponLevel(this.playerTank);
+                document.getElementById('weaponLevel').textContent = weaponLevel;
+                
+                const collectionRate = stats.totalSpawned > 0 ? 
+                    Math.round((stats.totalCollected / stats.totalSpawned) * 100) : 0;
+                document.getElementById('collectionRate').textContent = collectionRate + '%';
+            }
+
+            updateEffectsPanel() {
+                const panel = document.getElementById('effectsPanel');
+                
+                if (!this.powerUpManager || this.powerUpManager.playerEffects.size === 0) {
+                    panel.innerHTML = '<p>当前没有激活的道具效果</p>';
+                    return;
+                }
+                
+                const effects = this.powerUpManager.getPlayerEffects();
+                let html = '';
+                
+                for (const effect of effects) {
+                    const remainingTime = effect.remainingTime;
+                    const timeText = remainingTime === Infinity ? '永久' : 
+                        `${Math.ceil(remainingTime / 1000)}秒`;
+                    
+                    html += `
+                        <div class="effect-item">
+                            <div>
+                                <span class="effect-name">${effect.config.icon} ${effect.name}</span>
+                                ${effect.stacks > 1 ? `<span class="effect-stacks"> x${effect.stacks}</span>` : ''}
+                            </div>
+                            <div class="effect-timer">${timeText}</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${(1 - effect.progress) * 100}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                panel.innerHTML = html;
+            }
+
+            log(message) {
+                const logElement = document.getElementById('systemLog');
+                const timestamp = new Date().toLocaleTimeString();
+                logElement.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+
+            clearLog() {
+                document.getElementById('systemLog').innerHTML = '';
+            }
+
+            exportLog() {
+                const logContent = document.getElementById('systemLog').textContent;
+                const blob = new Blob([logContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `powerup-test-log-${new Date().toISOString().slice(0, 19)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // 启动测试
+        let powerUpTest;
+        window.addEventListener('load', () => {
+            powerUpTest = new PowerUpSystemTest();
+        });
+    </script>
+</body>
+</html>

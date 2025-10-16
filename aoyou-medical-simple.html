@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奥友医学平台 - 简化版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            color: #2E86AB;
+            margin-bottom: 10px;
+        }
+        
+        .auth-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2E86AB;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #2E86AB;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #2E86AB, #5BA3C7);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .video-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .video-thumbnail {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .video-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2E86AB;
+        }
+        
+        .video-meta {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2E86AB;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .user-info {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .points-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2E86AB;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 奥友医学科普学习平台</h1>
+            <p>专业医学教育，助力健康成长</p>
+        </div>
+
+        <!-- 认证区域 -->
+        <div id="auth-section" class="auth-section">
+            <h2>欢迎使用奥友医学平台</h2>
+            <p style="margin-bottom: 20px;">请使用邀请码注册或登录</p>
+            
+            <div class="form-group">
+                <label for="invite-code">邀请码</label>
+                <input type="text" id="invite-code" placeholder="请输入邀请码 (AOYOU2024)" value="AOYOU2024">
+            </div>
+            
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" placeholder="请输入用户名" value="demo">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" placeholder="请输入密码" value="demo123">
+            </div>
+            
+            <button class="btn" onclick="handleAuth()">登录/注册</button>
+        </div>
+
+        <!-- 用户信息区域 -->
+        <div id="user-section" class="user-info hidden">
+            <h3>👋 欢迎回来，<span id="display-username">用户</span>！</h3>
+            <div class="points-display">
+                积分：<span id="user-points">0</span> | 等级：Lv.<span id="user-level">1</span>
+            </div>
+            <button class="btn" onclick="logout()" style="width: auto; margin-top: 10px;">退出登录</button>
+        </div>
+
+        <!-- 视频区域 -->
+        <div id="video-section" class="hidden">
+            <h2>📚 医学视频课程</h2>
+            <div class="video-grid" id="video-grid">
+                <!-- 视频卡片将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // 简化的应用状态
+        let currentUser = null;
+        let userPoints = 0;
+        let userLevel = 1;
+
+        // 演示视频数据
+        const videoData = [
+            {
+                id: 'aoyou_demo_2_0',
+                title: '奥友医学平台演示视频 2.0',
+                category: '平台演示',
+                icon: '🎬',
+                points: 50,
+                isDemo: true,
+                videoUrl: './videos/aoyou-demo-video-2.0.mp4'
+            },
+            {
+                id: 'clinical_001',
+                title: '心血管疾病诊断与治疗',
+                category: '临床医学',
+                icon: '❤️',
+                points: 10
+            },
+            {
+                id: 'basic_001',
+                title: '人体解剖学基础',
+                category: '基础医学',
+                icon: '🧠',
+                points: 8
+            },
+            {
+                id: 'surgery_001',
+                title: '腹腔镜手术技术',
+                category: '外科手术',
+                icon: '🔬',
+                points: 15
+            },
+            {
+                id: 'internal_001',
+                title: '呼吸系统疾病诊疗',
+                category: '内科诊疗',
+                icon: '🫁',
+                points: 12
+            },
+            {
+                id: 'pharmacy_001',
+                title: '抗生素合理使用',
+                category: '药学治疗',
+                icon: '💊',
+                points: 10
+            },
+            {
+                id: 'technology_001',
+                title: 'AI在医学影像中的应用',
+                category: '前沿技术',
+                icon: '🤖',
+                points: 20
+            }
+        ];
+
+        // 显示提示消息
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // 处理认证
+        function handleAuth() {
+            const inviteCode = document.getElementById('invite-code').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!inviteCode || !username || !password) {
+                showToast('请填写完整信息');
+                return;
+            }
+
+            if (inviteCode !== 'AOYOU2024') {
+                showToast('邀请码错误');
+                return;
+            }
+
+            // 模拟登录成功
+            currentUser = {
+                username: username,
+                inviteCode: inviteCode,
+                joinDate: new Date().toLocaleDateString()
+            };
+
+            // 尝试从本地存储加载用户数据
+            const savedData = localStorage.getItem('aoyou_simple_user');
+            if (savedData) {
+                try {
+                    const userData = JSON.parse(savedData);
+                    userPoints = userData.points || 0;
+                    userLevel = userData.level || 1;
+                } catch (error) {
+                    console.log('加载用户数据失败，使用默认值');
+                }
+            }
+
+            // 保存用户数据
+            saveUserData();
+
+            // 更新UI
+            updateUI();
+            showToast('登录成功！');
+        }
+
+        // 退出登录
+        function logout() {
+            currentUser = null;
+            userPoints = 0;
+            userLevel = 1;
+            localStorage.removeItem('aoyou_simple_user');
+            updateUI();
+            showToast('已退出登录');
+        }
+
+        // 更新UI
+        function updateUI() {
+            const authSection = document.getElementById('auth-section');
+            const userSection = document.getElementById('user-section');
+            const videoSection = document.getElementById('video-section');
+
+            if (currentUser) {
+                authSection.classList.add('hidden');
+                userSection.classList.remove('hidden');
+                videoSection.classList.remove('hidden');
+                
+                document.getElementById('display-username').textContent = currentUser.username;
+                document.getElementById('user-points').textContent = userPoints;
+                document.getElementById('user-level').textContent = userLevel;
+                
+                renderVideos();
+            } else {
+                authSection.classList.remove('hidden');
+                userSection.classList.add('hidden');
+                videoSection.classList.add('hidden');
+            }
+        }
+
+        // 渲染视频列表
+        function renderVideos() {
+            const videoGrid = document.getElementById('video-grid');
+            videoGrid.innerHTML = videoData.map(video => `
+                <div class="video-card" onclick="watchVideo('${video.id}')">
+                    <div class="video-thumbnail">${video.icon}</div>
+                    <div class="video-title">${video.title}</div>
+                    <div class="video-meta">
+                        ${video.category} • +${video.points} 积分
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 观看视频
+        function watchVideo(videoId) {
+            const video = videoData.find(v => v.id === videoId);
+            if (!video) return;
+
+            // 如果是真实视频，打开视频播放器
+            if (video.videoUrl && video.isDemo) {
+                openVideoPlayer(video);
+                return;
+            }
+
+            // 模拟观看完成
+            completeVideoWatch(video);
+        }
+
+        // 打开视频播放器
+        function openVideoPlayer(video) {
+            // 创建视频播放器模态框
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                box-sizing: border-box;
+            `;
+
+            const videoContainer = document.createElement('div');
+            videoContainer.style.cssText = `
+                background: white;
+                border-radius: 15px;
+                padding: 20px;
+                max-width: 800px;
+                width: 100%;
+                max-height: 90vh;
+                overflow-y: auto;
+            `;
+
+            videoContainer.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0; color: #2E86AB;">${video.title}</h3>
+                    <button onclick="this.closest('.video-modal').remove()" style="
+                        background: #f0f0f0;
+                        border: none;
+                        border-radius: 50%;
+                        width: 40px;
+                        height: 40px;
+                        cursor: pointer;
+                        font-size: 20px;
+                    ">×</button>
+                </div>
+                <video controls style="width: 100%; border-radius: 10px; margin-bottom: 15px;">
+                    <source src="${video.videoUrl}" type="video/mp4">
+                    您的浏览器不支持视频播放。
+                </video>
+                <p style="color: #666; margin-bottom: 15px;">${video.category} • +${video.points} 积分</p>
+                <button onclick="completeVideoWatch(${JSON.stringify(video).replace(/"/g, '&quot;')}); this.closest('.video-modal').remove();" 
+                        style="
+                            background: linear-gradient(135deg, #2E86AB, #5BA3C7);
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                            width: 100%;
+                        ">
+                    完成观看并获得积分
+                </button>
+            `;
+
+            modal.className = 'video-modal';
+            modal.appendChild(videoContainer);
+            document.body.appendChild(modal);
+
+            // 点击背景关闭
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // 完成视频观看
+        function completeVideoWatch(video) {
+            // 增加积分
+            userPoints += video.points;
+            
+            // 计算等级
+            const newLevel = Math.floor(userPoints / 50) + 1;
+            if (newLevel > userLevel) {
+                userLevel = newLevel;
+                showToast(`🎉 恭喜升级到 Lv.${userLevel}！`);
+            } else {
+                showToast(`📚 观看完成，获得 ${video.points} 积分！`);
+            }
+
+            // 保存数据
+            saveUserData();
+            
+            // 更新显示
+            document.getElementById('user-points').textContent = userPoints;
+            document.getElementById('user-level').textContent = userLevel;
+        }
+
+        // 保存用户数据
+        function saveUserData() {
+            if (currentUser) {
+                const userData = {
+                    ...currentUser,
+                    points: userPoints,
+                    level: userLevel,
+                    lastLogin: new Date().toISOString()
+                };
+                localStorage.setItem('aoyou_simple_user', JSON.stringify(userData));
+            }
+        }
+
+        // 页面加载完成后检查登录状态
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('奥友医学平台简化版已加载');
+            
+            // 尝试自动登录
+            const savedData = localStorage.getItem('aoyou_simple_user');
+            if (savedData) {
+                try {
+                    const userData = JSON.parse(savedData);
+                    currentUser = userData;
+                    userPoints = userData.points || 0;
+                    userLevel = userData.level || 1;
+                    
+                    // 自动填充表单
+                    document.getElementById('invite-code').value = userData.inviteCode || 'AOYOU2024';
+                    document.getElementById('username').value = userData.username || '';
+                    
+                    updateUI();
+                    showToast('欢迎回来！');
+                } catch (error) {
+                    console.log('自动登录失败');
+                }
+            }
+        });
+
+        // 添加键盘事件支持
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !currentUser) {
+                handleAuth();
+            }
+        });
+
+        console.log('奥友医学平台简化版初始化完成');
+    </script>
+</body>
+</html>

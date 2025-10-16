@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人博客管理后台</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+    <div id="app">
+        <!-- 登录页面 -->
+        <div id="login-page" class="login-container">
+            <div class="login-form">
+                <h1>博客管理后台</h1>
+                <form id="login-form" autocomplete="on">
+                    <div class="form-group">
+                        <label for="username" class="required">用户名</label>
+                        <input type="text" id="username" name="username" 
+                               autocomplete="username" 
+                               placeholder="请输入用户名" 
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="required">密码</label>
+                        <input type="password" id="password" name="password" 
+                               autocomplete="current-password" 
+                               placeholder="请输入密码" 
+                               required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">登录</button>
+                </form>
+                <div id="login-error" class="error-message" style="display: none;"></div>
+                <div class="login-info">
+                    <p><strong>默认管理员账户：</strong></p>
+                    <p>用户名: admin</p>
+                    <p>密码: admin123</p>
+                    <p class="warning">⚠️ 请在首次登录后修改默认密码！</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主界面 -->
+        <div id="main-app" class="main-container" style="display: none;">
+            <!-- 侧边栏 -->
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h2>博客管理</h2>
+                    <div class="user-info">
+                        <span id="current-user">admin</span>
+                        <button id="logout-btn" class="btn btn-sm">退出</button>
+                    </div>
+                </div>
+                <ul class="sidebar-menu">
+                    <li><a href="#dashboard" class="menu-item active" data-page="dashboard">📊 仪表板</a></li>
+                    <li><a href="#homepage" class="menu-item" data-page="homepage">🏠 主页内容</a></li>
+                    <li><a href="#posts" class="menu-item" data-page="posts">📝 文章管理</a></li>
+                    <li><a href="#media" class="menu-item" data-page="media">🖼️ 媒体库</a></li>
+                    <li><a href="#categories" class="menu-item" data-page="categories">📂 分类管理</a></li>
+                </ul>
+            </nav>
+
+            <!-- 主内容区 -->
+            <main class="main-content">
+                <!-- 仪表板 -->
+                <div id="dashboard-page" class="page active">
+                    <div class="page-header">
+                        <h1>仪表板</h1>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📝</div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="total-posts">0</div>
+                                <div class="stat-label">总文章数</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="published-posts">0</div>
+                                <div class="stat-label">已发布</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🖼️</div>
+                            <div class="stat-info">
+                                <div class="stat-number" id="total-media">0</div>
+                                <div class="stat-label">媒体文件</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="recent-posts">
+                        <h2>最近文章</h2>
+                        <div id="recent-posts-list" class="posts-list">
+                            <!-- 最近文章列表 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 主页内容管理 -->
+                <div id="homepage-page" class="page">
+                    <div class="page-header">
+                        <h1>主页内容管理</h1>
+                        <button id="save-homepage-btn" class="btn btn-primary">保存更改</button>
+                    </div>
+                    
+                    <div class="homepage-editor">
+                        <div class="editor-tabs">
+                            <button class="tab-btn active" data-tab="basic">基本信息</button>
+                            <button class="tab-btn" data-tab="intro">个人介绍</button>
+                            <button class="tab-btn" data-tab="experience">专业经历</button>
+                            <button class="tab-btn" data-tab="community">社区活动</button>
+                        </div>
+                        
+                        <!-- 基本信息标签页 -->
+                        <div id="basic-tab" class="tab-content active">
+                            <div class="form-section">
+                                <h3>网站基本信息</h3>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="site-title" class="required">网站标题</label>
+                                        <input type="text" id="site-title" placeholder="Stevn" value="Stevn">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="site-tagline" class="required">网站标语</label>
+                                        <textarea id="site-tagline" rows="2" placeholder="移动医疗专家 & 社区建设者...">移动医疗专家 & 社区建设者，专注于数字医疗产品策略与用户体验设计</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="site-description" class="required">网站描述</label>
+                                    <textarea id="site-description" rows="3" placeholder="网站SEO描述">Stevn的个人博客 - 分享移动医疗、产品策略、技术社区和生活感悟</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 个人介绍标签页 -->
+                        <div id="intro-tab" class="tab-content">
+                            <div class="form-section">
+                                <h3>欢迎部分</h3>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="welcome-title" class="required">欢迎标题</label>
+                                        <input type="text" id="welcome-title" placeholder="OH, HI. WELCOME!" value="OH, HI. WELCOME!">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="welcome-subtitle" class="required">欢迎副标题</label>
+                                        <input type="text" id="welcome-subtitle" placeholder="我是Stevn，很高兴认识你！" value="我是Stevn，很高兴认识你！">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="intro-text1" class="required">个人介绍第一段</label>
+                                    <textarea id="intro-text1" rows="4" placeholder="我对移动医疗行业有着深刻的认识...">我对移动医疗行业有着深刻的认识，拥有9年以上的数字医疗和产品策略经验。目前在小苹果昆育互联网医院担任产品经理，负责新媒体运营和数字医疗业务的发展。</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="intro-text2" class="required">个人介绍第二段</label>
+                                    <textarea id="intro-text2" rows="4" placeholder="作为上海谷歌开发者社区的核心组织者...">作为上海谷歌开发者社区的核心组织者，我积极参与Women Techmarkers、Devfest上海等技术大会的组织工作。同时，我也是一个美食爱好者，热爱下厨房亲自制作美食，与身边的亲朋好友一起品尝生活的美好。</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 专业经历标签页 -->
+                        <div id="experience-tab" class="tab-content">
+                            <div class="form-section">
+                                <h3>专业经历</h3>
+                                <div class="experience-items">
+                                    <div class="experience-form-item">
+                                        <h4>当前职位</h4>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="current-role" class="required">职位名称</label>
+                                                <input type="text" id="current-role" placeholder="产品经理" value="产品经理">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="current-company" class="required">公司信息</label>
+                                                <input type="text" id="current-company" placeholder="小苹果昆育互联网医院 (2023-至今)" value="小苹果昆育互联网医院 (2023-至今)">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="current-desc" class="required">职位描述</label>
+                                            <textarea id="current-desc" rows="2" placeholder="负责新媒体运营和数字医疗业务">负责新媒体运营和数字医疗业务，推动互联网医院的产品创新与用户体验优化</textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="experience-form-item">
+                                        <h4>过往经历</h4>
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="previous-role" class="required">职位名称</label>
+                                                <input type="text" id="previous-role" placeholder="产品经理" value="产品经理">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="previous-company" class="required">公司信息</label>
+                                                <input type="text" id="previous-company" placeholder="多家医疗公司 (2016-2023)" value="多家医疗公司 (2016-2023)">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="previous-desc" class="required">经历描述</label>
+                                            <textarea id="previous-desc" rows="2" placeholder="9年以上数字医疗和产品策略经验">9年以上数字医疗和产品策略经验，专注于移动医疗产品的设计与运营</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 社区活动标签页 -->
+                        <div id="community-tab" class="tab-content">
+                            <div class="form-section">
+                                <h3>社区活动与兴趣爱好</h3>
+                                <div class="form-group">
+                                    <label for="community-title">部分标题</label>
+                                    <input type="text" id="community-title" placeholder="社区活动与兴趣爱好" value="社区活动与兴趣爱好">
+                                </div>
+                                <div class="form-group">
+                                    <label for="community-desc">部分描述</label>
+                                    <textarea id="community-desc" rows="2" placeholder="上海技术社区的活跃组织者，对各种兴趣爱好充满热情">上海技术社区的活跃组织者，对各种兴趣爱好充满热情</textarea>
+                                </div>
+                                
+                                <div class="community-items">
+                                    <div class="community-form-item">
+                                        <h4>技术社区</h4>
+                                        <div class="form-group">
+                                            <label for="tech-community-title">标题</label>
+                                            <input type="text" id="tech-community-title" placeholder="技术社区" value="技术社区">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tech-community-desc">描述</label>
+                                            <textarea id="tech-community-desc" rows="2" placeholder="Women Techmarkers、Devfest上海等技术大会的组织者">Women Techmarkers、Devfest上海等技术大会的组织者</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="tech-community-tags">标签（用逗号分隔）</label>
+                                            <input type="text" id="tech-community-tags" placeholder="Women Techmarkers, Devfest Shanghai, Google Developer Community" value="Women Techmarkers, Devfest Shanghai, Google Developer Community">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="community-form-item">
+                                        <h4>个人兴趣</h4>
+                                        <div class="form-group">
+                                            <label for="personal-interests-title">标题</label>
+                                            <input type="text" id="personal-interests-title" placeholder="个人兴趣" value="个人兴趣">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="personal-interests-desc">描述</label>
+                                            <textarea id="personal-interests-desc" rows="2" placeholder="美食爱好者，热爱下厨房亲自制作美食，与身边的亲朋好友品尝">美食爱好者，热爱下厨房亲自制作美食，与身边的亲朋好友品尝</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="personal-interests-tags">标签（用逗号分隔）</label>
+                                            <input type="text" id="personal-interests-tags" placeholder="Cooking, Food Photography, Culinary Exploration" value="Cooking, Food Photography, Culinary Exploration">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文章管理 -->
+                <div id="posts-page" class="page">
+                    <div class="page-header">
+                        <h1>文章管理</h1>
+                        <button id="new-post-btn" class="btn btn-primary">新建文章</button>
+                    </div>
+                    
+                    <div class="filters">
+                        <select id="category-filter">
+                            <option value="">所有分类</option>
+                        </select>
+                        <select id="status-filter">
+                            <option value="">所有状态</option>
+                            <option value="true">已发布</option>
+                            <option value="false">草稿</option>
+                        </select>
+                        <input type="text" id="search-input" placeholder="搜索文章...">
+                    </div>
+                    
+                    <div id="posts-list" class="posts-table">
+                        <!-- 文章列表 -->
+                    </div>
+                    
+                    <div id="posts-pagination" class="pagination">
+                        <!-- 分页 -->
+                    </div>
+                </div>
+
+                <!-- 文章编辑器 -->
+                <div id="post-editor-page" class="page">
+                    <div class="page-header">
+                        <h1 id="editor-title">新建文章</h1>
+                        <div class="editor-actions">
+                            <button id="save-draft-btn" class="btn btn-secondary">保存草稿</button>
+                            <button id="publish-btn" class="btn btn-primary">发布</button>
+                            <button id="cancel-edit-btn" class="btn btn-outline">取消</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-notice">
+                        <p><span class="required-indicator">*</span> 标记为必填字段</p>
+                    </div>
+                    
+                    <form id="post-form" class="post-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="title-en" class="required">英文标题</label>
+                                <input type="text" id="title-en" name="title_en" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="title-zh" class="required">中文标题</label>
+                                <input type="text" id="title-zh" name="title_zh" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="slug-en" class="required">英文Slug</label>
+                                <input type="text" id="slug-en" name="slug_en" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="slug-zh" class="required">中文Slug</label>
+                                <input type="text" id="slug-zh" name="slug_zh" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="category" class="required">分类</label>
+                                <select id="category" name="category" required>
+                                    <option value="">选择分类</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tags">标签（用逗号分隔）</label>
+                                <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="excerpt-en">英文摘要</label>
+                            <textarea id="excerpt-en" name="excerpt_en" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="excerpt-zh">中文摘要</label>
+                            <textarea id="excerpt-zh" name="excerpt_zh" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content-en" class="required">英文内容</label>
+                            <textarea id="content-en" name="content_en" rows="15" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="content-zh" class="required">中文内容</label>
+                            <textarea id="content-zh" name="content_zh" rows="15" required></textarea>
+                        </div>
+                        
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="featured" name="featured">
+                                <span class="checkmark"></span>
+                                推荐文章
+                            </label>
+                        </div>
+                        
+                        <input type="hidden" id="post-id" name="id">
+                    </form>
+                </div>
+
+                <!-- 媒体库 -->
+                <div id="media-page" class="page">
+                    <div class="page-header">
+                        <h1>媒体库</h1>
+                        <button id="upload-btn" class="btn btn-primary">上传文件</button>
+                    </div>
+                    
+                    <input type="file" id="file-input" accept="image/*" style="display: none;" multiple>
+                    
+                    <div id="media-grid" class="media-grid">
+                        <!-- 媒体文件网格 -->
+                    </div>
+                    
+                    <div id="media-pagination" class="pagination">
+                        <!-- 分页 -->
+                    </div>
+                </div>
+
+                <!-- 分类管理 -->
+                <div id="categories-page" class="page">
+                    <div class="page-header">
+                        <h1>分类管理</h1>
+                    </div>
+                    
+                    <div id="categories-list" class="categories-list">
+                        <!-- 分类列表 -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- 加载指示器 -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- 通知 -->
+    <div id="notification" class="notification" style="display: none;"></div>
+
+    <script src="admin-fixed.js"></script>
+    <script src="url-params-handler.js"></script>
+</body>
+</html>

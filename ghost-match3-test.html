@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鬼消消乐 - 功能测试</title>
+    <link rel="stylesheet" href="css/ghost-match3.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+        }
+        .test-title {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .game-test-container {
+            width: 400px;
+            height: 500px;
+            margin: 20px auto;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>小鬼消消乐 - 功能测试</h1>
+        <p>这个页面用于测试游戏的各个组件是否正常工作。</p>
+
+        <!-- 模块加载测试 -->
+        <div class="test-section">
+            <h2 class="test-title">1. 模块加载测试</h2>
+            <div id="module-test-results"></div>
+        </div>
+
+        <!-- 网格管理器测试 -->
+        <div class="test-section">
+            <h2 class="test-title">2. 网格管理器测试</h2>
+            <div id="grid-test-results"></div>
+        </div>
+
+        <!-- 小鬼管理器测试 -->
+        <div class="test-section">
+            <h2 class="test-title">3. 小鬼管理器测试</h2>
+            <div id="ghost-test-results"></div>
+        </div>
+
+        <!-- 游戏引擎测试 -->
+        <div class="test-section">
+            <h2 class="test-title">4. 游戏引擎测试</h2>
+            <div id="engine-test-results"></div>
+            <div class="game-test-container" id="game-test-container"></div>
+        </div>
+
+        <!-- 性能测试 -->
+        <div class="test-section">
+            <h2 class="test-title">5. 性能测试</h2>
+            <div id="performance-test-results"></div>
+        </div>
+    </div>
+
+    <!-- 加载游戏模块 -->
+    <script src="js/grid-manager.js"></script>
+    <script src="js/ghost-manager.js"></script>
+    <script src="js/ghost-match3-engine.js"></script>
+
+    <script>
+        // 测试结果记录
+        const testResults = {
+            modules: [],
+            grid: [],
+            ghost: [],
+            engine: [],
+            performance: []
+        };
+
+        /**
+         * 添加测试结果
+         */
+        function addTestResult(category, testName, passed, message = '') {
+            testResults[category].push({
+                name: testName,
+                passed: passed,
+                message: message,
+                timestamp: new Date().toISOString()
+            });
+        }
+
+        /**
+         * 显示测试结果
+         */
+        function displayTestResults(category, containerId) {
+            const container = document.getElementById(containerId);
+            const results = testResults[category];
+            
+            let html = '';
+            results.forEach(result => {
+                const cssClass = result.passed ? 'test-pass' : 'test-fail';
+                const status = result.passed ? '✅ PASS' : '❌ FAIL';
+                html += `
+                    <div class="${cssClass} test-result">
+                        <strong>${status}</strong> ${result.name}
+                        ${result.message ? `<br>详情: ${result.message}` : ''}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        /**
+         * 模块加载测试
+         */
+        function testModuleLoading() {
+            console.log('开始模块加载测试...');
+            
+            // 测试 GridManager 类是否存在
+            try {
+                const hasGridManager = typeof GridManager !== 'undefined';
+                addTestResult('modules', 'GridManager 类加载', hasGridManager, 
+                    hasGridManager ? 'GridManager 类已成功加载' : 'GridManager 类未找到');
+            } catch (error) {
+                addTestResult('modules', 'GridManager 类加载', false, error.message);
+            }
+
+            // 测试 GhostManager 类是否存在
+            try {
+                const hasGhostManager = typeof GhostManager !== 'undefined';
+                addTestResult('modules', 'GhostManager 类加载', hasGhostManager,
+                    hasGhostManager ? 'GhostManager 类已成功加载' : 'GhostManager 类未找到');
+            } catch (error) {
+                addTestResult('modules', 'GhostManager 类加载', false, error.message);
+            }
+
+            // 测试 GhostMatch3Engine 类是否存在
+            try {
+                const hasEngine = typeof GhostMatch3Engine !== 'undefined';
+                addTestResult('modules', 'GhostMatch3Engine 类加载', hasEngine,
+                    hasEngine ? 'GhostMatch3Engine 类已成功加载' : 'GhostMatch3Engine 类未找到');
+            } catch (error) {
+                addTestResult('modules', 'GhostMatch3Engine 类加载', false, error.message);
+            }
+
+            displayTestResults('modules', 'module-test-results');
+        }
+
+        /**
+         * 网格管理器测试
+         */
+        function testGridManager() {
+            console.log('开始网格管理器测试...');
+            
+            try {
+                // 创建网格管理器实例
+                const gridManager = new GridManager({ width: 8, height: 8 });
+                addTestResult('grid', '网格管理器实例化', true, '8x8 网格创建成功');
+
+                // 测试网格初始化
+                const isEmpty = gridManager.grid.every(row => row.every(cell => cell === null));
+                addTestResult('grid', '网格初始化', isEmpty, '网格已正确初始化为空');
+
+                // 测试位置验证
+                const validPos = gridManager.isValidPosition(3, 3);
+                const invalidPos = gridManager.isValidPosition(10, 10);
+                addTestResult('grid', '位置验证', validPos && !invalidPos, 
+                    `有效位置检测: ${validPos}, 无效位置检测: ${!invalidPos}`);
+
+                // 测试瓦片设置和获取
+                const testTile = { type: 0, id: 'test' };
+                gridManager.setTile(3, 3, testTile);
+                const retrievedTile = gridManager.getTile(3, 3);
+                addTestResult('grid', '瓦片设置和获取', retrievedTile === testTile,
+                    '瓦片设置和获取功能正常');
+
+                // 测试瓦片交换
+                const testTile2 = { type: 1, id: 'test2' };
+                gridManager.setTile(3, 4, testTile2);
+                gridManager.swapTiles({ x: 3, y: 3 }, { x: 3, y: 4 });
+                const swapped1 = gridManager.getTile(3, 3);
+                const swapped2 = gridManager.getTile(3, 4);
+                addTestResult('grid', '瓦片交换', swapped1 === testTile2 && swapped2 === testTile,
+                    '瓦片交换功能正常');
+
+            } catch (error) {
+                addTestResult('grid', '网格管理器测试', false, error.message);
+            }
+
+            displayTestResults('grid', 'grid-test-results');
+        }
+
+        /**
+         * 小鬼管理器测试
+         */
+        function testGhostManager() {
+            console.log('开始小鬼管理器测试...');
+            
+            try {
+                // 创建小鬼管理器实例
+                const ghostManager = new GhostManager(6);
+                addTestResult('ghost', '小鬼管理器实例化', true, '6种小鬼类型初始化成功');
+
+                // 测试小鬼类型初始化
+                const hasGhostTypes = ghostManager.ghostTypes.length === 6;
+                addTestResult('ghost', '小鬼类型初始化', hasGhostTypes,
+                    `小鬼类型数量: ${ghostManager.ghostTypes.length}`);
+
+                // 测试随机小鬼创建
+                const randomGhost = ghostManager.createRandomGhost();
+                const isValidGhost = randomGhost && typeof randomGhost.type === 'number' && 
+                                   randomGhost.type >= 0 && randomGhost.type < 6;
+                addTestResult('ghost', '随机小鬼创建', isValidGhost,
+                    `创建的小鬼类型: ${randomGhost ? randomGhost.type : 'null'}`);
+
+                // 测试特殊小鬼创建
+                const specialGhost = ghostManager.createSpecialGhost('bomb');
+                const isValidSpecial = specialGhost && specialGhost.isSpecial && 
+                                     specialGhost.specialType === 'bomb';
+                addTestResult('ghost', '特殊小鬼创建', isValidSpecial,
+                    `特殊小鬼类型: ${specialGhost ? specialGhost.specialType : 'null'}`);
+
+                // 测试小鬼ID生成
+                const ghost1 = ghostManager.createRandomGhost();
+                const ghost2 = ghostManager.createRandomGhost();
+                const uniqueIds = ghost1.id !== ghost2.id;
+                addTestResult('ghost', '小鬼ID唯一性', uniqueIds,
+                    `ID1: ${ghost1.id.substring(0, 10)}..., ID2: ${ghost2.id.substring(0, 10)}...`);
+
+            } catch (error) {
+                addTestResult('ghost', '小鬼管理器测试', false, error.message);
+            }
+
+            displayTestResults('ghost', 'ghost-test-results');
+        }
+
+        /**
+         * 游戏引擎测试
+         */
+        function testGameEngine() {
+            console.log('开始游戏引擎测试...');
+            
+            try {
+                const container = document.getElementById('game-test-container');
+                
+                // 创建游戏引擎实例
+                const gameEngine = new GhostMatch3Engine(container, {
+                    gridSize: { width: 8, height: 8 },
+                    ghostTypes: 6
+                });
+                
+                addTestResult('engine', '游戏引擎实例化', true, '游戏引擎创建成功');
+
+                // 测试游戏状态初始化
+                const hasGameState = gameEngine.gameState && 
+                                   typeof gameEngine.gameState.score === 'number';
+                addTestResult('engine', '游戏状态初始化', hasGameState,
+                    `初始分数: ${gameEngine.gameState.score}`);
+
+                // 测试事件系统
+                let eventFired = false;
+                gameEngine.on('testEvent', () => { eventFired = true; });
+                gameEngine.emit('testEvent');
+                addTestResult('engine', '事件系统', eventFired, '事件发射和监听正常');
+
+                // 测试UI创建
+                const hasGameBoard = container.querySelector('.game-board') !== null;
+                addTestResult('engine', 'UI界面创建', hasGameBoard, '游戏界面已创建');
+
+                // 测试游戏控制
+                gameEngine.startNewGame();
+                const gameStarted = gameEngine.isGameActive;
+                addTestResult('engine', '游戏开始控制', gameStarted, '游戏开始功能正常');
+
+                // 清理测试
+                setTimeout(() => {
+                    gameEngine.destroy();
+                    addTestResult('engine', '游戏引擎清理', true, '游戏引擎已清理');
+                    displayTestResults('engine', 'engine-test-results');
+                }, 100);
+
+            } catch (error) {
+                addTestResult('engine', '游戏引擎测试', false, error.message);
+                displayTestResults('engine', 'engine-test-results');
+            }
+        }
+
+        /**
+         * 性能测试
+         */
+        function testPerformance() {
+            console.log('开始性能测试...');
+            
+            try {
+                // 测试大量小鬼创建性能
+                const startTime = performance.now();
+                const ghostManager = new GhostManager(6);
+                const ghosts = [];
+                
+                for (let i = 0; i < 1000; i++) {
+                    ghosts.push(ghostManager.createRandomGhost());
+                }
+                
+                const endTime = performance.now();
+                const duration = endTime - startTime;
+                
+                addTestResult('performance', '大量小鬼创建', duration < 100,
+                    `创建1000个小鬼耗时: ${duration.toFixed(2)}ms`);
+
+                // 测试网格操作性能
+                const gridStartTime = performance.now();
+                const gridManager = new GridManager({ width: 10, height: 10 });
+                
+                for (let i = 0; i < 100; i++) {
+                    gridManager.setTile(i % 10, Math.floor(i / 10), { type: i % 6 });
+                }
+                
+                const gridEndTime = performance.now();
+                const gridDuration = gridEndTime - gridStartTime;
+                
+                addTestResult('performance', '网格操作', gridDuration < 50,
+                    `100次网格操作耗时: ${gridDuration.toFixed(2)}ms`);
+
+                // 内存使用测试
+                const memoryInfo = performance.memory ? {
+                    used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
+                    total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)
+                } : null;
+                
+                if (memoryInfo) {
+                    addTestResult('performance', '内存使用', memoryInfo.used < 50,
+                        `当前内存使用: ${memoryInfo.used}MB / ${memoryInfo.total}MB`);
+                } else {
+                    addTestResult('performance', '内存使用', true, '内存信息不可用（非Chrome浏览器）');
+                }
+
+            } catch (error) {
+                addTestResult('performance', '性能测试', false, error.message);
+            }
+
+            displayTestResults('performance', 'performance-test-results');
+        }
+
+        /**
+         * 运行所有测试
+         */
+        function runAllTests() {
+            console.log('开始运行所有测试...');
+            
+            // 按顺序运行测试
+            testModuleLoading();
+            
+            setTimeout(() => {
+                testGridManager();
+                testGhostManager();
+                testGameEngine();
+                testPerformance();
+                
+                // 显示测试总结
+                setTimeout(() => {
+                    showTestSummary();
+                }, 200);
+            }, 100);
+        }
+
+        /**
+         * 显示测试总结
+         */
+        function showTestSummary() {
+            const allResults = Object.values(testResults).flat();
+            const totalTests = allResults.length;
+            const passedTests = allResults.filter(r => r.passed).length;
+            const failedTests = totalTests - passedTests;
+            
+            const summaryHtml = `
+                <div class="test-info test-result">
+                    <strong>📊 测试总结</strong><br>
+                    总测试数: ${totalTests}<br>
+                    通过: ${passedTests}<br>
+                    失败: ${failedTests}<br>
+                    成功率: ${((passedTests / totalTests) * 100).toFixed(1)}%
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', summaryHtml);
+            
+            console.log(`测试完成 - 通过: ${passedTests}/${totalTests}`);
+        }
+
+        // 页面加载完成后运行测试
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('小鬼消消乐测试页面加载完成');
+            runAllTests();
+        });
+    </script>
+</body>
+</html>

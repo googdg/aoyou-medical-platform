@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Stevn的个人博客 - 移动医疗专家、社区组织者和产品经理，分享数字健康创新和技术社区建设的见解">
+    <meta name="keywords" content="移动医疗, 数字健康, 产品经理, 技术社区, 上海开发者, 女性技术人, 开发者大会, 医疗创新, 社区组织者">
+    <meta name="author" content="Stevn - 产品经理 & 数字健康专家">
+    
+    <!-- Performance Optimization -->
+    <meta name="theme-color" content="#0066cc">
+    <meta name="color-scheme" content="light dark">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Critical CSS inlined for faster rendering -->
+    <style>
+        /* Critical above-the-fold styles */
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; }
+        .site-header { text-align: center; padding: 4rem 2rem 3rem; }
+        .site-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 700; margin-bottom: 1.5rem; }
+        .main-navigation { display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; }
+        .nav-item { color: #333; text-decoration: none; padding: 1rem 1.5rem; }
+    </style>
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourwebsite.com/">
+    <meta property="og:title" content="Stevn - 个人博客">
+    <meta property="og:description" content="自1990年以来一直在编程、学习、写作、演讲和在线创作">
+    <meta property="og:image" content="https://yourwebsite.com/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://yourwebsite.com/">
+    <meta property="twitter:title" content="Stevn - 个人博客">
+    <meta property="twitter:description" content="自1990年以来一直在编程、学习、写作、演讲和在线创作">
+    <meta property="twitter:image" content="https://yourwebsite.com/og-image.jpg">
+
+    <title>Stevn - 个人博客</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/search-styles.css">
+    <link rel="stylesheet" href="css/accessibility-styles.css">
+    <link rel="canonical" href="https://yourwebsite.com/">
+</head>
+<body>
+    <header class="site-header">
+        <h1 class="site-title" data-i18n="site.title">Stevn</h1>
+        <p class="site-tagline" data-i18n="site.tagline">产品经理 & 数字健康专家 | 构建创新医疗解决方案，通过数据驱动策略推动增长。</p>
+        
+        <nav class="main-navigation" role="navigation" aria-label="Main navigation">
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-expanded="false">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="nav-menu" id="nav-menu">
+                <a href="#main" class="nav-item" data-i18n="navigation.main" aria-label="首页">首页</a>
+                <a href="#blog" class="nav-item" data-i18n="navigation.blog" aria-label="博客文章">博客</a>
+                <a href="ghost-match3.html" class="nav-item" data-i18n="navigation.game" aria-label="小鬼消消乐游戏">小鬼消消乐</a>
+                <button class="search-trigger-btn" id="search-trigger" aria-label="搜索博客文章" title="搜索 (Ctrl+K)">
+                    <span class="search-icon">🔍</span>
+                    <span class="search-text" data-i18n="navigation.search">搜索</span>
+                    <span class="search-shortcut">Ctrl+K</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="site-content" id="main" role="main">
+        <section class="welcome-section">
+            <h2 class="welcome-title" data-i18n="welcome.title">加载中...</h2>
+            <p class="welcome-subtitle" data-i18n="welcome.subtitle">正在加载内容...</p>
+            
+            <p class="navigation-guide" data-i18n="welcome.navigationGuide">
+                正在从管理后台加载导航指南...
+            </p>
+            
+            <div class="personal-intro">
+                <p data-i18n="welcome.intro1">
+                    正在从管理后台加载个人介绍...
+                </p>
+                
+                <p data-i18n="welcome.intro2">
+                    正在从管理后台加载更多介绍内容...
+                </p>
+            </div>
+            
+            <div class="professional-highlights">
+                <h3 data-i18n="welcome.experienceTitle">专业经历</h3>
+                <div class="experience-grid">
+                    <div class="experience-item">
+                        <div class="company-logo">🏥</div>
+                        <div class="experience-details">
+                            <h4 class="current-role" data-i18n="welcome.currentRole">正在加载当前职位...</h4>
+                            <p class="current-company" data-i18n="welcome.currentCompany">正在加载公司信息...</p>
+                            <p class="current-desc" data-i18n="welcome.currentDesc">正在加载职位描述...</p>
+                        </div>
+                    </div>
+                    <div class="experience-item">
+                        <div class="company-logo">📊</div>
+                        <div class="experience-details">
+                            <h4 class="previous-role" data-i18n="welcome.previousRole">正在加载之前职位...</h4>
+                            <p class="previous-company" data-i18n="welcome.previousCompany">正在加载公司信息...</p>
+                            <p class="previous-desc" data-i18n="welcome.previousDesc">正在加载职位描述...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="community-interests">
+                <h3 data-i18n="welcome.communityTitle">Community & Interests</h3>
+                <p class="section-description" data-i18n="welcome.communityDesc">Active organizer in Shanghai's tech community and passionate about various interests</p>
+                <div class="interests-grid">
+                    <div class="interest-item">
+                        <div class="interest-icon">👥</div>
+                        <div class="interest-details">
+                            <h4 data-i18n="welcome.techCommunity">Tech Community</h4>
+                            <p data-i18n="welcome.techCommunityDesc">Organizer of Women Techmarkers, Devfest Shanghai, and various tech meetups</p>
+                            <div class="community-highlights">
+                                <span class="highlight-tag">Women Techmarkers</span>
+                                <span class="highlight-tag">Devfest Shanghai</span>
+                                <span class="highlight-tag">Google Developer Community</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="interest-item">
+                        <div class="interest-icon">🍳</div>
+                        <div class="interest-details">
+                            <h4 data-i18n="welcome.personalInterests">Personal Interests</h4>
+                            <p data-i18n="welcome.personalInterestsDesc">Food enthusiast, home cooking, sharing culinary experiences with friends</p>
+                            <div class="community-highlights">
+                                <span class="highlight-tag">Cooking</span>
+                                <span class="highlight-tag">Food Photography</span>
+                                <span class="highlight-tag">Culinary Exploration</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="contact-links">
+                <h3 data-i18n="welcome.connectTitle">Let's Connect</h3>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/%E6%99%B6%E6%99%B6-%E5%8D%95-20161841/" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="social-link linkedin"
+                       aria-label="Connect on LinkedIn">
+                        <span class="social-icon">💼</span>
+                        <span data-i18n="welcome.linkedinText">LinkedIn Profile</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="personal-image-placeholder">
+                <!-- Personal photo will be added here -->
+                <div class="image-placeholder" 
+                     aria-label="Personal photo placeholder" 
+                     data-i18n="welcome.photoPlaceholder"
+                     data-src="images/personal-photo.jpg"
+                     data-lazy="true">
+                    📸 Personal Photo
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Blog Section -->
+    <section class="blog-section" id="blog" role="region" aria-label="Blog posts">
+        <div class="section-container">
+            <header class="section-header">
+                <h2 class="section-title" data-i18n="blog.title">Blog Posts</h2>
+                <p class="section-subtitle" data-i18n="blog.subtitle">Thoughts, insights, and experiences from my journey in technology and development.</p>
+                
+                <!-- Language Toggle -->
+                <div class="language-toggle" role="group" aria-label="Language selection">
+                    <button class="lang-btn" data-lang="en" aria-pressed="false">English</button>
+                    <button class="lang-btn active" data-lang="zh" aria-pressed="true">中文</button>
+                </div>
+            </header>
+
+            <!-- Blog Filters -->
+            <div class="blog-filters">
+                <div class="filter-group">
+                    <label for="category-filter" class="filter-label" data-i18n="blog.filters.category">Category:</label>
+                    <select id="category-filter" class="filter-select">
+                        <option value="" data-i18n="blog.filters.allCategories">All Categories</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="tag-filter" class="filter-label" data-i18n="blog.filters.tag">Tag:</label>
+                    <select id="tag-filter" class="filter-select">
+                        <option value="" data-i18n="blog.filters.allTags">All Tags</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <button id="clear-filters" class="clear-filters-btn" data-i18n="blog.filters.clear">Clear Filters</button>
+                </div>
+            </div>
+
+            <!-- Blog Posts Grid -->
+            <div class="blog-posts-grid" id="blog-posts-container">
+                <!-- Blog posts will be dynamically loaded here -->
+                <div class="loading-message" id="loading-message">
+                    <div class="loading-spinner"></div>
+                    <p data-i18n="blog.loading">Loading blog posts...</p>
+                </div>
+            </div>
+
+            <!-- No Posts Message -->
+            <div class="no-posts-message" id="no-posts-message" style="display: none;">
+                <h3 data-i18n="blog.noPostsTitle">No posts found</h3>
+                <p data-i18n="blog.noPostsMessage">Try adjusting your filters or check back later for new content.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Post Detail Section -->
+    <section class="blog-post-detail" id="blog-post-detail" style="display: none;" role="article">
+        <div class="post-container">
+            <!-- Post Navigation -->
+            <nav class="post-navigation" aria-label="Post navigation">
+                <button class="back-to-blog-btn" id="back-to-blog" aria-label="Back to blog list">
+                    ← Back to Blog
+                </button>
+                <div class="post-nav-controls">
+                    <button class="prev-post-btn" id="prev-post" aria-label="Previous post" style="display: none;">
+                        ← Previous
+                    </button>
+                    <button class="next-post-btn" id="next-post" aria-label="Next post" style="display: none;">
+                        Next →
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Post Header -->
+            <header class="post-header">
+                <div class="post-meta-top">
+                    <a href="#" class="post-category-link" id="post-category"></a>
+                    <time class="post-date" id="post-date"></time>
+                </div>
+                
+                <h1 class="post-title" id="post-title"></h1>
+                
+                <div class="post-meta-bottom">
+                    <div class="post-author">
+                        <span class="author-label">By</span>
+                        <span class="author-name" id="post-author"></span>
+                    </div>
+                    <div class="post-reading-time">
+                        <span id="post-reading-time"></span> min read
+                    </div>
+                </div>
+                
+                <div class="post-tags" id="post-tags"></div>
+            </header>
+
+            <!-- Post Content -->
+            <main class="post-content">
+                <div class="post-body" id="post-body">
+                    <!-- Post content will be rendered here -->
+                </div>
+            </main>
+
+            <!-- Post Footer -->
+            <footer class="post-footer">
+                <div class="post-share">
+                    <h3>Share this post</h3>
+                    <div class="share-buttons">
+                        <button class="share-btn twitter-share" id="share-twitter" aria-label="Share on Twitter">
+                            🐦 Twitter
+                        </button>
+                        <button class="share-btn linkedin-share" id="share-linkedin" aria-label="Share on LinkedIn">
+                            💼 LinkedIn
+                        </button>
+                        <button class="share-btn copy-link" id="copy-link" aria-label="Copy link">
+                            🔗 Copy Link
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Related Posts -->
+                <div class="related-posts" id="related-posts" style="display: none;">
+                    <h3>Related Posts</h3>
+                    <div class="related-posts-grid" id="related-posts-container">
+                        <!-- Related posts will be rendered here -->
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    <!-- Privacy Policy Section -->
+    <section class="privacy-policy-section" id="privacy" role="region" aria-labelledby="privacy-title" style="display: none;">
+        <div class="section-container">
+            <header class="section-header">
+                <h2 class="section-title" id="privacy-title" data-i18n="privacy.title">Privacy Policy</h2>
+                <p class="section-subtitle" data-i18n="privacy.lastUpdated">Last updated: August 21, 2024</p>
+            </header>
+
+            <div class="legal-content">
+                <div class="legal-section">
+                    <h3 data-i18n="privacy.dataCollection.title">Data Collection</h3>
+                    <p data-i18n="privacy.dataCollection.content">
+                        This website is designed with privacy in mind. We collect minimal data and do not use tracking cookies or analytics that compromise your privacy. Any data collection is limited to:
+                    </p>
+                    <ul>
+                        <li data-i18n="privacy.dataCollection.item1">Basic server logs for security and performance monitoring</li>
+                        <li data-i18n="privacy.dataCollection.item2">Language preference stored locally in your browser</li>
+                        <li data-i18n="privacy.dataCollection.item3">No personal information is collected without explicit consent</li>
+                    </ul>
+                </div>
+
+                <div class="legal-section">
+                    <h3 data-i18n="privacy.cookies.title">Cookies and Local Storage</h3>
+                    <p data-i18n="privacy.cookies.content">
+                        This website uses minimal local storage to enhance your experience:
+                    </p>
+                    <ul>
+                        <li data-i18n="privacy.cookies.item1">Language preference to remember your chosen language</li>
+                        <li data-i18n="privacy.cookies.item2">No tracking cookies or third-party analytics</li>
+                        <li data-i18n="privacy.cookies.item3">You can clear this data anytime through your browser settings</li>
+                    </ul>
+                </div>
+
+                <div class="legal-section">
+                    <h3 data-i18n="privacy.thirdParty.title">Third-Party Services</h3>
+                    <p data-i18n="privacy.thirdParty.content">
+                        External links on this website may lead to third-party services with their own privacy policies. We are not responsible for the privacy practices of external websites.
+                    </p>
+                </div>
+
+                <div class="legal-section">
+                    <h3 data-i18n="privacy.contact.title">Contact</h3>
+                    <p data-i18n="privacy.contact.content">
+                        If you have any questions about this privacy policy, please contact me through the social media links provided on this website.
+                    </p>
+                </div>
+
+                <div class="legal-navigation">
+                    <button class="back-to-main-btn" onclick="showMainContent()" data-i18n="privacy.backToMain">← Back to Main</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Terms of Service Section -->
+    <section class="terms-section" id="terms" role="region" aria-labelledby="terms-title" style="display: none;">
+        <div class="section-container">
+            <header class="section-header">
+                <h2 class="section-title" id="terms-title" data-i18n="terms.title">Terms of Service</h2>
+                <p class="section-subtitle" data-i18n="terms.lastUpdated">Last updated: August 21, 2024</p>
+            </header>
+
+            <div class="legal-content">
+                <div class="legal-section">
+                    <h3 data-i18n="terms.usage.title">Website Usage</h3>
+                    <p data-i18n="terms.usage.content">
+                        This website is provided for informational and educational purposes. By accessing this website, you agree to use it responsibly and in accordance with applicable laws.
+                    </p>
+                </div>
+
+                <div class="legal-section">
+                    <h3 data-i18n="terms.content.title">Content and Intellectual Property</h3>
+                    <p data-i18n="terms.content.content">
+                        All content on this website, including blog posts, code examples, and design elements, is the intellectual property of the website owner unless otherwise stated. You may:
+                    </p>
+                    <ul>
+                        <li data-i18n="terms.content.item1">Read and share links to the content</li>
+                        <li data-i18n="terms.content.item2">Use code examples for learning and personal projects</li>
+                        <li data-i18n="terms.content.item3">Quote brief excerpts with proper attribution</li>
+                    </ul>
+                </div>
+
+                <div class="legal-section">
+                    <h3 data-i18n="terms.disclaimer.title">Disclaimer</h3>
+                    <p data-i18n="terms.disclaimer.content">
+                        The information on this website is provided "as is" without warranties of any kind. While I strive for accuracy, I cannot guarantee that all information is current, complete, or error-free.
+                    </p>
+                </div>
+
+                <div class="legal-section">
+                    <h3 data-i18n="terms.liability.title">Limitation of Liability</h3>
+                    <p data-i18n="terms.liability.content">
+                        The website owner shall not be liable for any damages arising from the use of this website or its content, including but not limited to direct, indirect, incidental, or consequential damages.
+                    </p>
+                </div>
+
+                <div class="legal-section">
+                    <h3 data-i18n="terms.changes.title">Changes to Terms</h3>
+                    <p data-i18n="terms.changes.content">
+                        These terms may be updated from time to time. Continued use of the website constitutes acceptance of any changes.
+                    </p>
+                </div>
+
+                <div class="legal-navigation">
+                    <button class="back-to-main-btn" onclick="showMainContent()" data-i18n="terms.backToMain">← Back to Main</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="footer-content">
+            <div class="legal-links">
+                <a href="#privacy" class="footer-link" onclick="showPrivacyPolicy(event)" data-i18n="footer.privacy">Privacy Policy</a>
+                <span class="separator">•</span>
+                <a href="#terms" class="footer-link" onclick="showTermsOfService(event)" data-i18n="footer.terms">Terms of Service</a>
+            </div>
+            
+            <!-- Language Switcher -->
+            <div class="language-switcher">
+                <span class="language-label" data-i18n="footer.language">Language:</span>
+                <div class="language-options">
+                    <button class="lang-option" data-lang="en">
+                        <span data-i18n="language.english">English</span>
+                    </button>
+                    <button class="lang-option" data-lang="zh">
+                        <span data-i18n="language.chinese">中文</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="tech-info">
+                <p data-i18n="footer.poweredBy">Built with HTML, CSS, and JavaScript</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/performance-optimizer.js" async></script>
+    <script src="js/accessibility-enhancer.js" defer></script>
+    <script src="js/navigation-enhancer.js" defer></script>
+    <script src="js/search-engine.js" defer></script>
+    <script src="js/seo-optimizer.js" defer></script>
+    <script src="js/api-client.js" defer></script>
+    <script src="js/content-loader.js" defer></script>
+    <script src="js/sync-manager.js" defer></script>
+    <script src="js/i18n.js" defer></script>
+    <script src="js/blog-models.js" defer></script>
+    <script src="js/blog-data.js" defer></script>
+    <script src="js/image-optimizer.js" defer></script>
+    <script src="js/device-compatibility.js" defer></script>
+    <script src="script-simple.js" defer></script>
+    <script src="test/integration-test.js" defer></script>
+</body>
+</html>

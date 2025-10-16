@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>得分系统测试 - 坦克大战</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        
+        .danger { background-color: #f44336; }
+        .danger:hover { background-color: #da190b; }
+        
+        .warning { background-color: #ff9800; }
+        .warning:hover { background-color: #e68900; }
+        
+        .info { background-color: #2196F3; }
+        .info:hover { background-color: #1976D2; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .current-score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .high-score {
+            font-size: 18px;
+            color: #ffd700;
+            margin-top: 10px;
+        }
+        
+        .lives-display {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .life-icon {
+            width: 30px;
+            height: 30px;
+            background-color: #ff4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .life-icon.lost {
+            background-color: #666;
+            opacity: 0.3;
+        }
+        
+        .life-icon.respawning {
+            background-color: #ffaa00;
+            animation: pulse 1s infinite;
+        }
+        
+        .life-icon.invulnerable {
+            background-color: #00ff00;
+            animation: glow 0.5s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #00ff00; }
+            100% { box-shadow: 0 0 20px #00ff00; }
+        }
+        
+        .combo-display {
+            background-color: #ff6b35;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin: 10px 0;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+        
+        .combo-display.active {
+            transform: scale(1.1);
+            animation: comboGlow 0.5s infinite alternate;
+        }
+        
+        @keyframes comboGlow {
+            0% { box-shadow: 0 0 10px #ff6b35; }
+            100% { box-shadow: 0 0 30px #ff6b35; }
+        }
+        
+        .multiplier-display {
+            background-color: #9b59b6;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            transition: width 0.3s ease;
+        }
+        
+        .events-list {
+            background-color: #1a1a2e;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #16213e;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .event-points {
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .event-type {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .game-state {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .state-indicator {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .state-playing { color: #27ae60; }
+        .state-paused { color: #f39c12; }
+        .state-game-over { color: #e74c3c; }
+        .state-menu { color: #3498db; }
+        
+        .accuracy-meter {
+            background-color: #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .accuracy-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#4CAF50 0deg, #4CAF50 var(--accuracy-deg), #333 var(--accuracy-deg), #333 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .accuracy-circle::before {
+            content: '';
+            width: 70px;
+            height: 70px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .accuracy-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            z-index: 1;
+        }
+        
+        .log {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 得分系统测试</h1>
+            <p>测试坦克大战游戏的得分、生命值和游戏状态管理系统</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🎮 游戏控制</h2>
+            <div class="controls">
+                <button id="startGame">开始游戏</button>
+                <button id="pauseGame">暂停游戏</button>
+                <button id="resumeGame">继续游戏</button>
+                <button id="gameOver" class="danger">游戏结束</button>
+                <button id="resetGame" class="warning">重置游戏</button>
+            </div>
+            
+            <div class="controls">
+                <button id="completeLevel" class="info">完成关卡</button>
+                <button id="nextLevel" class="info">下一关</button>
+                <button id="loseLife" class="danger">失去生命</button>
+                <button id="gainLife" class="info">获得生命</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>💰 得分显示</h2>
+            <div class="score-display">
+                <div class="current-score" id="currentScore">0</div>
+                <div class="high-score">最高分: <span id="highScore">0</span></div>
+            </div>
+            
+            <div class="combo-display" id="comboDisplay">
+                <div>连击: <span id="comboCount">0</span></div>
+                <div>最高连击: <span id="maxCombo">0</span></div>
+            </div>
+            
+            <div class="multiplier-display" id="multiplierDisplay">
+                <div>得分倍数: x<span id="multiplier">1.0</span></div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="multiplierProgress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>❤️ 生命值系统</h2>
+            <div class="lives-display" id="livesDisplay">
+                <!-- 生命图标将在这里动态生成 -->
+            </div>
+            
+            <div class="controls">
+                <div>重生进度: <span id="respawnProgress">0%</span></div>
+                <div>无敌时间: <span id="invulnerabilityTime">0%</span></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 精度统计</h2>
+            <div class="accuracy-meter">
+                <div class="accuracy-circle" id="accuracyCircle">
+                    <div class="accuracy-text" id="accuracyText">0%</div>
+                </div>
+                <div style="text-align: center; margin-top: 10px;">
+                    <div>命中: <span id="shotsHit">0</span> / 发射: <span id="shotsFired">0</span></div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="fireShot" class="info">发射子弹</button>
+                <button id="hitTarget" class="info">命中目标</button>
+                <button id="missTarget" class="warning">未命中</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎮 游戏状态</h2>
+            <div class="game-state">
+                <div class="state-indicator" id="gameStateIndicator">MENU</div>
+                <div>关卡: <span id="currentLevel">1</span> / <span id="maxLevel">20</span></div>
+                <div>敌人: <span id="enemiesDestroyed">0</span> / <span id="enemiesTotal">0</span></div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🏅 得分操作</h2>
+            <div class="controls">
+                <button id="destroyBasicEnemy" class="info">消灭基础敌人 (+100)</button>
+                <button id="destroyFastEnemy" class="info">消灭快速敌人 (+200)</button>
+                <button id="destroyHeavyEnemy" class="info">消灭重型敌人 (+300)</button>
+                <button id="destroyBoss" class="info">消灭Boss (+1000)</button>
+            </div>
+            
+            <div class="controls">
+                <button id="collectCommonPowerUp" class="info">收集普通道具 (+50)</button>
+                <button id="collectRarePowerUp" class="info">收集稀有道具 (+200)</button>
+                <button id="collectLegendaryPowerUp" class="info">收集传说道具 (+1000)</button>
+            </div>
+            
+            <div class="controls">
+                <button id="setMultiplier" class="warning">设置2倍得分 (10秒)</button>
+                <button id="addBonus" class="info">奖励得分 (+500)</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 统计信息</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="sessionScore">0</div>
+                    <div class="stat-label">本次得分</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="levelScore">0</div>
+                    <div class="stat-label">关卡得分</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalEvents">0</div>
+                    <div class="stat-label">得分事件</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="deathCount">0</div>
+                    <div class="stat-label">死亡次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="respawnCount">0</div>
+                    <div class="stat-label">重生次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="playTime">0s</div>
+                    <div class="stat-label">游戏时间</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📈 最近得分事件</h2>
+            <div id="recentEvents" class="events-list">
+                <p>暂无得分事件</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 系统日志</h2>
+            <div class="controls">
+                <button id="clearLog" class="warning">清除日志</button>
+                <button id="exportLog" class="info">导出日志</button>
+            </div>
+            <div id="systemLog" class="log"></div>
+        </div>
+    </div>
+
+    <!-- 引入依赖 -->
+    <script src="../js/entity-component-system.js"></script>
+    <script src="../js/score-system.js"></script>
+
+    <script>
+        // 得分系统测试类
+        class ScoreSystemTest {
+            constructor() {
+                this.scoreComponent = new ScoreSystem.ScoreComponent();
+                this.lifeSystem = new ScoreSystem.LifeSystem(3, 3000);
+                this.gameStateManager = new ScoreSystem.GameStateManager();
+                
+                this.updateInterval = null;
+                
+                this.initializeUI();
+                this.startUpdateLoop();
+                this.setupEventListeners();
+            }
+
+            initializeUI() {
+                // 绑定控制按钮
+                document.getElementById('startGame').addEventListener('click', () => this.startGame());
+                document.getElementById('pauseGame').addEventListener('click', () => this.pauseGame());
+                document.getElementById('resumeGame').addEventListener('click', () => this.resumeGame());
+                document.getElementById('gameOver').addEventListener('click', () => this.gameOver());
+                document.getElementById('resetGame').addEventListener('click', () => this.resetGame());
+                
+                document.getElementById('completeLevel').addEventListener('click', () => this.completeLevel());
+                document.getElementById('nextLevel').addEventListener('click', () => this.nextLevel());
+                document.getElementById('loseLife').addEventListener('click', () => this.loseLife());
+                document.getElementById('gainLife').addEventListener('click', () => this.gainLife());
+                
+                // 得分操作
+                document.getElementById('destroyBasicEnemy').addEventListener('click', () => 
+                    this.addScore(100, ScoreSystem.ScoreEventType.ENEMY_DESTROYED, { enemyType: 'ENEMY_BASIC' }));
+                document.getElementById('destroyFastEnemy').addEventListener('click', () => 
+                    this.addScore(200, ScoreSystem.ScoreEventType.ENEMY_DESTROYED, { enemyType: 'ENEMY_FAST' }));
+                document.getElementById('destroyHeavyEnemy').addEventListener('click', () => 
+                    this.addScore(300, ScoreSystem.ScoreEventType.ENEMY_DESTROYED, { enemyType: 'ENEMY_HEAVY' }));
+                document.getElementById('destroyBoss').addEventListener('click', () => 
+                    this.addScore(1000, ScoreSystem.ScoreEventType.ENEMY_DESTROYED, { enemyType: 'ENEMY_BOSS' }));
+                
+                document.getElementById('collectCommonPowerUp').addEventListener('click', () => 
+                    this.addScore(50, ScoreSystem.ScoreEventType.POWERUP_COLLECTED, { rarity: 'common' }));
+                document.getElementById('collectRarePowerUp').addEventListener('click', () => 
+                    this.addScore(200, ScoreSystem.ScoreEventType.POWERUP_COLLECTED, { rarity: 'rare' }));
+                document.getElementById('collectLegendaryPowerUp').addEventListener('click', () => 
+                    this.addScore(1000, ScoreSystem.ScoreEventType.POWERUP_COLLECTED, { rarity: 'legendary' }));
+                
+                document.getElementById('setMultiplier').addEventListener('click', () => this.setMultiplier());
+                document.getElementById('addBonus').addEventListener('click', () => this.addBonus());
+                
+                // 精度测试
+                document.getElementById('fireShot').addEventListener('click', () => this.fireShot());
+                document.getElementById('hitTarget').addEventListener('click', () => this.hitTarget());
+                document.getElementById('missTarget').addEventListener('click', () => this.missTarget());
+                
+                document.getElementById('clearLog').addEventListener('click', () => this.clearLog());
+                document.getElementById('exportLog').addEventListener('click', () => this.exportLog());
+                
+                this.log('得分系统测试初始化完成');
+            }
+
+            setupEventListeners() {
+                // 监听得分事件
+                window.addEventListener('scoreAdded', (e) => {
+                    const { points, eventType, details } = e.detail;
+                    this.log(`💰 得分事件: +${points} (${eventType})`);
+                    this.updateRecentEvents();
+                });
+                
+                // 监听游戏状态变更
+                window.addEventListener('gameStateChanged', (e) => {
+                    const { newState, oldState } = e.detail;
+                    this.log(`🎮 状态变更: ${oldState} -> ${newState}`);
+                });
+            }
+
+            startUpdateLoop() {
+                this.updateInterval = setInterval(() => {
+                    this.update();
+                    this.updateUI();
+                }, 100); // 100ms更新间隔
+            }
+
+            update() {
+                const deltaTime = 100;
+                
+                this.scoreComponent.update(deltaTime);
+                this.lifeSystem.update(deltaTime);
+                
+                // 更新游戏状态管理器的关卡数据
+                if (this.gameStateManager.gameState === 'PLAYING') {
+                    this.gameStateManager.sessionData.playTime = Date.now() - this.gameStateManager.sessionData.startTime;
+                }
+            }
+
+            updateUI() {
+                // 更新得分显示
+                const scoreStats = this.scoreComponent.getStats();
+                document.getElementById('currentScore').textContent = scoreStats.currentScore.toLocaleString();
+                document.getElementById('highScore').textContent = scoreStats.highScore.toLocaleString();
+                document.getElementById('comboCount').textContent = scoreStats.comboCount;
+                document.getElementById('maxCombo').textContent = scoreStats.maxCombo;
+                document.getElementById('multiplier').textContent = scoreStats.multiplier.toFixed(1);
+                
+                // 更新倍数进度条
+                const multiplierProgress = this.scoreComponent.multiplier > 1.0 ? 
+                    (1 - this.scoreComponent.multiplierTimer / this.scoreComponent.multiplierDuration) * 100 : 0;
+                document.getElementById('multiplierProgress').style.width = multiplierProgress + '%';
+                
+                // 更新连击显示
+                const comboDisplay = document.getElementById('comboDisplay');
+                if (scoreStats.comboCount > 0) {
+                    comboDisplay.classList.add('active');
+                } else {
+                    comboDisplay.classList.remove('active');
+                }
+                
+                // 更新生命值显示
+                this.updateLivesDisplay();
+                
+                // 更新精度显示
+                this.updateAccuracyDisplay();
+                
+                // 更新游戏状态显示
+                this.updateGameStateDisplay();
+                
+                // 更新统计信息
+                this.updateStats();
+            }
+
+            updateLivesDisplay() {
+                const livesDisplay = document.getElementById('livesDisplay');
+                const lifeStats = this.lifeSystem.getStats();
+                
+                livesDisplay.innerHTML = '';
+                
+                for (let i = 0; i < lifeStats.maxLives; i++) {
+                    const lifeIcon = document.createElement('div');
+                    lifeIcon.className = 'life-icon';
+                    lifeIcon.textContent = '❤️';
+                    
+                    if (i >= lifeStats.currentLives) {
+                        lifeIcon.classList.add('lost');
+                    } else if (lifeStats.isRespawning && i === lifeStats.currentLives - 1) {
+                        lifeIcon.classList.add('respawning');
+                    } else if (lifeStats.isInvulnerable && i === lifeStats.currentLives - 1) {
+                        lifeIcon.classList.add('invulnerable');
+                    }
+                    
+                    livesDisplay.appendChild(lifeIcon);
+                }
+                
+                // 更新重生和无敌进度
+                const respawnProgress = this.lifeSystem.getRespawnProgress() * 100;
+                const invulnerabilityProgress = this.lifeSystem.getInvulnerabilityProgress() * 100;
+                
+                document.getElementById('respawnProgress').textContent = respawnProgress.toFixed(0) + '%';
+                document.getElementById('invulnerabilityTime').textContent = invulnerabilityProgress.toFixed(0) + '%';
+            }
+
+            updateAccuracyDisplay() {
+                const scoreStats = this.scoreComponent.getStats();
+                const accuracy = scoreStats.accuracy * 100;
+                
+                document.getElementById('accuracyText').textContent = accuracy.toFixed(1) + '%';
+                document.getElementById('shotsHit').textContent = scoreStats.shotsHit;
+                document.getElementById('shotsFired').textContent = scoreStats.shotsFired;
+                
+                // 更新精度圆环
+                const accuracyCircle = document.getElementById('accuracyCircle');
+                accuracyCircle.style.setProperty('--accuracy-deg', (accuracy * 3.6) + 'deg');
+            }
+
+            updateGameStateDisplay() {
+                const gameStats = this.gameStateManager.getStats();
+                const stateIndicator = document.getElementById('gameStateIndicator');
+                
+                stateIndicator.textContent = gameStats.gameState;
+                stateIndicator.className = 'state-indicator state-' + gameStats.gameState.toLowerCase();
+                
+                document.getElementById('currentLevel').textContent = gameStats.currentLevel;
+                document.getElementById('maxLevel').textContent = this.gameStateManager.maxLevel;
+                document.getElementById('enemiesDestroyed').textContent = gameStats.levelData.enemiesDestroyed;
+                document.getElementById('enemiesTotal').textContent = gameStats.levelData.enemiesTotal;
+            }
+
+            updateStats() {
+                const scoreStats = this.scoreComponent.getStats();
+                const lifeStats = this.lifeSystem.getStats();
+                const gameStats = this.gameStateManager.getStats();
+                
+                document.getElementById('sessionScore').textContent = scoreStats.sessionScore.toLocaleString();
+                document.getElementById('levelScore').textContent = scoreStats.levelScore.toLocaleString();
+                document.getElementById('totalEvents').textContent = scoreStats.totalEvents;
+                document.getElementById('deathCount').textContent = lifeStats.deathCount;
+                document.getElementById('respawnCount').textContent = lifeStats.respawnCount;
+                
+                const playTime = Math.floor(gameStats.sessionData.playTime / 1000);
+                document.getElementById('playTime').textContent = playTime + 's';
+            }
+
+            updateRecentEvents() {
+                const eventsContainer = document.getElementById('recentEvents');
+                const recentEvents = this.scoreComponent.getRecentEvents(10);
+                
+                if (recentEvents.length === 0) {
+                    eventsContainer.innerHTML = '<p>暂无得分事件</p>';
+                    return;
+                }
+                
+                let html = '';
+                for (const event of recentEvents) {
+                    const timeAgo = Math.floor((Date.now() - event.timestamp) / 1000);
+                    html += `
+                        <div class="event-item">
+                            <div>
+                                <div class="event-points">+${event.points}</div>
+                                <div class="event-type">${event.eventType || '未知事件'}</div>
+                            </div>
+                            <div>${timeAgo}秒前</div>
+                        </div>
+                    `;
+                }
+                
+                eventsContainer.innerHTML = html;
+            }
+
+            // 游戏控制方法
+            startGame() {
+                this.gameStateManager.changeState('PLAYING');
+                this.gameStateManager.updateLevelData({
+                    enemiesTotal: 10,
+                    enemiesDestroyed: 0,
+                    timeLimit: 120000,
+                    timeRemaining: 120000
+                });
+                this.log('🎯 游戏开始');
+            }
+
+            pauseGame() {
+                if (this.gameStateManager.gameState === 'PLAYING') {
+                    this.gameStateManager.changeState('PAUSED');
+                    this.log('⏸️ 游戏暂停');
+                }
+            }
+
+            resumeGame() {
+                if (this.gameStateManager.gameState === 'PAUSED') {
+                    this.gameStateManager.changeState('PLAYING');
+                    this.log('▶️ 游戏继续');
+                }
+            }
+
+            gameOver() {
+                this.gameStateManager.changeState('GAME_OVER');
+                this.scoreComponent.gameOver(this.lifeSystem.currentLives);
+                this.log('💀 游戏结束');
+            }
+
+            resetGame() {
+                this.scoreComponent.reset();
+                this.lifeSystem = new ScoreSystem.LifeSystem(3, 3000);
+                this.gameStateManager.reset();
+                this.log('🔄 游戏重置');
+            }
+
+            completeLevel() {
+                const timeRemaining = 30; // 假设剩余30秒
+                const enemiesDestroyed = this.gameStateManager.levelData.enemiesTotal;
+                
+                this.scoreComponent.completeLevel(timeRemaining, enemiesDestroyed);
+                this.gameStateManager.changeState('LEVEL_COMPLETE');
+                this.log('🎉 关卡完成');
+            }
+
+            nextLevel() {
+                this.gameStateManager.onLevelComplete();
+                this.gameStateManager.changeState('PLAYING');
+                this.gameStateManager.updateLevelData({
+                    enemiesTotal: 10 + this.gameStateManager.currentLevel * 2,
+                    enemiesDestroyed: 0
+                });
+                this.log(`🚀 进入关卡 ${this.gameStateManager.currentLevel}`);
+            }
+
+            loseLife() {
+                if (this.lifeSystem.loseLife()) {
+                    this.gameStateManager.sessionData.totalDeaths++;
+                    
+                    if (this.lifeSystem.isDead()) {
+                        this.gameOver();
+                    }
+                }
+            }
+
+            gainLife() {
+                this.lifeSystem.gainLife();
+            }
+
+            // 得分操作方法
+            addScore(points, eventType, details) {
+                this.scoreComponent.addScore(points, eventType, details);
+                
+                // 模拟敌人被消灭
+                if (eventType === ScoreSystem.ScoreEventType.ENEMY_DESTROYED) {
+                    const levelData = this.gameStateManager.levelData;
+                    levelData.enemiesDestroyed++;
+                    this.gameStateManager.updateLevelData(levelData);
+                    
+                    // 检查关卡完成
+                    if (this.gameStateManager.checkLevelComplete()) {
+                        this.completeLevel();
+                    }
+                }
+            }
+
+            setMultiplier() {
+                this.scoreComponent.setMultiplier(2.0, 10000);
+                this.log('⚡ 设置2倍得分倍数');
+            }
+
+            addBonus() {
+                this.scoreComponent.addScore(500, ScoreSystem.ScoreEventType.BONUS_ACHIEVED);
+            }
+
+            // 精度测试方法
+            fireShot() {
+                this.scoreComponent.recordShot(false);
+                this.log('🔫 发射子弹');
+            }
+
+            hitTarget() {
+                this.scoreComponent.recordShot(true);
+                this.log('🎯 命中目标');
+            }
+
+            missTarget() {
+                this.scoreComponent.recordShot(false);
+                this.log('❌ 未命中目标');
+            }
+
+            log(message) {
+                const logElement = document.getElementById('systemLog');
+                const timestamp = new Date().toLocaleTimeString();
+                logElement.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+
+            clearLog() {
+                document.getElementById('systemLog').innerHTML = '';
+            }
+
+            exportLog() {
+                const logContent = document.getElementById('systemLog').textContent;
+                const blob = new Blob([logContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `score-test-log-${new Date().toISOString().slice(0, 19)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // 启动测试
+        let scoreTest;
+        window.addEventListener('load', () => {
+            scoreTest = new ScoreSystemTest();
+        });
+    </script>
+</body>
+</html>

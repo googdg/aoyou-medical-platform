@@ -1,0 +1,41 @@
+# WordPress 核心文件
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup-db/
+wp-content/advanced-cache.php
+wp-content/wp-cache-config.php
+
+# 数据库备份
+*.sql
+backups/
+
+# Docker 相关
+.env.local
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
+error_log
+access_log
+
+# 临时文件
+*.tmp
+*.temp
+
+# IDE 文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node.js (如果使用)
+node_modules/
+npm-debug.log*
+
+# 缓存文件
+wp-content/cache/
+wp-content/w3tc-config/

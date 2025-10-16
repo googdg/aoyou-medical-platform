@@ -1,0 +1,450 @@
+{
+  "en": {
+    "site": {
+      "title": "Stevn",
+      "tagline": "Mobile Healthcare Expert & Community Builder | Passionate about creating innovative digital health solutions and fostering tech communities.",
+      "description": "Personal blog and portfolio of Stevn - Product Manager specializing in digital healthcare, new media operations, and data analytics"
+    },
+    "navigation": {
+      "main": "Main",
+      "blog": "Blog",
+      "social": "Social Media",
+      "resources": "Resources",
+      "search": "Search"
+    },
+    "welcome": {
+      "title": "OH, HI. WELCOME!",
+      "subtitle": "I'm Stevn, nice to meet you!",
+      "navigationGuide": "Use the menu bar above to quickly navigate to different sections of the website. You'll find my blog posts, social media links, and useful resources.",
+      "intro1": "I'm deeply passionate about the mobile healthcare industry, with expertise in creating comprehensive digital health solutions. I've led products from concept to market, covering the entire patient journey - from online consultations and prescriptions to payment processing and hospital management systems. My work has helped scale platforms from 1 million to 8 million users.",
+      "intro2": "Beyond healthcare, I'm an active community organizer in Shanghai's tech scene. I dedicate my spare time to building platforms for entrepreneurs, product managers, developers, and designers. I've been involved in organizing events like Women Techmarkers, Devfest Shanghai, and various tech meetups, fostering connections and knowledge sharing in our vibrant tech community.",
+      "experienceTitle": "Professional Experience",
+      "currentRole": "Product Manager",
+      "currentCompany": "Health Apple Pediatrician (2023-Present)",
+      "currentDesc": "Leading new media operations and digital healthcare initiatives",
+      "previousRole": "Product Manager",
+      "previousCompany": "Various Healthcare Companies (2016-2023)",
+      "previousDesc": "9+ years in digital healthcare and product strategy",
+      "communityTitle": "Community & Interests",
+      "communityDesc": "Active organizer in Shanghai's tech community and passionate about various interests",
+      "techCommunity": "Tech Community",
+      "techCommunityDesc": "Organizer of Women Techmarkers, Devfest Shanghai, and various tech meetups",
+      "personalInterests": "Personal Interests",
+      "personalInterestsDesc": "Food enthusiast, home cooking, sharing culinary experiences with friends",
+      "connectTitle": "Let's Connect",
+      "linkedinText": "LinkedIn Profile",
+      "photoPlaceholder": "📸 Personal Photo"
+    },
+    "blog": {
+      "title": "Blog Posts",
+      "subtitle": "Insights from mobile healthcare innovation, community building, and product management experiences.",
+      "loading": "Loading blog posts...",
+      "noPostsTitle": "No posts found",
+      "noPostsMessage": "Try adjusting your filters or check back later for new content.",
+      "errorTitle": "Unable to load blog posts",
+      "errorMessage": "Please check your connection and try again later.",
+      "filters": {
+        "category": "Category:",
+        "tag": "Tag:",
+        "allCategories": "All Categories",
+        "allTags": "All Tags",
+        "clear": "Clear Filters"
+      },
+      "post": {
+        "by": "By",
+        "minRead": "min read",
+        "backToBlog": "← Back to Blog",
+        "previous": "← Previous",
+        "next": "Next →",
+        "shareTitle": "Share this post",
+        "shareTwitter": "🐦 Twitter",
+        "shareLinkedin": "💼 LinkedIn",
+        "shareCopy": "🔗 Copy Link",
+        "shareCopied": "✓ Copied!",
+        "relatedTitle": "Related Posts",
+        "postNotFoundTitle": "Post not found",
+        "postNotFoundMessage": "The requested blog post could not be found."
+      }
+    },
+    "search": {
+      "placeholder": "Search blog posts...",
+      "hint": "Start typing to search through blog posts...",
+      "minChars": "Type at least 2 characters to search...",
+      "noResults": "No results found",
+      "noResultsDesc": "Try different keywords or check your spelling.",
+      "resultsFor": "Found {count} result{plural} for \"{query}\"",
+      "searchTime": "({time}ms)",
+      "moreResults": "Showing top 20 results. {count} more results available.",
+      "refineSearch": "Try refining your search for more specific results.",
+      "recentSearches": "Recent Searches",
+      "searchTips": {
+        "title": "Search tips:",
+        "tip1": "Use different keywords",
+        "tip2": "Check spelling",
+        "tip3": "Try broader terms",
+        "tip4": "Search in different languages"
+      },
+      "shortcuts": {
+        "navigate": "Navigate",
+        "open": "Open",
+        "close": "Close"
+      },
+      "relevance": "Relevance:",
+      "readingTime": "{time} min read"
+    },
+    "social": {
+      "title": "Social Media & Contact",
+      "subtitle": "Connect with me on various platforms and stay updated with my latest content.",
+      "professional": "Professional",
+      "socialPlatforms": "Social",
+      "contact": "Contact",
+      "github": {
+        "desc": "Code repositories and projects"
+      },
+      "linkedin": {
+        "desc": "Professional network and career updates"
+      },
+      "twitter": {
+        "desc": "Thoughts and quick updates"
+      },
+      "mastodon": {
+        "desc": "Decentralized social networking"
+      },
+      "email": "Email",
+      "emailDesc": "Direct contact for collaborations",
+      "rss": "RSS Feed",
+      "rssDesc": "Subscribe to blog updates",
+      "contactForm": {
+        "title": "Send a Message",
+        "name": "Name",
+        "email": "Email",
+        "message": "Message",
+        "send": "Send Message"
+      }
+    },
+    "resources": {
+      "title": "Resources",
+      "subtitle": "Useful tools, links, and recommendations that I find valuable in my work and learning journey.",
+      "visitLink": "Visit →",
+      "development": {
+        "title": "Development Tools",
+        "vscode": "My go-to code editor with excellent extensions and customization options.",
+        "github": "Essential platform for version control, collaboration, and project hosting.",
+        "docker": "Containerization platform that simplifies development and deployment workflows."
+      },
+      "learning": {
+        "title": "Learning Resources",
+        "mdn": "Comprehensive documentation for web technologies and standards.",
+        "stackoverflow": "The go-to community for programming questions and solutions.",
+        "freecodecamp": "Free coding bootcamp with hands-on projects and certifications."
+      },
+      "design": {
+        "title": "Design & UI",
+        "figma": "Collaborative design tool for creating user interfaces and prototypes.",
+        "unsplash": "High-quality free photos for web projects and design work.",
+        "googlefonts": "Free web fonts that are easy to use and integrate into projects."
+      },
+      "productivity": {
+        "title": "Productivity",
+        "notion": "All-in-one workspace for notes, tasks, and project management.",
+        "todoist": "Task management app that helps organize projects and deadlines.",
+        "rescuetime": "Time tracking tool that provides insights into digital habits and productivity."
+      },
+      "books": {
+        "title": "Recommended Books",
+        "cleancode": "Essential principles for writing maintainable and readable code.",
+        "pragmatic": "Timeless tips for becoming a better programmer and problem solver.",
+        "ydkjs": "Deep dive into JavaScript fundamentals and advanced concepts."
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: August 21, 2024",
+      "dataCollection": {
+        "title": "Data Collection",
+        "content": "This website is designed with privacy in mind. We collect minimal data and do not use tracking cookies or analytics that compromise your privacy. Any data collection is limited to:",
+        "item1": "Basic server logs for security and performance monitoring",
+        "item2": "Language preference stored locally in your browser",
+        "item3": "No personal information is collected without explicit consent"
+      },
+      "cookies": {
+        "title": "Cookies and Local Storage",
+        "content": "This website uses minimal local storage to enhance your experience:",
+        "item1": "Language preference to remember your chosen language",
+        "item2": "No tracking cookies or third-party analytics",
+        "item3": "You can clear this data anytime through your browser settings"
+      },
+      "thirdParty": {
+        "title": "Third-Party Services",
+        "content": "External links on this website may lead to third-party services with their own privacy policies. We are not responsible for the privacy practices of external websites."
+      },
+      "contact": {
+        "title": "Contact",
+        "content": "If you have any questions about this privacy policy, please contact me through the social media links provided on this website."
+      },
+      "backToMain": "← Back to Main"
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated: August 21, 2024",
+      "usage": {
+        "title": "Website Usage",
+        "content": "This website is provided for informational and educational purposes. By accessing this website, you agree to use it responsibly and in accordance with applicable laws."
+      },
+      "content": {
+        "title": "Content and Intellectual Property",
+        "content": "All content on this website, including blog posts, code examples, and design elements, is the intellectual property of the website owner unless otherwise stated. You may:",
+        "item1": "Read and share links to the content",
+        "item2": "Use code examples for learning and personal projects",
+        "item3": "Quote brief excerpts with proper attribution"
+      },
+      "disclaimer": {
+        "title": "Disclaimer",
+        "content": "The information on this website is provided \"as is\" without warranties of any kind. While I strive for accuracy, I cannot guarantee that all information is current, complete, or error-free."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "content": "The website owner shall not be liable for any damages arising from the use of this website or its content, including but not limited to direct, indirect, incidental, or consequential damages."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "content": "These terms may be updated from time to time. Continued use of the website constitutes acceptance of any changes."
+      },
+      "backToMain": "← Back to Main"
+    },
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "poweredBy": "Built with HTML, CSS, and JavaScript",
+      "language": "Language"
+    },
+    "language": {
+      "english": "English",
+      "chinese": "中文"
+    }
+  },
+  "zh": {
+    "site": {
+      "title": "Stevn",
+      "tagline": "移动医疗专家 & 社区建设者 | 热衷于创造创新数字医疗解决方案和促进技术社区发展。",
+      "description": "Stevn的个人博客和作品集 - 专注于数字医疗、新媒体运营和数据分析的产品经理"
+    },
+    "navigation": {
+      "main": "首页",
+      "blog": "博客",
+      "social": "社交媒体",
+      "resources": "资源",
+      "search": "搜索"
+    },
+    "welcome": {
+      "title": "嗨，欢迎！",
+      "subtitle": "我是Stevn，很高兴认识你！",
+      "navigationGuide": "使用上方的菜单栏快速导航到网站的不同部分。您可以找到我的博客文章、社交媒体链接和有用的资源。",
+      "intro1": "我对移动医疗行业有着深刻的认识，目标是让国人在健康就诊服务环节中体验爽。我专注于构建覆盖患者从入院到出院全流程的数字医疗产品，包括预约、挂号、导诊、排队候诊、咨询支付、报告查询、住院费用清单等一系列产品逻辑和模块设计，见证产品从第1用户到800万用户的快速增长过程。",
+      "intro2": "作为上海谷歌开发者社区的核心组织者，我会利用业余时间为创业者、产品经理、技术开发、设计师们搭建自由交流的平台，喜欢研究及体验各种各样的新鲜事物。我主导并参与了2017~2019年三届的Women Techmarkers上海女性开发者大会、2015~2019年5届Devfest上海谷歌开发者大会等多个技术社区活动。",
+      "experienceTitle": "专业经历",
+      "currentRole": "产品经理",
+      "currentCompany": "小苹果昆育互联网医院 (2023-至今)",
+      "currentDesc": "负责新媒体运营和数字医疗业务",
+      "previousRole": "产品经理",
+      "previousCompany": "多家医疗公司 (2016-2023)",
+      "previousDesc": "9年以上数字医疗和产品策略经验",
+      "communityTitle": "社区活动与兴趣爱好",
+      "communityDesc": "上海技术社区的活跃组织者，对各种兴趣爱好充满热情",
+      "techCommunity": "技术社区",
+      "techCommunityDesc": "Women Techmarkers、Devfest上海等技术大会的组织者",
+      "personalInterests": "个人兴趣",
+      "personalInterestsDesc": "美食爱好者，热爱下厨房亲自制作美食，与身边的亲朋好友品尝",
+      "connectTitle": "联系我",
+      "linkedinText": "LinkedIn 档案",
+      "photoPlaceholder": "📸 个人照片"
+    },
+    "blog": {
+      "title": "博客文章",
+      "subtitle": "来自移动医疗创新、社区建设和产品管理经验的见解分享。",
+      "loading": "正在加载博客文章...",
+      "noPostsTitle": "未找到文章",
+      "noPostsMessage": "请尝试调整筛选条件或稍后查看新内容。",
+      "errorTitle": "无法加载博客文章",
+      "errorMessage": "请检查您的网络连接并稍后重试。",
+      "filters": {
+        "category": "分类：",
+        "tag": "标签：",
+        "allCategories": "所有分类",
+        "allTags": "所有标签",
+        "clear": "清除筛选"
+      },
+      "post": {
+        "by": "作者",
+        "minRead": "分钟阅读",
+        "backToBlog": "← 返回博客",
+        "previous": "← 上一篇",
+        "next": "下一篇 →",
+        "shareTitle": "分享这篇文章",
+        "shareTwitter": "🐦 Twitter",
+        "shareLinkedin": "💼 LinkedIn",
+        "shareCopy": "🔗 复制链接",
+        "shareCopied": "✓ 已复制！",
+        "relatedTitle": "相关文章",
+        "postNotFoundTitle": "文章未找到",
+        "postNotFoundMessage": "请求的博客文章未找到。"
+      }
+    },
+    "search": {
+      "placeholder": "搜索博客文章...",
+      "hint": "开始输入以搜索博客文章...",
+      "minChars": "请输入至少2个字符进行搜索...",
+      "noResults": "未找到结果",
+      "noResultsDesc": "请尝试不同的关键词或检查拼写。",
+      "resultsFor": "为 \"{query}\" 找到 {count} 个结果",
+      "searchTime": "({time}毫秒)",
+      "moreResults": "显示前20个结果。还有 {count} 个结果可用。",
+      "refineSearch": "尝试细化搜索以获得更具体的结果。",
+      "recentSearches": "最近搜索",
+      "searchTips": {
+        "title": "搜索提示：",
+        "tip1": "使用不同的关键词",
+        "tip2": "检查拼写",
+        "tip3": "尝试更广泛的术语",
+        "tip4": "在不同语言中搜索"
+      },
+      "shortcuts": {
+        "navigate": "导航",
+        "open": "打开",
+        "close": "关闭"
+      },
+      "relevance": "相关性：",
+      "readingTime": "{time} 分钟阅读"
+    },
+    "social": {
+      "title": "社交媒体与联系",
+      "subtitle": "在各种平台上与我联系，获取我的最新内容更新。",
+      "professional": "专业平台",
+      "socialPlatforms": "社交平台",
+      "contact": "联系方式",
+      "github": {
+        "desc": "代码仓库和项目"
+      },
+      "linkedin": {
+        "desc": "专业网络和职业更新"
+      },
+      "twitter": {
+        "desc": "想法和快速更新"
+      },
+      "mastodon": {
+        "desc": "去中心化社交网络"
+      },
+      "email": "邮箱",
+      "emailDesc": "合作联系方式",
+      "rss": "RSS订阅",
+      "rssDesc": "订阅博客更新",
+      "contactForm": {
+        "title": "发送消息",
+        "name": "姓名",
+        "email": "邮箱",
+        "message": "消息",
+        "send": "发送消息"
+      }
+    },
+    "resources": {
+      "title": "资源",
+      "subtitle": "在我的工作和学习旅程中发现有价值的有用工具、链接和推荐。",
+      "visitLink": "访问 →",
+      "development": {
+        "title": "开发工具",
+        "vscode": "我首选的代码编辑器，具有出色的扩展和自定义选项。",
+        "github": "版本控制、协作和项目托管的必备平台。",
+        "docker": "简化开发和部署工作流程的容器化平台。"
+      },
+      "learning": {
+        "title": "学习资源",
+        "mdn": "Web技术和标准的综合文档。",
+        "stackoverflow": "编程问题和解决方案的首选社区。",
+        "freecodecamp": "免费编程训练营，提供实践项目和认证。"
+      },
+      "design": {
+        "title": "设计与UI",
+        "figma": "用于创建用户界面和原型的协作设计工具。",
+        "unsplash": "为Web项目和设计工作提供高质量免费照片。",
+        "googlefonts": "易于使用并集成到项目中的免费Web字体。"
+      },
+      "productivity": {
+        "title": "生产力工具",
+        "notion": "笔记、任务和项目管理的一体化工作空间。",
+        "todoist": "帮助组织项目和截止日期的任务管理应用。",
+        "rescuetime": "提供数字习惯和生产力洞察的时间跟踪工具。"
+      },
+      "books": {
+        "title": "推荐书籍",
+        "cleancode": "编写可维护和可读代码的基本原则。",
+        "pragmatic": "成为更好程序员和问题解决者的永恒技巧。",
+        "ydkjs": "深入了解JavaScript基础和高级概念。"
+      }
+    },
+    "privacy": {
+      "title": "隐私政策",
+      "lastUpdated": "最后更新：2024年8月21日",
+      "dataCollection": {
+        "title": "数据收集",
+        "content": "本网站在设计时考虑了隐私保护。我们收集的数据极少，不使用跟踪Cookie或损害您隐私的分析工具。任何数据收集仅限于：",
+        "item1": "用于安全和性能监控的基本服务器日志",
+        "item2": "存储在您浏览器本地的语言偏好",
+        "item3": "未经明确同意不收集个人信息"
+      },
+      "cookies": {
+        "title": "Cookie和本地存储",
+        "content": "本网站使用最少的本地存储来增强您的体验：",
+        "item1": "语言偏好以记住您选择的语言",
+        "item2": "无跟踪Cookie或第三方分析",
+        "item3": "您可以随时通过浏览器设置清除这些数据"
+      },
+      "thirdParty": {
+        "title": "第三方服务",
+        "content": "本网站上的外部链接可能导向具有自己隐私政策的第三方服务。我们不对外部网站的隐私做法负责。"
+      },
+      "contact": {
+        "title": "联系方式",
+        "content": "如果您对此隐私政策有任何疑问，请通过本网站提供的社交媒体链接联系我。"
+      },
+      "backToMain": "← 返回主页"
+    },
+    "terms": {
+      "title": "服务条款",
+      "lastUpdated": "最后更新：2024年8月21日",
+      "usage": {
+        "title": "网站使用",
+        "content": "本网站仅供信息和教育目的。通过访问本网站，您同意负责任地使用它并遵守适用法律。"
+      },
+      "content": {
+        "title": "内容和知识产权",
+        "content": "本网站上的所有内容，包括博客文章、代码示例和设计元素，除非另有说明，均为网站所有者的知识产权。您可以：",
+        "item1": "阅读并分享内容链接",
+        "item2": "将代码示例用于学习和个人项目",
+        "item3": "在适当署名的情况下引用简短摘录"
+      },
+      "disclaimer": {
+        "title": "免责声明",
+        "content": "本网站上的信息按"现状"提供，不提供任何形式的保证。虽然我努力确保准确性，但不能保证所有信息都是最新、完整或无错误的。"
+      },
+      "liability": {
+        "title": "责任限制",
+        "content": "网站所有者不对因使用本网站或其内容而产生的任何损害承担责任，包括但不限于直接、间接、偶然或后果性损害。"
+      },
+      "changes": {
+        "title": "条款变更",
+        "content": "这些条款可能会不时更新。继续使用网站即表示接受任何更改。"
+      },
+      "backToMain": "← 返回主页"
+    },
+    "footer": {
+      "privacy": "隐私政策",
+      "terms": "服务条款",
+      "poweredBy": "使用HTML、CSS和JavaScript构建",
+      "language": "语言"
+    },
+    "language": {
+      "english": "English",
+      "chinese": "中文"
+    }
+  }
+}

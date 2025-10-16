@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>战斗系统测试 - Combat System Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #combatCanvas {
+            border: 2px solid #333;
+            background: #000;
+        }
+        .controls {
+            margin: 10px 0;
+        }
+        .combat-info {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .combat-stats {
+            font-family: monospace;
+            font-size: 12px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .damage-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .damage-sample {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .damage-color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚔️ 战斗系统测试</h1>
+    
+    <div class="test-container">
+        <h2>📋 测试结果</h2>
+        <div id="testResults"></div>
+        <button onclick="runAllTests()">🚀 运行所有测试</button>
+        <button onclick="clearResults()">🧹 清除结果</button>
+    </div>
+
+    <div class="test-container">
+        <h2>🎮 战斗可视化测试</h2>
+        <canvas id="combatCanvas" width="800" height="600"></canvas>
+        <div class="controls">
+            <button onclick="createTestTanks()">🚗 创建测试坦克</button>
+            <button onclick="testTankCollision()">💥 测试坦克碰撞</button>
+            <button onclick="testBulletDamage()">🎯 测试子弹伤害</button>
+            <button onclick="testExplosionDamage()">💣 测试爆炸伤害</button>
+            <button onclick="showDamageNumbers()">🔢 显示伤害数字</button>
+        </div>
+        <div class="controls">
+            <button onclick="testSpatialGrid()">🗂️ 测试空间网格</button>
+            <button onclick="testCollisionDetection()">🔍 测试碰撞检测</button>
+            <button onclick="resetCombatStats()">📊 重置统计</button>
+            <button onclick="clearAll()">🧹 清除所有</button>
+        </div>
+        <div class="controls">
+            <p><strong>说明：</strong> 创建坦克后可以测试各种战斗功能</p>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>📊 战斗信息</h2>
+        <div class="combat-info" id="combatInfo">
+            <p>坦克数量: <span id="tankCount">0</span></p>
+            <p>子弹数量: <span id="bulletCount">0</span></p>
+            <p>伤害数字: <span id="damageNumberCount">0</span></p>
+        </div>
+        
+        <h3>伤害类型</h3>
+        <div class="damage-types">
+            <div class="damage-sample">
+                <div class="damage-color" style="background: #FFD700;"></div>
+                <span>子弹伤害</span>
+            </div>
+            <div class="damage-sample">
+                <div class="damage-color" style="background: #FF4500;"></div>
+                <span>爆炸伤害</span>
+            </div>
+            <div class="damage-sample">
+                <div class="damage-color" style="background: #FFFFFF;"></div>
+                <span>碰撞伤害</span>
+            </div>
+            <div class="damage-sample">
+                <div class="damage-color" style="background: #FF0000;"></div>
+                <span>环境伤害</span>
+            </div>
+        </div>
+        
+        <h3>战斗统计</h3>
+        <div class="combat-stats" id="combatStats">
+            等待战斗数据...
+        </div>
+    </div>
+
+    <!-- 引入依赖 -->
+    <script src="../js/entity-component-system.js"></script>
+    <script src="../js/map-system.js"></script>
+    <script src="../js/tank-system.js"></script>
+    <script src="../js/bullet-system.js"></script>
+    <script src="../js/ai-system.js"></script>
+    <script src="../js/combat-system.js"></script>
+    
+    <script>
+        // 测试管理器
+        class CombatTestManager {
+            constructor() {
+                this.results = [];
+                this.entityManager = new ECS.EntityManager();
+                this.tankManager = new TankSystem.TankManager(this.entityManager);
+                this.fireSystem = new BulletSystem.FireSystem();
+                this.combatManager = new CombatSystem.CombatManager(this.entityManager);
+                this.damageNumberSystem = new CombatSystem.DamageNumberSystem();
+                this.canvas = document.getElementById('combatCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.imageSmoothingEnabled = false;
+                
+                // 创建简单地图
+                this.gameMap = new MapSystem.GameMap(25, 19, 32);
+                this.setupTestMap();
+                
+                // 设置全局引用
+                window.game = {
+                    entityManager: this.entityManager,
+                    canvas: this.canvas,
+                    currentMap: this.gameMap,
+                    inputManager: { isKeyDown: () => false, isKeyPressed: () => false },
+                    createBullet: (bulletData) => this.createBullet(bulletData),
+                    createExplosion: (x, y, radius) => this.createExplosion(x, y, radius),
+                    onPlayerTankDestroyed: (tank) => console.log('玩家坦克被摧毁'),
+                    onEnemyTankDestroyed: (tank) => console.log('敌方坦克被摧毁')
+                };
+                
+                this.setupCombatEventListeners();
+                this.startRenderLoop();
+            }
+
+            setupTestMap() {
+                // 创建边框
+                this.gameMap.drawBorder(MapSystem.TileType.STEEL);
+                
+                // 添加一些障碍物
+                for (let i = 0; i < 10; i++) {
+                    const x = Math.floor(Math.random() * (this.gameMap.width - 4)) + 2;
+                    const y = Math.floor(Math.random() * (this.gameMap.height - 4)) + 2;
+                    this.gameMap.setTile(x, y, MapSystem.TileType.BRICK);
+                }
+            }
+
+            setupCombatEventListeners() {
+                // 监听伤害事件
+                this.combatManager.addEventListener(CombatSystem.CombatEvent.DAMAGE_DEALT, (data) => {
+                    const transform = data.target.getComponent('Transform');
+                    if (transform) {
+                        this.damageNumberSystem.showDamage(
+                            transform.x, 
+                            transform.y - 20, 
+                            data.damage, 
+                            data.damageType
+                        );
+                    }
+                    console.log('💥 伤害事件:', data.damage, data.damageType);
+                });
+                
+                // 监听其他战斗事件
+                this.combatManager.addEventListener(CombatSystem.CombatEvent.TANK_DESTROYED, (data) => {
+                    console.log('🔥 坦克摧毁事件');
+                });
+                
+                this.combatManager.addEventListener(CombatSystem.CombatEvent.COLLISION_OCCURRED, (data) => {
+                    console.log('💥 碰撞事件:', data.type);
+                });
+            }
+
+            createBullet(bulletData) {
+                const bullet = this.fireSystem.createBullet(bulletData);
+                this.entityManager.addEntity(bullet);
+                
+                // 简单的边界检查
+                const originalUpdate = bullet.update.bind(bullet);
+                bullet.update = (deltaTime) => {
+                    originalUpdate(deltaTime);
+                    
+                    const transform = bullet.getComponent('Transform');
+                    if (transform) {
+                        if (transform.x < 0 || transform.x > this.canvas.width ||
+                            transform.y < 0 || transform.y > this.canvas.height) {
+                            this.entityManager.removeEntity(bullet);
+                        }
+                    }
+                };
+                
+                return bullet;
+            }
+
+            createExplosion(x, y, radius = 50) {
+                const explosion = new ECS.Entity('Explosion');
+                explosion.addComponent(new ECS.Transform(x, y, 0));
+                explosion.addComponent(new BulletSystem.Explosion(radius, 1000));
+                explosion.addComponent(new BulletSystem.ExplosionRenderer());
+                explosion.addTag('explosion');
+                this.entityManager.addEntity(explosion);
+                return explosion;
+            }
+
+            // 添加测试结果
+            addResult(testName, passed, message = '') {
+                this.results.push({
+                    name: testName,
+                    passed: passed,
+                    message: message,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                this.updateResultsDisplay();
+            }
+
+            // 更新结果显示
+            updateResultsDisplay() {
+                const container = document.getElementById('testResults');
+                container.innerHTML = '';
+                
+                this.results.forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = `test-result ${result.passed ? 'test-pass' : 'test-fail'}`;
+                    div.innerHTML = `
+                        <strong>${result.passed ? '✅' : '❌'} ${result.name}</strong>
+                        <br><small>${result.timestamp}</small>
+                        ${result.message ? `<br>${result.message}` : ''}
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            // 清除结果
+            clearResults() {
+                this.results = [];
+                this.updateResultsDisplay();
+            }
+
+            // 开始渲染循环
+            startRenderLoop() {
+                const render = () => {
+                    this.update();
+                    this.render();
+                    this.updateInfo();
+                    requestAnimationFrame(render);
+                };
+                render();
+            }
+
+            // 更新
+            update() {
+                this.entityManager.update(16);
+                this.fireSystem.update(16);
+                this.combatManager.update(16);
+                this.damageNumberSystem.update(16);
+            }
+
+            // 渲染
+            render() {
+                // 清空画布
+                this.ctx.fillStyle = '#111';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 渲染地图
+                this.gameMap.render(this.ctx);
+                
+                // 渲染所有实体
+                this.entityManager.render(this.ctx);
+                
+                // 渲染伤害数字
+                this.damageNumberSystem.render(this.ctx);
+                
+                // 渲染碰撞信息
+                this.renderCollisionInfo();
+            }
+
+            // 渲染碰撞信息
+            renderCollisionInfo() {
+                const collisions = this.combatManager.collisionDetector.collisionPairs;
+                
+                this.ctx.strokeStyle = '#FF0000';
+                this.ctx.lineWidth = 2;
+                
+                for (const collision of collisions) {
+                    const transformA = collision.entityA.getComponent('Transform');
+                    const transformB = collision.entityB.getComponent('Transform');
+                    
+                    if (transformA && transformB) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(transformA.x, transformA.y);
+                        this.ctx.lineTo(transformB.x, transformB.y);
+                        this.ctx.stroke();
+                    }
+                }
+            }
+
+            // 更新信息显示
+            updateInfo() {
+                const tanks = this.entityManager.getEntitiesByTag('tank');
+                const bullets = this.entityManager.getEntitiesByTag('bullet');
+                
+                document.getElementById('tankCount').textContent = tanks.length;
+                document.getElementById('bulletCount').textContent = bullets.length;
+                document.getElementById('damageNumberCount').textContent = this.damageNumberSystem.damageNumbers.length;
+                
+                // 更新战斗统计
+                this.updateCombatStats();
+            }
+
+            // 更新战斗统计显示
+            updateCombatStats() {
+                const statsEl = document.getElementById('combatStats');
+                const stats = this.combatManager.getStats();
+                const recentEvents = this.combatManager.getRecentEvents(5);
+                
+                let statsText = `总伤害: ${stats.totalDamageDealt}\n`;
+                statsText += `坦克摧毁: ${stats.tanksDestroyed}\n`;
+                statsText += `子弹击中: ${stats.bulletsHit}\n`;
+                statsText += `爆炸次数: ${stats.explosions}\n`;
+                statsText += `碰撞次数: ${stats.collisions}\n\n`;
+                
+                statsText += '最近事件:\n';
+                recentEvents.forEach((event, index) => {
+                    const time = new Date(event.timestamp).toLocaleTimeString();
+                    statsText += `${index + 1}. [${time}] ${event.type}\n`;
+                });
+                
+                statsEl.textContent = statsText;
+            }
+        }
+
+        // 全局测试管理器
+        let testManager;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            testManager = new CombatTestManager();
+            console.log('⚔️ 战斗测试管理器初始化完成');
+        });
+
+        // 测试函数
+        function testCombatManager() {
+            try {
+                const combatManager = new CombatSystem.CombatManager(testManager.entityManager);
+                
+                const hasCollisionDetector = combatManager.collisionDetector !== null;
+                const hasStats = typeof combatManager.getStats === 'function';
+                const hasEventSystem = typeof combatManager.addEventListener === 'function';
+                
+                const passed = hasCollisionDetector && hasStats && hasEventSystem;
+                testManager.addResult('战斗管理器测试', passed, 
+                    passed ? '战斗管理器创建成功' : '战斗管理器创建失败');
+                return passed;
+            } catch (error) {
+                testManager.addResult('战斗管理器测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testCollisionDetector() {
+            try {
+                const detector = new CombatSystem.AdvancedCollisionDetector();
+                
+                const hasSpatialGrid = detector.spatialGrid !== null;
+                const hasDetectMethod = typeof detector.detectCollisions === 'function';
+                const hasPreciseCheck = typeof detector.preciseCollisionCheck === 'function';
+                
+                const passed = hasSpatialGrid && hasDetectMethod && hasPreciseCheck;
+                testManager.addResult('碰撞检测器测试', passed,
+                    passed ? '碰撞检测器功能完整' : '碰撞检测器功能缺失');
+                return passed;
+            } catch (error) {
+                testManager.addResult('碰撞检测器测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testSpatialGridSystem() {
+            try {
+                const grid = new CombatSystem.SpatialGrid(64);
+                
+                // 创建测试实体
+                const entity = new ECS.Entity('TestEntity');
+                entity.addComponent(new ECS.Transform(100, 100));
+                entity.addComponent(new ECS.Collider(32, 32));
+                
+                grid.insert(entity, 100, 100, 32, 32);
+                const nearby = grid.getNearby(entity);
+                
+                const passed = Array.isArray(nearby);
+                testManager.addResult('空间网格测试', passed,
+                    passed ? '空间网格功能正常' : '空间网格功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('空间网格测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testDamageSystem() {
+            try {
+                const combatManager = new CombatSystem.CombatManager(testManager.entityManager);
+                
+                // 创建测试坦克
+                const tank = new ECS.Entity('TestTank');
+                tank.addComponent(new ECS.Transform(100, 100));
+                tank.addComponent(new ECS.Health(3));
+                
+                // 测试伤害
+                const damaged = combatManager.dealDamage(tank, 1, CombatSystem.DamageType.BULLET);
+                const health = tank.getComponent('Health');
+                
+                const passed = damaged && health.currentHealth === 2;
+                testManager.addResult('伤害系统测试', passed,
+                    passed ? '伤害系统功能正常' : '伤害系统功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('伤害系统测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testDamageNumbers() {
+            try {
+                const damageSystem = new CombatSystem.DamageNumberSystem();
+                
+                damageSystem.showDamage(100, 100, 50, CombatSystem.DamageType.BULLET);
+                const hasNumbers = damageSystem.damageNumbers.length > 0;
+                
+                damageSystem.update(16);
+                const canUpdate = typeof damageSystem.update === 'function';
+                
+                const passed = hasNumbers && canUpdate;
+                testManager.addResult('伤害数字测试', passed,
+                    passed ? '伤害数字系统正常' : '伤害数字系统异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('伤害数字测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testCombatEvents() {
+            try {
+                const combatManager = new CombatSystem.CombatManager(testManager.entityManager);
+                
+                let eventTriggered = false;
+                combatManager.addEventListener(CombatSystem.CombatEvent.DAMAGE_DEALT, () => {
+                    eventTriggered = true;
+                });
+                
+                // 触发事件
+                combatManager.addCombatEvent(CombatSystem.CombatEvent.DAMAGE_DEALT, { damage: 10 });
+                
+                const passed = eventTriggered;
+                testManager.addResult('战斗事件测试', passed,
+                    passed ? '战斗事件系统正常' : '战斗事件系统异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('战斗事件测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        // 运行所有测试
+        function runAllTests() {
+            testManager.clearResults();
+            
+            const tests = [
+                testCombatManager,
+                testCollisionDetector,
+                testSpatialGridSystem,
+                testDamageSystem,
+                testDamageNumbers,
+                testCombatEvents
+            ];
+            
+            let passedCount = 0;
+            tests.forEach(test => {
+                if (test()) passedCount++;
+            });
+            
+            const allPassed = passedCount === tests.length;
+            testManager.addResult('总体测试结果', allPassed,
+                `${passedCount}/${tests.length} 个测试通过`);
+            
+            console.log(`⚔️ 战斗系统测试完成: ${passedCount}/${tests.length} 通过`);
+        }
+
+        // 清除结果
+        function clearResults() {
+            testManager.clearResults();
+        }
+
+        // 创建测试坦克
+        function createTestTanks() {
+            // 创建玩家坦克
+            const playerTank = testManager.tankManager.createPlayerTank(200, 300, 1);
+            
+            // 创建敌方坦克
+            const enemyTank = testManager.tankManager.createEnemyTank(600, 300, TankSystem.TankType.ENEMY_BASIC);
+            
+            console.log('🚗 创建测试坦克');
+        }
+
+        // 测试坦克碰撞
+        function testTankCollision() {
+            const tanks = testManager.entityManager.getEntitiesByTag('tank');
+            if (tanks.length < 2) {
+                alert('需要至少2个坦克来测试碰撞');
+                return;
+            }
+            
+            // 将两个坦克移动到相近位置
+            const tank1 = tanks[0];
+            const tank2 = tanks[1];
+            
+            const transform1 = tank1.getComponent('Transform');
+            const transform2 = tank2.getComponent('Transform');
+            
+            if (transform1 && transform2) {
+                transform2.setPosition(transform1.x + 25, transform1.y);
+                console.log('💥 强制坦克碰撞');
+            }
+        }
+
+        // 测试子弹伤害
+        function testBulletDamage() {
+            const tanks = testManager.entityManager.getEntitiesByTag('tank');
+            if (tanks.length === 0) {
+                alert('请先创建坦克');
+                return;
+            }
+            
+            const tank = tanks[0];
+            const transform = tank.getComponent('Transform');
+            
+            if (transform) {
+                // 创建子弹击中坦克
+                const bullet = testManager.createBullet({
+                    x: transform.x - 50,
+                    y: transform.y,
+                    velocityX: 300,
+                    velocityY: 0,
+                    type: BulletSystem.BulletType.NORMAL,
+                    damage: 25
+                });
+                
+                console.log('🎯 发射子弹测试伤害');
+            }
+        }
+
+        // 测试爆炸伤害
+        function testExplosionDamage() {
+            const tanks = testManager.entityManager.getEntitiesByTag('tank');
+            if (tanks.length === 0) {
+                alert('请先创建坦克');
+                return;
+            }
+            
+            const tank = tanks[0];
+            const transform = tank.getComponent('Transform');
+            
+            if (transform) {
+                // 在坦克附近创建爆炸
+                testManager.createExplosion(transform.x + 30, transform.y, 80);
+                
+                // 手动造成爆炸伤害
+                testManager.combatManager.dealDamage(tank, 30, CombatSystem.DamageType.EXPLOSION);
+                
+                console.log('💣 测试爆炸伤害');
+            }
+        }
+
+        // 显示伤害数字
+        function showDamageNumbers() {
+            for (let i = 0; i < 5; i++) {
+                const x = 200 + Math.random() * 400;
+                const y = 200 + Math.random() * 200;
+                const damage = Math.floor(Math.random() * 50) + 10;
+                const types = [
+                    CombatSystem.DamageType.BULLET,
+                    CombatSystem.DamageType.EXPLOSION,
+                    CombatSystem.DamageType.COLLISION
+                ];
+                const type = types[Math.floor(Math.random() * types.length)];
+                
+                testManager.damageNumberSystem.showDamage(x, y, damage, type);
+            }
+            
+            console.log('🔢 显示随机伤害数字');
+        }
+
+        // 测试空间网格
+        function testSpatialGrid() {
+            const detector = testManager.combatManager.collisionDetector;
+            const entities = Array.from(testManager.entityManager.entities.values());
+            
+            detector.updateSpatialGrid(entities);
+            
+            console.log('🗂️ 空间网格已更新，实体数量:', entities.length);
+        }
+
+        // 测试碰撞检测
+        function testCollisionDetection() {
+            const entities = Array.from(testManager.entityManager.entities.values());
+            const collisions = testManager.combatManager.collisionDetector.detectCollisions(entities);
+            
+            console.log('🔍 碰撞检测完成，发现', collisions.length, '个碰撞');
+        }
+
+        // 重置战斗统计
+        function resetCombatStats() {
+            testManager.combatManager.resetStats();
+            console.log('📊 战斗统计已重置');
+        }
+
+        // 清除所有
+        function clearAll() {
+            testManager.tankManager.clearAll();
+            testManager.fireSystem.clearAll();
+            testManager.damageNumberSystem.clear();
+            
+            // 清除爆炸效果
+            const explosions = testManager.entityManager.getEntitiesByTag('explosion');
+            explosions.forEach(explosion => {
+                testManager.entityManager.removeEntity(explosion);
+            });
+            
+            console.log('🧹 清除所有实体');
+        }
+    </script>
+</body>
+</html>

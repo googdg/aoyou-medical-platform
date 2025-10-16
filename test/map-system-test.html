@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>地图系统测试 - Map System Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #mapCanvas {
+            border: 2px solid #333;
+            background: #000;
+        }
+        .controls {
+            margin: 10px 0;
+        }
+        .map-info {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .tile-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .tile-sample {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .tile-color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🗺️ 地图系统测试</h1>
+    
+    <div class="test-container">
+        <h2>📋 测试结果</h2>
+        <div id="testResults"></div>
+        <button onclick="runAllTests()">🚀 运行所有测试</button>
+        <button onclick="clearResults()">🧹 清除结果</button>
+    </div>
+
+    <div class="test-container">
+        <h2>🎮 地图可视化</h2>
+        <canvas id="mapCanvas" width="832" height="832"></canvas>
+        <div class="controls">
+            <button onclick="loadMap('test')">🧪 测试地图</button>
+            <button onclick="loadMap('classic')">🏛️ 经典地图</button>
+            <button onclick="loadMap('maze')">🌀 迷宫地图</button>
+            <button onclick="createRandomMap()">🎲 随机地图</button>
+            <button onclick="clearMap()">🧹 清空地图</button>
+        </div>
+        <div class="controls">
+            <button onclick="testCollision()">💥 测试碰撞</button>
+            <button onclick="testDestruction()">💣 测试破坏</button>
+            <button onclick="showSpawnPoints()">📍 显示生成点</button>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>📊 地图信息</h2>
+        <div class="map-info" id="mapInfo">
+            <p>当前地图: 无</p>
+        </div>
+        
+        <h3>瓦片图例</h3>
+        <div class="tile-legend">
+            <div class="tile-sample">
+                <div class="tile-color" style="background: #000000;"></div>
+                <span>空地</span>
+            </div>
+            <div class="tile-sample">
+                <div class="tile-color" style="background: #CD853F;"></div>
+                <span>砖墙</span>
+            </div>
+            <div class="tile-sample">
+                <div class="tile-color" style="background: #C0C0C0;"></div>
+                <span>钢墙</span>
+            </div>
+            <div class="tile-sample">
+                <div class="tile-color" style="background: #4169E1;"></div>
+                <span>水域</span>
+            </div>
+            <div class="tile-sample">
+                <div class="tile-color" style="background: #228B22;"></div>
+                <span>草地</span>
+            </div>
+            <div class="tile-sample">
+                <div class="tile-color" style="background: #FFD700;"></div>
+                <span>基地</span>
+            </div>
+            <div class="tile-sample">
+                <div class="tile-color" style="background: #00FF00;"></div>
+                <span>玩家生成点</span>
+            </div>
+            <div class="tile-sample">
+                <div class="tile-color" style="background: #FF0000;"></div>
+                <span>敌人生成点</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入地图系统 -->
+    <script src="../js/map-system.js"></script>
+    
+    <script>
+        // 测试管理器
+        class MapTestManager {
+            constructor() {
+                this.results = [];
+                this.mapManager = new MapSystem.MapManager();
+                this.currentMap = null;
+                this.canvas = document.getElementById('mapCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.imageSmoothingEnabled = false;
+                
+                // 测试点
+                this.testPoints = [];
+                this.showingSpawns = false;
+                
+                this.initCanvas();
+            }
+
+            initCanvas() {
+                // 设置画布点击事件
+                this.canvas.addEventListener('click', (e) => {
+                    if (this.currentMap) {
+                        const rect = this.canvas.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        this.handleCanvasClick(x, y);
+                    }
+                });
+            }
+
+            handleCanvasClick(x, y) {
+                if (!this.currentMap) return;
+                
+                const tilePos = this.currentMap.worldToTile(x, y);
+                const tile = this.currentMap.getTile(tilePos.x, tilePos.y);
+                
+                if (tile) {
+                    console.log(`点击瓦片: (${tilePos.x}, ${tilePos.y}), 类型: ${tile.config.name}`);
+                    
+                    // 测试破坏
+                    if (tile.isDestructible()) {
+                        this.currentMap.destroyTile(x, y);
+                        this.renderMap();
+                    }
+                }
+            }
+
+            // 添加测试结果
+            addResult(testName, passed, message = '') {
+                this.results.push({
+                    name: testName,
+                    passed: passed,
+                    message: message,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                this.updateResultsDisplay();
+            }
+
+            // 更新结果显示
+            updateResultsDisplay() {
+                const container = document.getElementById('testResults');
+                container.innerHTML = '';
+                
+                this.results.forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = `test-result ${result.passed ? 'test-pass' : 'test-fail'}`;
+                    div.innerHTML = `
+                        <strong>${result.passed ? '✅' : '❌'} ${result.name}</strong>
+                        <br><small>${result.timestamp}</small>
+                        ${result.message ? `<br>${result.message}` : ''}
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            // 清除结果
+            clearResults() {
+                this.results = [];
+                this.updateResultsDisplay();
+            }
+
+            // 渲染地图
+            renderMap() {
+                if (!this.currentMap) {
+                    this.ctx.fillStyle = '#333';
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.ctx.fillStyle = '#FFF';
+                    this.ctx.font = '24px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('没有加载地图', this.canvas.width / 2, this.canvas.height / 2);
+                    this.ctx.textAlign = 'left';
+                    return;
+                }
+                
+                // 渲染地图
+                this.currentMap.render(this.ctx);
+                
+                // 渲染测试点
+                this.renderTestPoints();
+                
+                // 渲染生成点（如果显示）
+                if (this.showingSpawns) {
+                    this.renderSpawnPoints();
+                }
+                
+                // 更新地图信息
+                this.updateMapInfo();
+            }
+
+            // 渲染测试点
+            renderTestPoints() {
+                this.ctx.fillStyle = '#FF00FF';
+                this.testPoints.forEach(point => {
+                    this.ctx.fillRect(point.x - 2, point.y - 2, 4, 4);
+                });
+            }
+
+            // 渲染生成点
+            renderSpawnPoints() {
+                // 玩家生成点
+                this.ctx.fillStyle = '#00FF00';
+                this.currentMap.playerSpawns.forEach(spawn => {
+                    this.ctx.beginPath();
+                    this.ctx.arc(spawn.x, spawn.y, 8, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.font = '12px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('P', spawn.x, spawn.y + 4);
+                    this.ctx.fillStyle = '#00FF00';
+                });
+                
+                // 敌人生成点
+                this.ctx.fillStyle = '#FF0000';
+                this.currentMap.enemySpawns.forEach(spawn => {
+                    this.ctx.beginPath();
+                    this.ctx.arc(spawn.x, spawn.y, 8, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.fillStyle = '#FFF';
+                    this.ctx.font = '12px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('E', spawn.x, spawn.y + 4);
+                    this.ctx.fillStyle = '#FF0000';
+                });
+                
+                // 基地
+                if (this.currentMap.basePosition) {
+                    this.ctx.fillStyle = '#FFD700';
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.currentMap.basePosition.x, this.currentMap.basePosition.y, 12, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.font = '12px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText('B', this.currentMap.basePosition.x, this.currentMap.basePosition.y + 4);
+                }
+                
+                this.ctx.textAlign = 'left';
+            }
+
+            // 更新地图信息
+            updateMapInfo() {
+                const infoEl = document.getElementById('mapInfo');
+                if (!this.currentMap) {
+                    infoEl.innerHTML = '<p>当前地图: 无</p>';
+                    return;
+                }
+                
+                let tileCount = {};
+                for (let y = 0; y < this.currentMap.height; y++) {
+                    for (let x = 0; x < this.currentMap.width; x++) {
+                        const tile = this.currentMap.getTile(x, y);
+                        const typeName = tile.config.name;
+                        tileCount[typeName] = (tileCount[typeName] || 0) + 1;
+                    }
+                }
+                
+                let html = `
+                    <p><strong>地图尺寸:</strong> ${this.currentMap.width} x ${this.currentMap.height}</p>
+                    <p><strong>瓦片大小:</strong> ${this.currentMap.tileSize}px</p>
+                    <p><strong>像素尺寸:</strong> ${this.currentMap.pixelWidth} x ${this.currentMap.pixelHeight}</p>
+                    <p><strong>玩家生成点:</strong> ${this.currentMap.playerSpawns.length}个</p>
+                    <p><strong>敌人生成点:</strong> ${this.currentMap.enemySpawns.length}个</p>
+                    <p><strong>基地:</strong> ${this.currentMap.basePosition ? '有' : '无'}</p>
+                    <p><strong>瓦片统计:</strong></p>
+                    <ul>
+                `;
+                
+                for (const [type, count] of Object.entries(tileCount)) {
+                    html += `<li>${type}: ${count}个</li>`;
+                }
+                
+                html += '</ul>';
+                infoEl.innerHTML = html;
+            }
+        }
+
+        // 全局测试管理器
+        let testManager;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            testManager = new MapTestManager();
+            console.log('🗺️ 地图测试管理器初始化完成');
+        });
+
+        // 测试函数
+        function testMapCreation() {
+            try {
+                const map = new MapSystem.GameMap(10, 10, 32);
+                const passed = map.width === 10 && map.height === 10 && map.tileSize === 32;
+                testManager.addResult('地图创建测试', passed, 
+                    passed ? '地图创建成功' : '地图创建失败');
+                return passed;
+            } catch (error) {
+                testManager.addResult('地图创建测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testTileOperations() {
+            try {
+                const map = new MapSystem.GameMap(5, 5, 32);
+                
+                // 测试设置瓦片
+                const setResult = map.setTile(2, 2, MapSystem.TileType.BRICK);
+                const tile = map.getTile(2, 2);
+                const getResult = tile && tile.type === MapSystem.TileType.BRICK;
+                
+                // 测试坐标转换
+                const worldPos = map.tileToWorld(2, 2);
+                const tilePos = map.worldToTile(worldPos.x, worldPos.y);
+                const coordResult = tilePos.x === 2 && tilePos.y === 2;
+                
+                const passed = setResult && getResult && coordResult;
+                testManager.addResult('瓦片操作测试', passed,
+                    passed ? '瓦片设置和坐标转换正常' : '瓦片操作异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('瓦片操作测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testCollisionDetection() {
+            try {
+                const map = new MapSystem.GameMap(5, 5, 32);
+                map.setTile(2, 2, MapSystem.TileType.STEEL);
+                
+                const worldPos = map.tileToWorld(2, 2);
+                const passable1 = map.isPassable(worldPos.x, worldPos.y);
+                const passable2 = map.isPassable(16, 16); // 空地
+                
+                const rectPassable1 = map.isRectPassable(worldPos.x, worldPos.y, 30, 30);
+                const rectPassable2 = map.isRectPassable(16, 16, 30, 30);
+                
+                const passed = !passable1 && passable2 && !rectPassable1 && rectPassable2;
+                testManager.addResult('碰撞检测测试', passed,
+                    passed ? '碰撞检测功能正常' : '碰撞检测功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('碰撞检测测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testTileDestruction() {
+            try {
+                const map = new MapSystem.GameMap(5, 5, 32);
+                map.setTile(2, 2, MapSystem.TileType.BRICK);
+                
+                const worldPos = map.tileToWorld(2, 2);
+                const destroyed = map.destroyTile(worldPos.x, worldPos.y);
+                const tile = map.getTile(2, 2);
+                
+                const passed = destroyed && tile.type === MapSystem.TileType.EMPTY;
+                testManager.addResult('瓦片破坏测试', passed,
+                    passed ? '瓦片破坏功能正常' : '瓦片破坏功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('瓦片破坏测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testMapManager() {
+            try {
+                const manager = new MapSystem.MapManager();
+                const mapList = manager.getMapList();
+                const hasTestMap = mapList.includes('test');
+                
+                const testMap = manager.loadMap('test');
+                const loadResult = testMap !== null;
+                
+                const passed = hasTestMap && loadResult;
+                testManager.addResult('地图管理器测试', passed,
+                    passed ? '地图管理器功能正常' : '地图管理器功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('地图管理器测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testSpawnPoints() {
+            try {
+                const manager = new MapSystem.MapManager();
+                const map = manager.loadMap('test');
+                
+                const playerSpawn = map.getRandomPlayerSpawn();
+                const enemySpawn = map.getRandomEnemySpawn();
+                
+                const passed = playerSpawn && enemySpawn && 
+                              typeof playerSpawn.x === 'number' && 
+                              typeof enemySpawn.x === 'number';
+                
+                testManager.addResult('生成点测试', passed,
+                    passed ? '生成点功能正常' : '生成点功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('生成点测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        // 运行所有测试
+        function runAllTests() {
+            testManager.clearResults();
+            
+            const tests = [
+                testMapCreation,
+                testTileOperations,
+                testCollisionDetection,
+                testTileDestruction,
+                testMapManager,
+                testSpawnPoints
+            ];
+            
+            let passedCount = 0;
+            tests.forEach(test => {
+                if (test()) passedCount++;
+            });
+            
+            const allPassed = passedCount === tests.length;
+            testManager.addResult('总体测试结果', allPassed,
+                `${passedCount}/${tests.length} 个测试通过`);
+            
+            console.log(`🗺️ 地图系统测试完成: ${passedCount}/${tests.length} 通过`);
+        }
+
+        // 清除结果
+        function clearResults() {
+            testManager.clearResults();
+        }
+
+        // 加载地图
+        function loadMap(mapName) {
+            testManager.currentMap = testManager.mapManager.loadMap(mapName);
+            testManager.renderMap();
+            console.log('🗺️ 加载地图:', mapName);
+        }
+
+        // 创建随机地图
+        function createRandomMap() {
+            const map = new MapSystem.GameMap(26, 26, 32);
+            
+            // 添加边框
+            map.drawBorder(MapSystem.TileType.STEEL);
+            
+            // 随机添加障碍物
+            for (let i = 0; i < 50; i++) {
+                const x = Math.floor(Math.random() * (map.width - 4)) + 2;
+                const y = Math.floor(Math.random() * (map.height - 4)) + 2;
+                const tileType = Math.random() > 0.7 ? MapSystem.TileType.STEEL : MapSystem.TileType.BRICK;
+                map.setTile(x, y, tileType);
+            }
+            
+            // 添加水域
+            for (let i = 0; i < 10; i++) {
+                const x = Math.floor(Math.random() * (map.width - 6)) + 3;
+                const y = Math.floor(Math.random() * (map.height - 6)) + 3;
+                map.fillArea(x, y, x + 1, y + 1, MapSystem.TileType.WATER);
+            }
+            
+            // 添加草地
+            for (let i = 0; i < 15; i++) {
+                const x = Math.floor(Math.random() * (map.width - 4)) + 2;
+                const y = Math.floor(Math.random() * (map.height - 4)) + 2;
+                map.setTile(x, y, MapSystem.TileType.GRASS);
+            }
+            
+            // 添加生成点
+            map.setTile(1, map.height - 2, MapSystem.TileType.SPAWN_PLAYER);
+            map.setTile(2, map.height - 2, MapSystem.TileType.SPAWN_PLAYER);
+            map.setTile(map.width - 2, 1, MapSystem.TileType.SPAWN_ENEMY);
+            map.setTile(map.width - 3, 1, MapSystem.TileType.SPAWN_ENEMY);
+            
+            // 添加基地
+            map.setTile(Math.floor(map.width / 2), map.height - 2, MapSystem.TileType.BASE);
+            
+            testManager.currentMap = map;
+            testManager.renderMap();
+            console.log('🎲 创建随机地图');
+        }
+
+        // 清空地图
+        function clearMap() {
+            if (testManager.currentMap) {
+                testManager.currentMap.clear();
+                testManager.renderMap();
+                console.log('🧹 清空地图');
+            }
+        }
+
+        // 测试碰撞
+        function testCollision() {
+            if (!testManager.currentMap) {
+                alert('请先加载地图');
+                return;
+            }
+            
+            testManager.testPoints = [];
+            
+            // 在地图上随机测试一些点
+            for (let i = 0; i < 20; i++) {
+                const x = Math.random() * testManager.currentMap.pixelWidth;
+                const y = Math.random() * testManager.currentMap.pixelHeight;
+                
+                if (!testManager.currentMap.isPassable(x, y)) {
+                    testManager.testPoints.push({ x, y });
+                }
+            }
+            
+            testManager.renderMap();
+            console.log('💥 碰撞测试完成，紫色点表示不可通过的位置');
+        }
+
+        // 测试破坏
+        function testDestruction() {
+            if (!testManager.currentMap) {
+                alert('请先加载地图');
+                return;
+            }
+            
+            // 随机破坏一些瓦片
+            for (let i = 0; i < 10; i++) {
+                const x = Math.random() * testManager.currentMap.pixelWidth;
+                const y = Math.random() * testManager.currentMap.pixelHeight;
+                testManager.currentMap.destroyTile(x, y);
+            }
+            
+            testManager.renderMap();
+            console.log('💣 破坏测试完成');
+        }
+
+        // 显示生成点
+        function showSpawnPoints() {
+            testManager.showingSpawns = !testManager.showingSpawns;
+            testManager.renderMap();
+            console.log('📍 生成点显示:', testManager.showingSpawns ? '开启' : '关闭');
+        }
+    </script>
+</body>
+</html>

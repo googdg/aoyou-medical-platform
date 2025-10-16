@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奥友医学科普学习平台 - 视频演示</title>
+    <link rel="stylesheet" href="./css/aoyou-medical.css">
+    <style>
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 16px;
+        }
+        
+        .demo-title {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        
+        .demo-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .demo-video-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .demo-video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .demo-video-thumbnail {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .demo-video-info {
+            padding: 16px;
+        }
+        
+        .demo-video-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .demo-video-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        
+        .demo-video-category {
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        
+        .demo-instructions {
+            background: #f8f9fa;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .demo-instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .demo-instructions ul {
+            margin: 16px 0;
+            padding-left: 20px;
+        }
+        
+        .demo-instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .demo-note {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .demo-note strong {
+            color: #1976d2;
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #5a6fd8;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1 class="demo-title">🎥 视频演示页面</h1>
+            <p class="demo-subtitle">体验奥友医学科普学习平台的视频功能</p>
+        </div>
+        
+        <div class="demo-instructions">
+            <h3>📋 演示说明</h3>
+            <ul>
+                <li><strong>视频内容</strong>：使用Google提供的演示视频，实际部署时应替换为真实医学教育视频</li>
+                <li><strong>缩略图</strong>：使用占位图片服务生成，显示不同的医学主题</li>
+                <li><strong>讲师信息</strong>：模拟的医学专家信息，包含头像、姓名、职称和医院</li>
+                <li><strong>互动功能</strong>：点赞、收藏、分享功能完全可用</li>
+                <li><strong>积分系统</strong>：观看视频可获得积分，支持等级升级</li>
+            </ul>
+            
+            <div class="demo-note">
+                <strong>提示：</strong>点击任意视频卡片即可进入完整的视频播放页面，体验所有功能。
+            </div>
+        </div>
+        
+        <h3>🎬 演示视频列表</h3>
+        <div class="video-grid" id="demo-video-grid">
+            <!-- 视频卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="aoyou-medical-platform.html" class="back-button">
+                ← 返回主平台
+            </a>
+        </div>
+    </div>
+
+    <!-- 引入所有模块 -->
+    <script src="./js/aoyou-medical-storage.js"></script>
+    <script src="./js/aoyou-medical-performance.js"></script>
+    <script src="./js/aoyou-medical-ux.js"></script>
+    <script src="./js/aoyou-medical-analytics.js"></script>
+    <script src="./js/aoyou-medical-auth.js"></script>
+    <script src="./js/aoyou-medical-points.js"></script>
+    <script src="./js/aoyou-medical-video.js"></script>
+    <script src="./js/aoyou-medical-wechat.js"></script>
+    <script src="./js/aoyou-medical-mobile.js"></script>
+    <script src="./js/aoyou-medical-app.js"></script>
+
+    <script>
+        // 演示页面脚本
+        class AoyouVideoDemo {
+            constructor() {
+                this.init();
+            }
+            
+            init() {
+                // 等待主应用加载完成
+                setTimeout(() => {
+                    this.generateDemoVideos();
+                }, 1000);
+            }
+            
+            generateDemoVideos() {
+                if (!window.AoyouMedicalApp) {
+                    console.error('主应用未加载');
+                    return;
+                }
+                
+                // 生成演示视频数据
+                const app = new AoyouMedicalApp();
+                app.generateVideoData();
+                
+                // 获取前12个视频作为演示
+                const demoVideos = app.videoData.slice(0, 12);
+                
+                this.renderVideoGrid(demoVideos);
+            }
+            
+            renderVideoGrid(videos) {
+                const grid = document.getElementById('demo-video-grid');
+                if (!grid) return;
+                
+                grid.innerHTML = videos.map(video => `
+                    <div class="demo-video-card" onclick="playDemoVideo('${video.id}')">
+                        <img src="${video.thumbnail}" alt="${video.title}" class="demo-video-thumbnail">
+                        <div class="demo-video-info">
+                            <h4 class="demo-video-title">${video.title}</h4>
+                            <div class="demo-video-meta">
+                                <span class="demo-video-category">${video.categoryName}</span>
+                                <span>⏱️ ${this.formatDuration(video.duration)}</span>
+                                <span>👁️ ${video.views || 0}</span>
+                                <span>⭐ ${video.rating}</span>
+                            </div>
+                            <div class="demo-video-instructor">
+                                <small>👨‍⚕️ ${video.instructor.name} - ${video.instructor.title}</small>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            formatDuration(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                
+                if (hours > 0) {
+                    return `${hours}:${minutes.toString().padStart(2, '0')}:00`;
+                } else {
+                    return `${minutes}:00`;
+                }
+            }
+        }
+        
+        // 播放演示视频
+        function playDemoVideo(videoId) {
+            // 保存视频ID到sessionStorage
+            sessionStorage.setItem('demoVideoId', videoId);
+            
+            // 跳转到主平台
+            window.location.href = 'aoyou-medical-platform.html?demo=true&video=' + videoId;
+        }
+        
+        // 初始化演示页面
+        document.addEventListener('DOMContentLoaded', () => {
+            new AoyouVideoDemo();
+        });
+    </script>
+</body>
+</html>

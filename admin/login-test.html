@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录测试页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-link {
+            display: block;
+            margin: 10px 0;
+            padding: 15px;
+            background: #007cba;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .test-link:hover {
+            background: #005a87;
+        }
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .debug-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>管理后台登录测试</h1>
+        
+        <div class="info">
+            <h3>测试说明：</h3>
+            <p>默认管理员账户：</p>
+            <ul>
+                <li>用户名: <strong>admin</strong></li>
+                <li>密码: <strong>admin123</strong></li>
+            </ul>
+        </div>
+        
+        <h3>测试链接：</h3>
+        
+        <a href="index.html" class="test-link">
+            1. 正常登录页面（手动输入）
+        </a>
+        
+        <a href="index.html?username=admin&password=admin123" class="test-link">
+            2. URL参数自动填充登录
+        </a>
+        
+        <a href="http://localhost:3001/admin/" class="test-link">
+            3. 通过服务器访问（如果服务器运行中）
+        </a>
+        
+        <a href="http://localhost:3001/admin/?username=admin&password=admin123" class="test-link">
+            4. 服务器 + URL参数自动登录
+        </a>
+        
+        <div class="debug-info">
+            <h4>调试信息：</h4>
+            <p>当前URL: <span id="current-url"></span></p>
+            <p>URL参数: <span id="url-params"></span></p>
+            <p>浏览器: <span id="browser-info"></span></p>
+        </div>
+        
+        <div class="info">
+            <h4>故障排除：</h4>
+            <ul>
+                <li>确保服务器在 localhost:3001 运行</li>
+                <li>检查浏览器控制台是否有错误信息</li>
+                <li>尝试清除浏览器缓存和localStorage</li>
+                <li>如果Chrome密码管理器有问题，尝试禁用后重试</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // 显示调试信息
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('url-params').textContent = window.location.search || '无';
+        document.getElementById('browser-info').textContent = navigator.userAgent.split(' ').pop();
+        
+        // 清除localStorage的按钮
+        const clearBtn = document.createElement('button');
+        clearBtn.textContent = '清除本地存储';
+        clearBtn.style.cssText = 'margin: 10px 0; padding: 10px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;';
+        clearBtn.onclick = function() {
+            localStorage.clear();
+            alert('本地存储已清除');
+        };
+        document.querySelector('.test-container').appendChild(clearBtn);
+    </script>
+</body>
+</html>

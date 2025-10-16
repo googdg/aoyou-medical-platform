@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心功能测试</title>
+    <link rel="stylesheet" href="./css/aoyou-medical.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .test-btn {
+            padding: 12px 20px;
+            background: #2E86AB;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .test-btn:hover {
+            background: #1E5F7F;
+        }
+        .test-btn.secondary {
+            background: #6c757d;
+        }
+        .test-btn.danger {
+            background: #dc3545;
+        }
+        .test-results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        .mock-data {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>个人中心功能测试</h1>
+        
+        <div class="test-section">
+            <h2>📊 当前用户状态</h2>
+            <div id="user-status" class="mock-data">
+                <p><strong>登录状态:</strong> <span id="login-status">未登录</span></p>
+                <p><strong>用户名:</strong> <span id="current-username">-</span></p>
+                <p><strong>邀请码:</strong> <span id="current-invite-code">-</span></p>
+                <p><strong>积分:</strong> <span id="current-points">0</span></p>
+                <p><strong>等级:</strong> <span id="current-level">1</span></p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🧪 功能测试</h2>
+            <div class="test-actions">
+                <button onclick="createMockUser()" class="test-btn">创建测试用户</button>
+                <button onclick="addMockWatchHistory()" class="test-btn">添加观看记录</button>
+                <button onclick="addMockFavorites()" class="test-btn">添加收藏记录</button>
+                <button onclick="addMockLikes()" class="test-btn">添加点赞记录</button>
+                <button onclick="testProfileUI()" class="test-btn">测试个人中心UI</button>
+                <button onclick="testStatistics()" class="test-btn">测试统计功能</button>
+                <button onclick="clearAllData()" class="test-btn danger">清除所有数据</button>
+            </div>
+            <div id="test-results" class="test-results">
+                <h4>测试结果：</h4>
+                <div id="test-output"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📈 统计信息</h2>
+            <div id="statistics-display" class="mock-data">
+                <p><strong>观看视频数:</strong> <span id="stat-watched">0</span></p>
+                <p><strong>收藏视频数:</strong> <span id="stat-favorites">0</span></p>
+                <p><strong>点赞视频数:</strong> <span id="stat-likes">0</span></p>
+                <p><strong>总观看时长:</strong> <span id="stat-watch-time">0</span> 分钟</p>
+                <p><strong>最近观看:</strong> <span id="stat-recent">无</span></p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🚀 打开完整应用</h2>
+            <p>测试完成后，您可以打开完整的应用来体验个人中心功能：</p>
+            <a href="./aoyou-medical-platform.html" target="_blank" class="test-btn" style="display: inline-block; text-decoration: none; text-align: center;">
+                打开 Aoyou Digital 医学学习平台
+            </a>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 功能说明</h2>
+            <ul>
+                <li><strong>用户信息展示</strong>：显示用户名、邀请码、加入时间等基本信息</li>
+                <li><strong>统计数据</strong>：显示积分、等级、观看数、收藏数、点赞数、观看时长</li>
+                <li><strong>等级进度</strong>：显示当前等级和升级进度条</li>
+                <li><strong>收藏列表</strong>：显示用户收藏的视频，支持点击播放</li>
+                <li><strong>最近观看</strong>：显示最近观看的视频，包含观看进度</li>
+                <li><strong>功能按钮</strong>：清除观看记录、退出登录等操作</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="./js/aoyou-medical-app.js"></script>
+    <script src="./js/aoyou-medical-auth.js"></script>
+    <script src="./js/aoyou-medical-points.js"></script>
+    
+    <script>
+        // 页面加载完成后更新状态
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserStatus();
+            updateStatistics();
+        });
+        
+        function updateUserStatus() {
+            const user = JSON.parse(localStorage.getItem('aoyou_user') || 'null');
+            
+            if (user) {
+                document.getElementById('login-status').textContent = '已登录';
+                document.getElementById('current-username').textContent = user.name;
+                document.getElementById('current-invite-code').textContent = user.inviteCode;
+                document.getElementById('current-points').textContent = user.points || 0;
+                document.getElementById('current-level').textContent = user.level || 1;
+            } else {
+                document.getElementById('login-status').textContent = '未登录';
+                document.getElementById('current-username').textContent = '-';
+                document.getElementById('current-invite-code').textContent = '-';
+                document.getElementById('current-points').textContent = '0';
+                document.getElementById('current-level').textContent = '1';
+            }
+        }
+        
+        function updateStatistics() {
+            const watchHistory = JSON.parse(localStorage.getItem('aoyou_watch_history') || '[]');
+            const favorites = JSON.parse(localStorage.getItem('aoyou_favorites') || '[]');
+            const likes = JSON.parse(localStorage.getItem('aoyou_likes') || '[]');
+            
+            // 计算总观看时长
+            let totalWatchTime = 0;
+            watchHistory.forEach(record => {
+                if (record.duration && record.progress) {
+                    totalWatchTime += record.duration * record.progress;
+                }
+            });
+            
+            document.getElementById('stat-watched').textContent = watchHistory.length;
+            document.getElementById('stat-favorites').textContent = favorites.length;
+            document.getElementById('stat-likes').textContent = likes.length;
+            document.getElementById('stat-watch-time').textContent = Math.round(totalWatchTime / 60);
+            
+            if (watchHistory.length > 0) {
+                const recent = watchHistory[0];
+                const date = new Date(recent.watchedAt);
+                document.getElementById('stat-recent').textContent = 
+                    `${recent.videoTitle} (${date.toLocaleDateString()})`;
+            } else {
+                document.getElementById('stat-recent').textContent = '无';
+            }
+        }
+        
+        function createMockUser() {
+            const user = {
+                id: 'user_test_' + Date.now(),
+                name: '测试用户1234',
+                inviteCode: '1234',
+                avatar: './images/default-avatar.png',
+                points: 150,
+                level: 2,
+                registeredAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('aoyou_user', JSON.stringify(user));
+            updateUserStatus();
+            showTestResult('✅ 测试用户创建成功');
+        }
+        
+        function addMockWatchHistory() {
+            const watchHistory = JSON.parse(localStorage.getItem('aoyou_watch_history') || '[]');
+            
+            const mockRecords = [
+                {
+                    videoId: 'basic_1',
+                    videoTitle: '基础医学系列 - 第1讲',
+                    videoCategory: '基础医学',
+                    videoThumbnail: './images/default-thumbnail.jpg',
+                    watchedAt: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30分钟前
+                    duration: 1800, // 30分钟
+                    progress: 0.8 // 观看了80%
+                },
+                {
+                    videoId: 'clinical_2',
+                    videoTitle: '临床医学实践 - 第2讲',
+                    videoCategory: '临床医学',
+                    videoThumbnail: './images/default-thumbnail.jpg',
+                    watchedAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2小时前
+                    duration: 2400, // 40分钟
+                    progress: 1.0 // 观看完成
+                },
+                {
+                    videoId: 'imaging_3',
+                    videoTitle: '医学影像诊断 - 第3讲',
+                    videoCategory: '医学影像',
+                    videoThumbnail: './images/default-thumbnail.jpg',
+                    watchedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1天前
+                    duration: 3000, // 50分钟
+                    progress: 0.6 // 观看了60%
+                }
+            ];
+            
+            mockRecords.forEach(record => {
+                const existingIndex = watchHistory.findIndex(item => item.videoId === record.videoId);
+                if (existingIndex >= 0) {
+                    watchHistory[existingIndex] = record;
+                } else {
+                    watchHistory.unshift(record);
+                }
+            });
+            
+            localStorage.setItem('aoyou_watch_history', JSON.stringify(watchHistory));
+            updateStatistics();
+            showTestResult('✅ 观看记录添加成功');
+        }
+        
+        function addMockFavorites() {
+            const favorites = JSON.parse(localStorage.getItem('aoyou_favorites') || '[]');
+            
+            const mockFavorites = [
+                {
+                    id: 'fav_1',
+                    videoId: 'basic_1',
+                    userId: 'user_test',
+                    videoTitle: '基础医学系列 - 第1讲',
+                    videoThumbnail: './images/default-thumbnail.jpg',
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: 'fav_2',
+                    videoId: 'pharmacy_4',
+                    userId: 'user_test',
+                    videoTitle: '药学与治疗 - 第4讲',
+                    videoThumbnail: './images/default-thumbnail.jpg',
+                    timestamp: new Date().toISOString()
+                }
+            ];
+            
+            mockFavorites.forEach(fav => {
+                if (!favorites.find(f => f.videoId === fav.videoId)) {
+                    favorites.unshift(fav);
+                }
+            });
+            
+            localStorage.setItem('aoyou_favorites', JSON.stringify(favorites));
+            updateStatistics();
+            showTestResult('✅ 收藏记录添加成功');
+        }
+        
+        function addMockLikes() {
+            const likes = JSON.parse(localStorage.getItem('aoyou_likes') || '[]');
+            
+            const mockLikes = [
+                {
+                    id: 'like_1',
+                    videoId: 'basic_1',
+                    userId: 'user_test',
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: 'like_2',
+                    videoId: 'clinical_2',
+                    userId: 'user_test',
+                    timestamp: new Date().toISOString()
+                },
+                {
+                    id: 'like_3',
+                    videoId: 'technology_5',
+                    userId: 'user_test',
+                    timestamp: new Date().toISOString()
+                }
+            ];
+            
+            mockLikes.forEach(like => {
+                if (!likes.find(l => l.videoId === like.videoId)) {
+                    likes.unshift(like);
+                }
+            });
+            
+            localStorage.setItem('aoyou_likes', JSON.stringify(likes));
+            updateStatistics();
+            showTestResult('✅ 点赞记录添加成功');
+        }
+        
+        function testProfileUI() {
+            const user = JSON.parse(localStorage.getItem('aoyou_user') || 'null');
+            
+            if (!user) {
+                showTestResult('❌ 请先创建测试用户');
+                return;
+            }
+            
+            // 测试个人中心UI更新逻辑
+            const tests = [
+                { name: '用户信息显示', pass: !!user.name },
+                { name: '邀请码显示', pass: !!user.inviteCode },
+                { name: '积分显示', pass: typeof user.points === 'number' },
+                { name: '等级显示', pass: typeof user.level === 'number' },
+                { name: '注册时间显示', pass: !!user.registeredAt }
+            ];
+            
+            let results = '<ul>';
+            tests.forEach(test => {
+                const status = test.pass ? '✅' : '❌';
+                const color = test.pass ? 'green' : 'red';
+                results += `<li style="color: ${color}">${status} ${test.name}</li>`;
+            });
+            results += '</ul>';
+            
+            showTestResult('个人中心UI测试结果：' + results);
+        }
+        
+        function testStatistics() {
+            const watchHistory = JSON.parse(localStorage.getItem('aoyou_watch_history') || '[]');
+            const favorites = JSON.parse(localStorage.getItem('aoyou_favorites') || '[]');
+            const likes = JSON.parse(localStorage.getItem('aoyou_likes') || '[]');
+            
+            let totalWatchTime = 0;
+            watchHistory.forEach(record => {
+                if (record.duration && record.progress) {
+                    totalWatchTime += record.duration * record.progress;
+                }
+            });
+            
+            const stats = {
+                watchedVideos: watchHistory.length,
+                favoriteVideos: favorites.length,
+                likedVideos: likes.length,
+                totalWatchTimeMinutes: Math.round(totalWatchTime / 60)
+            };
+            
+            showTestResult(`
+                统计功能测试结果：<br>
+                📺 观看视频: ${stats.watchedVideos} 个<br>
+                ⭐ 收藏视频: ${stats.favoriteVideos} 个<br>
+                👍 点赞视频: ${stats.likedVideos} 个<br>
+                ⏱️ 观看时长: ${stats.totalWatchTimeMinutes} 分钟
+            `);
+        }
+        
+        function clearAllData() {
+            if (confirm('确定要清除所有测试数据吗？')) {
+                const keysToRemove = [
+                    'aoyou_user',
+                    'aoyou_watch_history',
+                    'aoyou_favorites',
+                    'aoyou_likes',
+                    'aoyou_points_history'
+                ];
+                
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                });
+                
+                updateUserStatus();
+                updateStatistics();
+                showTestResult('✅ 所有测试数据已清除');
+            }
+        }
+        
+        function showTestResult(message) {
+            const results = document.getElementById('test-results');
+            const output = document.getElementById('test-output');
+            
+            results.style.display = 'block';
+            output.innerHTML = message;
+        }
+    </script>
+</body>
+</html>

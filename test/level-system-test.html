@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关卡系统测试 - 坦克大战</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        
+        .danger { background-color: #f44336; }
+        .danger:hover { background-color: #da190b; }
+        
+        .warning { background-color: #ff9800; }
+        .warning:hover { background-color: #e68900; }
+        
+        .info { background-color: #2196F3; }
+        .info:hover { background-color: #1976D2; }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+        
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .level-card {
+            background-color: #333;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        
+        .level-card:hover {
+            background-color: #444;
+            transform: translateY(-2px);
+        }
+        
+        .level-card.unlocked { border-color: #4CAF50; }
+        .level-card.completed { border-color: #2196F3; }
+        .level-card.perfect { border-color: #FFD700; }
+        .level-card.locked { 
+            border-color: #666; 
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .level-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .level-id {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .level-type {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background-color: #555;
+        }
+        
+        .level-type.boss { background-color: #f44336; }
+        .level-type.survival { background-color: #ff9800; }
+        .level-type.normal { background-color: #2196F3; }
+        
+        .level-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .level-description {
+            font-size: 12px;
+            color: #ccc;
+            margin-bottom: 10px;
+        }
+        
+        .level-difficulty {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .difficulty-easy { background-color: #4CAF50; }
+        .difficulty-normal { background-color: #2196F3; }
+        .difficulty-hard { background-color: #ff9800; }
+        .difficulty-expert { background-color: #f44336; }
+        .difficulty-nightmare { background-color: #9c27b0; }
+        
+        .level-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        .stars {
+            color: #FFD700;
+        }
+        
+        .current-level {
+            background-color: #1a1a2e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .objectives-list {
+            background-color: #333;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .objective-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #444;
+            border-radius: 4px;
+            border-left: 4px solid #666;
+        }
+        
+        .objective-item.completed {
+            border-left-color: #4CAF50;
+        }
+        
+        .objective-description {
+            font-weight: bold;
+        }
+        
+        .objective-progress {
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        .progress-bar {
+            width: 100px;
+            height: 6px;
+            background-color: #666;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-left: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+        
+        .enemies-info {
+            background-color: #333;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .enemy-type {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #555;
+        }
+        
+        .enemy-type:last-child {
+            border-bottom: none;
+        }
+        
+        .log {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            margin-top: 10px;
+        }
+        
+        .level-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .level-selector select {
+            padding: 8px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+        
+        .time-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff9800;
+            text-align: center;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 关卡系统测试</h1>
+            <p>测试坦克大战游戏的关卡管理和游戏进度系统</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🎮 关卡控制</h2>
+            <div class="level-selector">
+                <label>选择关卡:</label>
+                <select id="levelSelect">
+                    <!-- 关卡选项将在这里动态生成 -->
+                </select>
+                <button id="startLevel">开始关卡</button>
+                <button id="completeLevel" class="info">完成关卡</button>
+                <button id="failLevel" class="danger">关卡失败</button>
+            </div>
+            
+            <div class="controls">
+                <button id="resetProgress" class="warning">重置进度</button>
+                <button id="unlockAllLevels" class="info">解锁所有关卡</button>
+                <button id="generateLevel" class="info">生成随机关卡</button>
+                <button id="saveProgress">保存进度</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 游戏进度统计</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalLevels">0</div>
+                    <div class="stat-label">总关卡数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="unlockedLevels">0</div>
+                    <div class="stat-label">已解锁关卡</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="completedLevels">0</div>
+                    <div class="stat-label">已完成关卡</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="perfectLevels">0</div>
+                    <div class="stat-label">完美完成</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalStars">0</div>
+                    <div class="stat-label">获得星星</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="completionRate">0%</div>
+                    <div class="stat-label">完成率</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 当前关卡状态</h2>
+            <div id="currentLevelInfo" class="current-level">
+                <p>请选择并开始一个关卡</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 关卡列表</h2>
+            <div id="levelGrid" class="level-grid">
+                <!-- 关卡卡片将在这里动态生成 -->
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎲 关卡生成器测试</h2>
+            <div class="controls">
+                <label>模板类型:</label>
+                <select id="templateSelect">
+                    <option value="basic">基础</option>
+                    <option value="mixed">混合</option>
+                    <option value="survival">生存</option>
+                </select>
+                
+                <label>难度:</label>
+                <select id="difficultySelect">
+                    <option value="easy">简单</option>
+                    <option value="normal" selected>普通</option>
+                    <option value="hard">困难</option>
+                    <option value="expert">专家</option>
+                    <option value="nightmare">噩梦</option>
+                </select>
+                
+                <button id="generateRandomLevel" class="info">生成随机关卡</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 系统日志</h2>
+            <div class="controls">
+                <button id="clearLog" class="warning">清除日志</button>
+                <button id="exportLog" class="info">导出日志</button>
+            </div>
+            <div id="systemLog" class="log"></div>
+        </div>
+    </div>
+
+    <!-- 引入依赖 -->
+    <script src="../js/level-system.js"></script>
+
+    <script>
+        // 关卡系统测试类
+        class LevelSystemTest {
+            constructor() {
+                this.levelManager = new LevelSystem.LevelManager();
+                this.currentLevelStartTime = 0;
+                this.levelTimer = null;
+                
+                this.initializeUI();
+                this.updateUI();
+                this.startUpdateLoop();
+            }
+
+            initializeUI() {
+                // 绑定控制按钮
+                document.getElementById('startLevel').addEventListener('click', () => this.startLevel());
+                document.getElementById('completeLevel').addEventListener('click', () => this.completeLevel());
+                document.getElementById('failLevel').addEventListener('click', () => this.failLevel());
+                
+                document.getElementById('resetProgress').addEventListener('click', () => this.resetProgress());
+                document.getElementById('unlockAllLevels').addEventListener('click', () => this.unlockAllLevels());
+                document.getElementById('generateLevel').addEventListener('click', () => this.generateLevel());
+                document.getElementById('saveProgress').addEventListener('click', () => this.saveProgress());
+                
+                document.getElementById('generateRandomLevel').addEventListener('click', () => this.generateRandomLevel());
+                
+                document.getElementById('clearLog').addEventListener('click', () => this.clearLog());
+                document.getElementById('exportLog').addEventListener('click', () => this.exportLog());
+                
+                // 填充关卡选择器
+                this.populateLevelSelector();
+                
+                this.log('关卡系统测试初始化完成');
+            }
+
+            populateLevelSelector() {
+                const levelSelect = document.getElementById('levelSelect');
+                const levels = this.levelManager.getLevelList(true); // 包括未解锁的关卡
+                
+                levelSelect.innerHTML = '';
+                for (const level of levels) {
+                    const option = document.createElement('option');
+                    option.value = level.id;
+                    option.textContent = `${level.id}. ${level.name} ${level.isUnlocked ? '' : '(锁定)'}`;
+                    option.disabled = !level.isUnlocked;
+                    levelSelect.appendChild(option);
+                }
+            }
+
+            startUpdateLoop() {
+                setInterval(() => {
+                    this.updateUI();
+                    this.updateCurrentLevelInfo();
+                }, 1000);
+            }
+
+            updateUI() {
+                // 更新进度统计
+                const stats = this.levelManager.getProgressStats();
+                
+                document.getElementById('totalLevels').textContent = stats.totalLevels;
+                document.getElementById('unlockedLevels').textContent = stats.unlockedLevels;
+                document.getElementById('completedLevels').textContent = stats.completedLevels;
+                document.getElementById('perfectLevels').textContent = stats.perfectLevels;
+                document.getElementById('totalStars').textContent = `${stats.totalStars}/${stats.maxStars}`;
+                document.getElementById('completionRate').textContent = (stats.completionRate * 100).toFixed(1) + '%';
+                
+                // 更新关卡网格
+                this.updateLevelGrid();
+                
+                // 更新关卡选择器
+                this.populateLevelSelector();
+            }
+
+            updateLevelGrid() {
+                const levelGrid = document.getElementById('levelGrid');
+                const levels = this.levelManager.getLevelList(true);
+                
+                levelGrid.innerHTML = '';
+                
+                for (const level of levels) {
+                    const levelCard = document.createElement('div');
+                    levelCard.className = 'level-card';
+                    
+                    // 设置卡片状态样式
+                    if (!level.isUnlocked) {
+                        levelCard.classList.add('locked');
+                    } else if (level.isPerfect) {
+                        levelCard.classList.add('perfect');
+                    } else if (level.isCompleted) {
+                        levelCard.classList.add('completed');
+                    } else {
+                        levelCard.classList.add('unlocked');
+                    }
+                    
+                    // 生成星星显示
+                    const stars = '★'.repeat(level.stars) + '☆'.repeat(3 - level.stars);
+                    
+                    levelCard.innerHTML = `
+                        <div class="level-header">
+                            <div class="level-id">#${level.id}</div>
+                            <div class="level-type ${level.type}">${level.type}</div>
+                        </div>
+                        <div class="level-name">${level.name}</div>
+                        <div class="level-description">${level.description}</div>
+                        <div class="level-difficulty difficulty-${level.difficulty}">${level.difficulty}</div>
+                        <div class="level-stats">
+                            <div class="stars">${stars}</div>
+                            <div>最高分: ${level.bestScore.toLocaleString()}</div>
+                        </div>
+                    `;
+                    
+                    // 添加点击事件
+                    if (level.isUnlocked) {
+                        levelCard.addEventListener('click', () => {
+                            document.getElementById('levelSelect').value = level.id;
+                            this.log(`选择关卡: ${level.name}`);
+                        });
+                    }
+                    
+                    levelGrid.appendChild(levelCard);
+                }
+            }
+
+            updateCurrentLevelInfo() {
+                const currentLevelInfo = document.getElementById('currentLevelInfo');
+                const levelStatus = this.levelManager.getCurrentLevelStatus();
+                
+                if (!levelStatus) {
+                    currentLevelInfo.innerHTML = '<p>请选择并开始一个关卡</p>';
+                    return;
+                }
+                
+                // 计算已用时间
+                const elapsedTime = this.currentLevelStartTime > 0 ? 
+                    Date.now() - this.currentLevelStartTime : 0;
+                const elapsedSeconds = Math.floor(elapsedTime / 1000);
+                const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+                const remainingSeconds = elapsedSeconds % 60;
+                
+                // 计算剩余时间
+                let timeDisplay = '';
+                if (levelStatus.timeLimit > 0) {
+                    const remainingTime = Math.max(0, levelStatus.timeLimit - elapsedTime);
+                    const remainingMin = Math.floor(remainingTime / 60000);
+                    const remainingSec = Math.floor((remainingTime % 60000) / 1000);
+                    timeDisplay = `<div class="time-display">剩余时间: ${remainingMin}:${remainingSec.toString().padStart(2, '0')}</div>`;
+                } else {
+                    timeDisplay = `<div class="time-display">已用时间: ${elapsedMinutes}:${remainingSeconds.toString().padStart(2, '0')}</div>`;
+                }
+                
+                let html = `
+                    <h3>${levelStatus.name} (${levelStatus.type})</h3>
+                    <p>难度: ${levelStatus.difficulty}</p>
+                    ${timeDisplay}
+                `;
+                
+                // 目标列表
+                if (levelStatus.objectives.length > 0) {
+                    html += '<div class="objectives-list"><h4>关卡目标:</h4>';
+                    for (const objective of levelStatus.objectives) {
+                        const progressPercent = (objective.progress * 100).toFixed(1);
+                        html += `
+                            <div class="objective-item ${objective.completed ? 'completed' : ''}">
+                                <div>
+                                    <div class="objective-description">${objective.description}</div>
+                                    <div class="objective-progress">${objective.current}/${objective.target} (${progressPercent}%)</div>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    html += '</div>';
+                }
+                
+                // 敌人信息
+                if (levelStatus.enemies) {
+                    html += `
+                        <div class="enemies-info">
+                            <h4>敌人信息:</h4>
+                            <div class="enemy-type">
+                                <span>总数:</span>
+                                <span>${levelStatus.enemies.total}</span>
+                            </div>
+                            <div class="enemy-type">
+                                <span>已生成:</span>
+                                <span>${levelStatus.enemies.spawned}</span>
+                            </div>
+                            <div class="enemy-type">
+                                <span>剩余:</span>
+                                <span>${levelStatus.enemies.remaining}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                currentLevelInfo.innerHTML = html;
+            }
+
+            // 关卡控制方法
+            startLevel() {
+                const levelId = parseInt(document.getElementById('levelSelect').value);
+                if (this.levelManager.startLevel(levelId)) {
+                    this.currentLevelStartTime = Date.now();
+                    this.log(`🎯 开始关卡 ${levelId}`);
+                    
+                    // 模拟目标进度
+                    this.simulateObjectiveProgress();
+                } else {
+                    this.log(`❌ 无法开始关卡 ${levelId}`);
+                }
+            }
+
+            completeLevel() {
+                if (!this.levelManager.currentLevel) {
+                    this.log('❌ 没有正在进行的关卡');
+                    return;
+                }
+                
+                const elapsedTime = Date.now() - this.currentLevelStartTime;
+                const score = Math.floor(Math.random() * 10000) + 5000; // 随机分数
+                const objectives = this.levelManager.currentLevel.objectives.map(obj => ({
+                    ...obj,
+                    completed: true,
+                    current: obj.target
+                }));
+                
+                if (this.levelManager.completeLevel(score, elapsedTime, objectives)) {
+                    this.log(`🎉 关卡完成! 得分: ${score}, 用时: ${Math.floor(elapsedTime/1000)}秒`);
+                    this.currentLevelStartTime = 0;
+                }
+            }
+
+            failLevel() {
+                if (!this.levelManager.currentLevel) {
+                    this.log('❌ 没有正在进行的关卡');
+                    return;
+                }
+                
+                this.log('💀 关卡失败');
+                this.currentLevelStartTime = 0;
+                // 这里可以添加失败处理逻辑
+            }
+
+            simulateObjectiveProgress() {
+                if (!this.levelManager.currentLevel) return;
+                
+                // 模拟目标进度更新
+                const updateProgress = () => {
+                    if (!this.levelManager.currentLevel || this.currentLevelStartTime === 0) return;
+                    
+                    for (let i = 0; i < this.levelManager.currentLevel.objectives.length; i++) {
+                        const objective = this.levelManager.currentLevel.objectives[i];
+                        if (!objective.completed) {
+                            // 随机增加进度
+                            const increment = Math.floor(Math.random() * 3);
+                            this.levelManager.updateObjective(i, objective.current + increment);
+                        }
+                    }
+                    
+                    // 检查关卡完成
+                    if (this.levelManager.checkLevelComplete()) {
+                        this.log('✅ 所有目标完成，关卡可以结束了');
+                    }
+                    
+                    setTimeout(updateProgress, 2000 + Math.random() * 3000);
+                };
+                
+                setTimeout(updateProgress, 1000);
+            }
+
+            resetProgress() {
+                this.levelManager.resetProgress();
+                this.currentLevelStartTime = 0;
+                this.log('🔄 游戏进度已重置');
+            }
+
+            unlockAllLevels() {
+                for (const [id, level] of this.levelManager.levels) {
+                    level.isUnlocked = true;
+                }
+                this.levelManager.saveProgress();
+                this.log('🔓 所有关卡已解锁');
+            }
+
+            generateLevel() {
+                const nextId = this.levelManager.levels.size + 1;
+                const templates = ['basic', 'mixed', 'survival'];
+                const difficulties = ['easy', 'normal', 'hard', 'expert'];
+                
+                const template = templates[Math.floor(Math.random() * templates.length)];
+                const difficulty = difficulties[Math.floor(Math.random() * difficulties.length)];
+                
+                const generatedLevel = this.levelManager.levelGenerator.generateLevel(nextId, template, difficulty);
+                if (generatedLevel) {
+                    generatedLevel.isUnlocked = true;
+                    this.levelManager.levels.set(nextId, generatedLevel);
+                    this.log(`🎲 生成关卡: ${generatedLevel.name} (${template}, ${difficulty})`);
+                }
+            }
+
+            generateRandomLevel() {
+                const template = document.getElementById('templateSelect').value;
+                const difficulty = document.getElementById('difficultySelect').value;
+                const nextId = this.levelManager.levels.size + 1;
+                
+                const generatedLevel = this.levelManager.levelGenerator.generateLevel(nextId, template, difficulty);
+                if (generatedLevel) {
+                    generatedLevel.isUnlocked = true;
+                    this.levelManager.levels.set(nextId, generatedLevel);
+                    this.log(`🎲 生成${template}关卡: ${generatedLevel.name} (${difficulty})`);
+                }
+            }
+
+            saveProgress() {
+                this.levelManager.saveProgress();
+                this.log('💾 进度已保存');
+            }
+
+            log(message) {
+                const logElement = document.getElementById('systemLog');
+                const timestamp = new Date().toLocaleTimeString();
+                logElement.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+
+            clearLog() {
+                document.getElementById('systemLog').innerHTML = '';
+            }
+
+            exportLog() {
+                const logContent = document.getElementById('systemLog').textContent;
+                const blob = new Blob([logContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `level-test-log-${new Date().toISOString().slice(0, 19)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // 启动测试
+        let levelTest;
+        window.addEventListener('load', () => {
+            levelTest = new LevelSystemTest();
+        });
+    </script>
+</body>
+</html>

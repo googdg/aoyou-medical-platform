@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Engine Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 测试页面特定样式 */
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .test-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--color-link);
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        
+        .test-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--color-link);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .test-btn:hover {
+            background: var(--color-link-hover);
+            transform: translateY(-1px);
+        }
+        
+        .test-btn.secondary {
+            background: #6c757d;
+        }
+        
+        .test-btn.secondary:hover {
+            background: #5a6268;
+        }
+        
+        .demo-posts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .demo-post {
+            padding: 1rem;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        
+        .demo-post h4 {
+            margin: 0 0 0.5rem 0;
+            color: var(--color-primary);
+        }
+        
+        .demo-post p {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+        }
+        
+        .demo-post .tags {
+            display: flex;
+            gap: 0.25rem;
+            flex-wrap: wrap;
+        }
+        
+        .demo-post .tag {
+            padding: 0.2rem 0.5rem;
+            background: #e3f2fd;
+            color: var(--color-link);
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        .search-stats {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            border: 1px solid #ddd;
+        }
+        
+        .search-stats h4 {
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .search-stats p {
+            margin: 0.25rem 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <h1 class="site-title">Search Engine Test</h1>
+        <p class="site-tagline">Testing the blog search functionality with sample data</p>
+        
+        <nav class="main-navigation">
+            <button class="search-trigger-btn" id="search-trigger" aria-label="Search blog posts" title="Search (Ctrl+K)">
+                <span class="search-icon">🔍</span>
+                <span class="search-text">Search</span>
+                <span class="search-shortcut">Ctrl+K</span>
+            </button>
+        </nav>
+    </header>
+
+    <main class="test-container">
+        <section class="test-section">
+            <h2>🔍 Search Engine Features</h2>
+            <p>This page demonstrates the blog search functionality. The search engine includes:</p>
+            <ul>
+                <li><strong>Full-text search</strong> - Search through titles, content, tags, and categories</li>
+                <li><strong>Multi-language support</strong> - Search content in different languages</li>
+                <li><strong>Smart ranking</strong> - Results ranked by relevance with title matches prioritized</li>
+                <li><strong>Search highlighting</strong> - Matched terms highlighted in results</li>
+                <li><strong>Search history</strong> - Recent searches saved and suggested</li>
+                <li><strong>Keyboard navigation</strong> - Full keyboard support with shortcuts</li>
+            </ul>
+            
+            <div class="test-buttons">
+                <button class="test-btn" onclick="openSearch()">Open Search (Ctrl+K)</button>
+                <button class="test-btn secondary" onclick="showSearchStats()">Show Search Stats</button>
+                <button class="test-btn secondary" onclick="clearSearchHistory()">Clear Search History</button>
+            </div>
+            
+            <div class="search-stats" id="search-stats" style="display: none;">
+                <h4>Search Engine Statistics</h4>
+                <div id="stats-content"></div>
+            </div>
+        </section>
+
+        <section class="test-section">
+            <h2>🧪 Test Queries</h2>
+            <p>Try these sample search queries to test different features:</p>
+            
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testSearch('javascript')">Search: "javascript"</button>
+                <button class="test-btn" onclick="testSearch('react hooks')">Search: "react hooks"</button>
+                <button class="test-btn" onclick="testSearch('css grid')">Search: "css grid"</button>
+                <button class="test-btn" onclick="testSearch('performance')">Search: "performance"</button>
+                <button class="test-btn" onclick="testSearch('tutorial')">Search: "tutorial"</button>
+                <button class="test-btn" onclick="testSearch('web development')">Search: "web development"</button>
+            </div>
+            
+            <h3>Multi-language Test Queries</h3>
+            <div class="test-buttons">
+                <button class="test-btn" onclick="testSearch('前端')">Search: "前端" (Chinese)</button>
+                <button class="test-btn" onclick="testSearch('开发')">Search: "开发" (Chinese)</button>
+                <button class="test-btn" onclick="testSearch('技术')">Search: "技术" (Chinese)</button>
+            </div>
+        </section>
+
+        <section class="test-section">
+            <h2>📝 Sample Blog Posts</h2>
+            <p>The search engine indexes these sample blog posts (loaded from blog-posts.json):</p>
+            
+            <div class="demo-posts" id="demo-posts">
+                <div class="demo-post">
+                    <h4>Getting Started with React Hooks</h4>
+                    <p>Learn the fundamentals of React Hooks and how they can simplify your component logic...</p>
+                    <div class="tags">
+                        <span class="tag">react</span>
+                        <span class="tag">javascript</span>
+                        <span class="tag">hooks</span>
+                        <span class="tag">tutorial</span>
+                    </div>
+                </div>
+                
+                <div class="demo-post">
+                    <h4>CSS Grid Layout Guide</h4>
+                    <p>A comprehensive guide to CSS Grid Layout with practical examples and best practices...</p>
+                    <div class="tags">
+                        <span class="tag">css</span>
+                        <span class="tag">grid</span>
+                        <span class="tag">layout</span>
+                        <span class="tag">design</span>
+                    </div>
+                </div>
+                
+                <div class="demo-post">
+                    <h4>JavaScript Performance Optimization</h4>
+                    <p>Tips and techniques for optimizing JavaScript performance in modern web applications...</p>
+                    <div class="tags">
+                        <span class="tag">javascript</span>
+                        <span class="tag">performance</span>
+                        <span class="tag">optimization</span>
+                        <span class="tag">web</span>
+                    </div>
+                </div>
+                
+                <div class="demo-post">
+                    <h4>前端开发最佳实践</h4>
+                    <p>分享前端开发中的最佳实践和常见问题解决方案...</p>
+                    <div class="tags">
+                        <span class="tag">前端</span>
+                        <span class="tag">开发</span>
+                        <span class="tag">最佳实践</span>
+                        <span class="tag">技术</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="test-section">
+            <h2>⌨️ Keyboard Shortcuts</h2>
+            <p>The search interface supports these keyboard shortcuts:</p>
+            <ul>
+                <li><kbd>Ctrl+K</kbd> or <kbd>Cmd+K</kbd> - Open search</li>
+                <li><kbd>Esc</kbd> - Close search</li>
+                <li><kbd>↑</kbd> / <kbd>↓</kbd> - Navigate through results</li>
+                <li><kbd>Enter</kbd> - Open selected result</li>
+                <li><kbd>Tab</kbd> - Navigate through interface elements</li>
+            </ul>
+        </section>
+
+        <section class="test-section">
+            <h2>🎯 Search Algorithm</h2>
+            <p>The search engine uses a weighted scoring system:</p>
+            <ul>
+                <li><strong>Title matches</strong> - Highest weight (10 points)</li>
+                <li><strong>Tag matches</strong> - Medium-high weight (5 points)</li>
+                <li><strong>Excerpt matches</strong> - Medium weight (3 points)</li>
+                <li><strong>Content matches</strong> - Lower weight (1 point)</li>
+                <li><strong>Language boost</strong> - Current language gets 20% bonus</li>
+                <li><strong>Complete matches</strong> - All query terms matched gets 50% bonus</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>Search Engine Test Page</p>
+            <p>Built with HTML, CSS, and JavaScript</p>
+        </div>
+    </footer>
+
+    <!-- 加载必要的脚本 -->
+    <script src="js/i18n.js"></script>
+    <script src="js/blog-models.js"></script>
+    <script src="js/blog-data.js"></script>
+    <script src="js/search-engine.js"></script>
+    
+    <script>
+        // 测试页面脚本
+        let searchEngine = null;
+        let blogDataManager = null;
+        let i18nManager = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Search Engine Test Page Loaded');
+            
+            // 初始化国际化管理器
+            i18nManager = new I18nManager();
+            await i18nManager.init();
+            
+            // 初始化博客数据管理器
+            blogDataManager = new BlogDataManager();
+            const dataLoaded = await blogDataManager.loadData();
+            
+            if (dataLoaded) {
+                // 初始化搜索引擎
+                searchEngine = new SearchEngine(blogDataManager, i18nManager);
+                
+                // 绑定搜索触发按钮
+                const searchTrigger = document.getElementById('search-trigger');
+                if (searchTrigger) {
+                    searchTrigger.addEventListener('click', () => {
+                        searchEngine.showSearch();
+                    });
+                }
+                
+                console.log('Search engine initialized successfully');
+                updateDemoPosts();
+            } else {
+                console.error('Failed to load blog data');
+                showError('Failed to load blog data. Search functionality may not work properly.');
+            }
+        });
+
+        // 测试函数
+        function openSearch() {
+            if (searchEngine) {
+                searchEngine.showSearch();
+            } else {
+                alert('Search engine not initialized yet. Please wait a moment and try again.');
+            }
+        }
+
+        function testSearch(query) {
+            if (searchEngine) {
+                searchEngine.showSearch();
+                setTimeout(() => {
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput) {
+                        searchInput.value = query;
+                        searchInput.dispatchEvent(new Event('input'));
+                    }
+                }, 100);
+            } else {
+                alert('Search engine not initialized yet. Please wait a moment and try again.');
+            }
+        }
+
+        function showSearchStats() {
+            if (searchEngine) {
+                const stats = searchEngine.getSearchStats();
+                const statsContainer = document.getElementById('search-stats');
+                const statsContent = document.getElementById('stats-content');
+                
+                statsContent.innerHTML = `
+                    <p><strong>Index Size:</strong> ${stats.indexSize} entries</p>
+                    <p><strong>Search History:</strong> ${stats.historySize} items</p>
+                    <p><strong>Last Query:</strong> "${stats.lastQuery || 'None'}"</p>
+                    <p><strong>Last Result Count:</strong> ${stats.lastResultCount}</p>
+                `;
+                
+                statsContainer.style.display = 'block';
+            } else {
+                alert('Search engine not initialized yet.');
+            }
+        }
+
+        function clearSearchHistory() {
+            if (searchEngine) {
+                searchEngine.searchHistory = [];
+                searchEngine.saveSearchHistory();
+                alert('Search history cleared!');
+            } else {
+                alert('Search engine not initialized yet.');
+            }
+        }
+
+        function updateDemoPosts() {
+            if (!blogDataManager) return;
+            
+            const posts = blogDataManager.getPublishedPosts('en');
+            const demoContainer = document.getElementById('demo-posts');
+            
+            if (posts.length > 0) {
+                demoContainer.innerHTML = posts.slice(0, 6).map(post => `
+                    <div class="demo-post">
+                        <h4>${post.getTitle('en')}</h4>
+                        <p>${post.getExcerpt('en').substring(0, 100)}...</p>
+                        <div class="tags">
+                            ${post.tags.slice(0, 4).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #f8d7da;
+                color: #721c24;
+                padding: 1rem;
+                border-radius: 6px;
+                border: 1px solid #f5c6cb;
+                max-width: 300px;
+                z-index: 1000;
+            `;
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

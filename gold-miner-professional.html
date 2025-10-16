@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄金矿工大师版 - Gold Miner Master</title>
+    <meta name="description" content="专业级黄金矿工游戏 - 更好玩，更易上手，更有挑战性！">
+    
+    <!-- 社交媒体分享优化 -->
+    <meta property="og:title" content="黄金矿工大师版 - 最好玩的挖矿游戏">
+    <meta property="og:description" content="专业级黄金矿工游戏，简单易上手，趣味性十足！">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630/FFD700/000000?text=黄金矿工大师版">
+    
+    <!-- PWA支持 -->
+    <meta name="theme-color" content="#FFD700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="黄金矿工">
+    
+    <!-- 图标 -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>">
+    
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #DEB887 40%, #CD853F 70%, #8B4513 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            user-select: none;
+        }
+
+        /* 云朵装饰 */
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+            opacity: 0.7;
+            animation: cloudFloat 20s infinite linear;
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50px;
+        }
+
+        .cloud1 {
+            width: 80px;
+            height: 30px;
+            top: 20%;
+            left: -100px;
+        }
+
+        .cloud1::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud1::after {
+            width: 60px;
+            height: 40px;
+            top: -15px;
+            right: 10px;
+        }
+
+        @keyframes cloudFloat {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(calc(100vw + 100px)); }
+        }
+
+        .game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 游戏界面 */
+        .game-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #2C3E50 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border-bottom: 3px solid #FFD700;
+        }
+
+        .score-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: center;
+        }
+
+        .info-item {
+            text-align: center;
+            background: rgba(255, 215, 0, 0.1);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .info-label {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .game-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .control-btn.start {
+            background: linear-gradient(135deg, #27AE60 0%, #229954 100%);
+        }
+
+        .control-btn.audio {
+            background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
+            font-size: 10px;
+            padding: 6px 12px;
+        }
+
+        .control-btn.audio.muted {
+            background: linear-gradient(135deg, #95A5A6 0%, #7F8C8D 100%);
+        }
+
+        /* 游戏画布 */
+        .game-canvas {
+            position: absolute;
+            top: 120px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, #87CEEB 0%, #DEB887 30%, #CD853F 60%, #8B4513 100%);
+            cursor: crosshair;
+        }
+
+        /* 矿工角色 */
+        .miner {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+
+        .miner-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #8B4513 0%, #A0522D 100%);
+            border-radius: 50% 50% 0 0;
+            border: 3px solid #654321;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .miner-face {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            animation: minerBlink 3s infinite;
+        }
+
+        @keyframes minerBlink {
+            0%, 90%, 100% { content: '👨‍🏭'; }
+            95% { content: '😊'; }
+        }
+
+        .miner-face::before {
+            content: '👨‍🏭';
+        }
+
+        .miner.working .miner-face::before {
+            content: '😤';
+        }
+
+        .miner.happy .miner-face::before {
+            content: '😄';
+        }
+
+        /* 钩子和绳子系统 */
+        .hook-system {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 40;
+            transition: transform 0.1s ease-out;
+        }
+
+        .rope {
+            width: 6px;
+            background: linear-gradient(180deg, #8B4513 0%, #A0522D 50%, #654321 100%);
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            transform-origin: top;
+            transition: all 0.1s linear;
+            box-shadow: 2px 0 4px rgba(0,0,0,0.3);
+            border-radius: 3px;
+        }
+
+        .hook {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 25px;
+            background: linear-gradient(135deg, #C0C0C0 0%, #808080 50%, #696969 100%);
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+            border: 2px solid #555;
+        }
+
+        .hook::after {
+            content: '🪝';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* 瞄准线 */
+        .aim-line {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            width: 2px;
+            height: 0;
+            background: rgba(255, 0, 0, 0.5);
+            transform-origin: top;
+            z-index: 35;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .aim-line.visible {
+            opacity: 1;
+        }
+
+        /* 宝物样式 */
+        .treasure {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 30;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: treasureGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes treasureGlow {
+            0% { filter: brightness(1) drop-shadow(0 0 5px rgba(255,215,0,0.3)); }
+            100% { filter: brightness(1.1) drop-shadow(0 0 15px rgba(255,215,0,0.6)); }
+        }
+
+        .treasure:hover {
+            transform: scale(1.05);
+            z-index: 31;
+        }
+
+        .treasure.gold {
+            background: radial-gradient(circle, #FFD700 0%, #FFA500 70%, #FF8C00 100%);
+            border: 3px solid #B8860B;
+        }
+
+        .treasure.gold::before {
+            content: '💰';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 28px;
+        }
+
+        .treasure.diamond {
+            background: linear-gradient(45deg, #E0E0E0 0%, #FFFFFF 50%, #E0E0E0 100%);
+            border: 3px solid #C0C0C0;
+            animation: diamondSparkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes diamondSparkle {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3) drop-shadow(0 0 10px rgba(255,255,255,0.8)); }
+        }
+
+        .treasure.diamond::before {
+            content: '💎';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+
+        .treasure.ruby {
+            background: radial-gradient(circle, #DC143C 0%, #B22222 70%, #8B0000 100%);
+            border: 3px solid #8B0000;
+        }
+
+        .treasure.ruby::before {
+            content: '💍';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+        }
+
+        .treasure.emerald {
+            background: radial-gradient(circle, #50C878 0%, #228B22 70%, #006400 100%);
+            border: 3px solid #006400;
+        }
+
+        .treasure.emerald::before {
+            content: '💚';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+        }
+
+        .treasure.rock {
+            background: radial-gradient(circle, #696969 0%, #2F4F4F 70%, #1C1C1C 100%);
+            border-radius: 40% 60% 60% 40%;
+            border: 3px solid #2F2F2F;
+            animation: none;
+        }
+
+        .treasure.rock::before {
+            content: '🪨';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+        }
+
+        .treasure.mystery {
+            background: linear-gradient(45deg, #9B59B6 0%, #8E44AD 50%, #7D3C98 100%);
+            border: 3px solid #6C3483;
+            animation: mysteryPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes mysteryPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .treasure.mystery::before {
+            content: '🎁';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 26px;
+        }
+
+        /* 特效系统 */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            z-index: 80;
+        }
+
+        .coin-particle {
+            color: #FFD700;
+            font-size: 16px;
+            animation: coinFloat 1.5s ease-out forwards;
+        }
+
+        @keyframes coinFloat {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+        }
+
+        .sparkle-particle {
+            width: 4px;
+            height: 4px;
+            background: #FFD700;
+            border-radius: 50%;
+            animation: sparkleFloat 1s ease-out forwards;
+        }
+
+        @keyframes sparkleFloat {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0) translateY(-50px); opacity: 0; }
+        }
+
+        /* 分数弹出效果 */
+        .score-popup {
+            position: absolute;
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 24px;
+            z-index: 90;
+            pointer-events: none;
+            animation: scoreFloat 2s ease-out forwards;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            font-family: 'Arial Black', Arial, sans-serif;
+        }
+
+        @keyframes scoreFloat {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+            100% { transform: translateY(-60px) scale(1); opacity: 0; }
+        }
+
+        .score-popup.bonus {
+            color: #FF6B6B;
+            animation: bonusFloat 2s ease-out forwards;
+        }
+
+        @keyframes bonusFloat {
+            0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-40px) scale(1.3) rotate(5deg); opacity: 1; }
+            100% { transform: translateY(-80px) scale(1.1) rotate(10deg); opacity: 0; }
+        }
+
+        /* 游戏消息系统 */
+        .game-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(44,62,80,0.95) 100%);
+            color: white;
+            padding: 40px 60px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 200;
+            display: none;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 3px solid #FFD700;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-message h2 {
+            margin-bottom: 20px;
+            color: #FFD700;
+            font-size: 28px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .game-message p {
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .message-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .message-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255,215,0,0.3);
+        }
+
+        .message-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(255,215,0,0.4);
+        }
+
+        .message-btn.secondary {
+            background: linear-gradient(135deg, #95A5A6 0%, #7F8C8D 100%);
+            color: white;
+        }
+
+        /* 进度条系统 */
+        .progress-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 90;
+        }
+
+        .progress-bar {
+            height: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,215,0,0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            z-index: 1;
+        }
+
+        /* 提示系统 */
+        .game-tips {
+            position: absolute;
+            top: 140px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            max-width: 250px;
+            z-index: 95;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+        }
+
+        .game-tips.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .game-tips h4 {
+            color: #FFD700;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .game-header {
+                height: 100px;
+                padding: 0 15px;
+            }
+
+            .score-info {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .info-value {
+                font-size: 16px;
+            }
+
+            .control-btn {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+
+            .miner {
+                width: 80px;
+                height: 80px;
+            }
+
+            .miner-face {
+                font-size: 40px;
+            }
+
+            .game-message {
+                padding: 30px 40px;
+                margin: 0 20px;
+            }
+
+            .game-message h2 {
+                font-size: 24px;
+            }
+
+            .game-tips {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .score-info {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .control-row {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .game-message {
+                padding: 25px 30px;
+            }
+
+            .message-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head><bod
+y>
+    <div class="game-container">
+        <!-- 云朵装饰 -->
+        <div class="cloud cloud1"></div>
+        
+        <!-- 游戏头部 -->
+        <div class="game-header">
+            <div class="score-info">
+                <div class="info-item">
+                    <div class="info-label">分数</div>
+                    <div class="info-value" id="score">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">目标</div>
+                    <div class="info-value" id="target">800</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">关卡</div>
+                    <div class="info-value" id="level">1</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">时间</div>
+                    <div class="info-value" id="time">90</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">连击</div>
+                    <div class="info-value" id="combo">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">力量</div>
+                    <div class="info-value" id="power">100%</div>
+                </div>
+            </div>
+            <div class="game-controls">
+                <div class="control-row">
+                    <button class="control-btn start" id="start-btn" onclick="startGame()">🎮 开始</button>
+                    <button class="control-btn" id="pause-btn" onclick="pauseGame()" disabled>⏸️ 暂停</button>
+                </div>
+                <div class="control-row">
+                    <button class="control-btn" onclick="restartGame()">🔄 重启</button>
+                    <button class="control-btn audio" id="audio-btn" onclick="toggleAudio()">🔊 音效</button>
+                    <button class="control-btn" onclick="showHelp()">❓ 帮助</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 游戏画布 -->
+        <div class="game-canvas" id="game-canvas">
+            <!-- 矿工 -->
+            <div class="miner" id="miner">
+                <div class="miner-body">
+                    <div class="miner-face"></div>
+                </div>
+            </div>
+            
+            <!-- 瞄准线 -->
+            <div class="aim-line" id="aim-line"></div>
+            
+            <!-- 钩子系统 -->
+            <div class="hook-system" id="hook-system">
+                <div class="rope" id="rope" style="height: 0px;"></div>
+                <div class="hook" id="hook"></div>
+            </div>
+        </div>
+
+        <!-- 进度条 -->
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+                <div class="progress-text" id="progress-text">0 / 800</div>
+            </div>
+        </div>
+
+        <!-- 游戏提示 -->
+        <div class="game-tips" id="game-tips">
+            <h4>💡 游戏提示</h4>
+            <p id="tip-content">点击屏幕发射钩子抓取宝物！</p>
+        </div>
+
+        <!-- 游戏消息 -->
+        <div class="game-message" id="game-message">
+            <h2 id="message-title">🏆 黄金矿工大师版</h2>
+            <p id="message-content">
+                欢迎来到最专业的挖矿游戏！<br><br>
+                🎯 <strong>简单操作</strong>：点击屏幕发射钩子<br>
+                💰 <strong>收集宝物</strong>：达到目标分数过关<br>
+                ⚡ <strong>连击系统</strong>：连续成功获得额外奖励<br>
+                🎁 <strong>神秘宝箱</strong>：随机获得惊喜奖励<br>
+                🪨 <strong>避开石头</strong>：它们很重但价值很低
+            </p>
+            <div class="message-buttons">
+                <button class="message-btn" onclick="hideMessage()">🚀 开始挖矿</button>
+                <button class="message-btn secondary" onclick="showHelp()">📖 查看帮助</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏状态管理
+        class GameState {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.score = 0;
+                this.level = 1;
+                this.time = 90;
+                this.target = 800;
+                this.combo = 0;
+                this.maxCombo = 0;
+                this.power = 100;
+                this.isPlaying = false;
+                this.isPaused = false;
+                this.treasures = [];
+                this.hookState = 'idle'; // idle, extending, retracting, caught
+                this.hookAngle = 0;
+                this.hookSpeed = 4;
+                this.hookLength = 0;
+                this.maxHookLength = window.innerHeight - 200;
+                this.caughtTreasure = null;
+                this.lastCatchTime = 0;
+                this.comboMultiplier = 1;
+                this.totalTreasuresCollected = 0;
+                this.clearTimer();
+            }
+
+            clearTimer() {
+                if (this.gameTimer) {
+                    clearInterval(this.gameTimer);
+                    this.gameTimer = null;
+                }
+            }
+        }
+
+        // 音频管理系统
+        class AudioManager {
+            constructor() {
+                this.enabled = true;
+                this.context = null;
+                this.sounds = {};
+                this.initAudio();
+            }
+
+            initAudio() {
+                try {
+                    this.context = new (window.AudioContext || window.webkitAudioContext)();
+                    this.createSounds();
+                } catch (e) {
+                    console.log('音频初始化失败，使用静音模式');
+                    this.enabled = false;
+                }
+            }
+
+            createSounds() {
+                this.sounds = {
+                    hook: () => this.playTone(200, 0.1, 'sine'),
+                    catch: () => this.playTone(400, 0.2, 'square'),
+                    gold: () => this.playTone(600, 0.3, 'sine'),
+                    diamond: () => this.playTone(800, 0.4, 'triangle'),
+                    ruby: () => this.playTone(700, 0.3, 'sawtooth'),
+                    emerald: () => this.playTone(650, 0.3, 'sine'),
+                    rock: () => this.playTone(150, 0.5, 'square'),
+                    mystery: () => this.playMysterySound(),
+                    combo: () => this.playComboSound(),
+                    levelUp: () => this.playLevelUpSound(),
+                    gameOver: () => this.playTone(100, 1.5, 'square')
+                };
+            }
+
+            playTone(frequency, duration, type = 'sine') {
+                if (!this.enabled || !this.context) return;
+                
+                const oscillator = this.context.createOscillator();
+                const gainNode = this.context.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.context.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(0.1, this.context.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + duration);
+                
+                oscillator.start(this.context.currentTime);
+                oscillator.stop(this.context.currentTime + duration);
+            }
+
+            playMysterySound() {
+                if (!this.enabled) return;
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        this.playTone(500 + i * 200, 0.2, 'sine');
+                    }, i * 100);
+                }
+            }
+
+            playComboSound() {
+                if (!this.enabled) return;
+                this.playTone(800, 0.1, 'sine');
+                setTimeout(() => this.playTone(1000, 0.1, 'sine'), 100);
+                setTimeout(() => this.playTone(1200, 0.2, 'sine'), 200);
+            }
+
+            playLevelUpSound() {
+                if (!this.enabled) return;
+                const notes = [523, 659, 784, 1047]; // C, E, G, C
+                notes.forEach((note, i) => {
+                    setTimeout(() => this.playTone(note, 0.3, 'sine'), i * 150);
+                });
+            }
+
+            play(soundName) {
+                if (this.enabled && this.sounds[soundName]) {
+                    this.sounds[soundName]();
+                }
+            }
+
+            toggle() {
+                this.enabled = !this.enabled;
+                return this.enabled;
+            }
+        }
+
+        // 宝物管理系统
+        class TreasureManager {
+            constructor() {
+                this.treasureTypes = {
+                    gold: { value: 100, weight: 1, size: 40, rarity: 0.35, emoji: '💰' },
+                    diamond: { value: 350, weight: 0.4, size: 35, rarity: 0.15, emoji: '💎' },
+                    ruby: { value: 200, weight: 0.6, size: 32, rarity: 0.2, emoji: '💍' },
+                    emerald: { value: 250, weight: 0.5, size: 32, rarity: 0.18, emoji: '💚' },
+                    rock: { value: 15, weight: 2.5, size: 50, rarity: 0.25, emoji: '🪨' },
+                    mystery: { value: 500, weight: 0.3, size: 45, rarity: 0.07, emoji: '🎁' }
+                };
+            }
+
+            generateTreasures(level) {
+                const treasures = [];
+                const baseCount = 12;
+                const count = Math.min(baseCount + level * 2, 22);
+                const canvas = document.getElementById('game-canvas');
+                const canvasRect = canvas.getBoundingClientRect();
+                
+                for (let i = 0; i < count; i++) {
+                    const type = this.getRandomTreasureType(level);
+                    const treasure = this.createTreasure(type, canvasRect, level);
+                    
+                    // 确保宝物不重叠
+                    let attempts = 0;
+                    while (attempts < 50 && this.checkOverlap(treasure, treasures)) {
+                        treasure.x = Math.random() * (canvasRect.width - treasure.size - 40) + 20;
+                        treasure.y = Math.random() * (canvasRect.height - treasure.size - 120) + 160;
+                        attempts++;
+                    }
+                    
+                    treasures.push(treasure);
+                }
+                
+                return treasures;
+            }
+
+            checkOverlap(newTreasure, existingTreasures) {
+                for (let treasure of existingTreasures) {
+                    const dx = newTreasure.x - treasure.x;
+                    const dy = newTreasure.y - treasure.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const minDistance = (newTreasure.size + treasure.size) / 2 + 10;
+                    
+                    if (distance < minDistance) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            getRandomTreasureType(level) {
+                const types = Object.keys(this.treasureTypes);
+                const weights = types.map(type => {
+                    let rarity = this.treasureTypes[type].rarity;
+                    
+                    // 高级关卡调整稀有度
+                    if (type === 'diamond' || type === 'mystery') {
+                        rarity += Math.min(level * 0.015, 0.1);
+                    }
+                    if (type === 'rock') {
+                        rarity = Math.max(0.1, rarity - level * 0.02);
+                    }
+                    
+                    return rarity;
+                });
+                
+                const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
+                let random = Math.random() * totalWeight;
+                
+                for (let i = 0; i < types.length; i++) {
+                    random -= weights[i];
+                    if (random <= 0) {
+                        return types[i];
+                    }
+                }
+                
+                return 'gold';
+            }
+
+            createTreasure(type, canvasRect, level) {
+                const config = this.treasureTypes[type];
+                const levelBonus = Math.floor((level - 1) * 15);
+                
+                return {
+                    id: Date.now() + Math.random(),
+                    type: type,
+                    value: config.value + levelBonus,
+                    weight: config.weight,
+                    size: config.size,
+                    x: Math.random() * (canvasRect.width - config.size - 40) + 20,
+                    y: Math.random() * (canvasRect.height - config.size - 120) + 160,
+                    element: null,
+                    emoji: config.emoji
+                };
+            }
+
+            renderTreasure(treasure) {
+                const element = document.createElement('div');
+                element.className = `treasure ${treasure.type}`;
+                element.style.left = treasure.x + 'px';
+                element.style.top = treasure.y + 'px';
+                element.style.width = treasure.size + 'px';
+                element.style.height = treasure.size + 'px';
+                element.dataset.treasureId = treasure.id;
+                element.title = `${treasure.emoji} ${treasure.value}分`;
+                
+                treasure.element = element;
+                document.getElementById('game-canvas').appendChild(element);
+                
+                return element;
+            }
+        }
+
+        // 钩子系统
+        class HookSystem {
+            constructor(gameState, audioManager) {
+                this.gameState = gameState;
+                this.audioManager = audioManager;
+                this.hookElement = document.getElementById('hook-system');
+                this.ropeElement = document.getElementById('rope');
+                this.aimLineElement = document.getElementById('aim-line');
+                this.minerElement = document.getElementById('miner');
+                
+                this.swingDirection = 1;
+                this.swingSpeed = 1.8;
+                this.minAngle = -65;
+                this.maxAngle = 65;
+                this.isSwinging = true;
+            }
+
+            update() {
+                if (this.gameState.hookState === 'idle' && this.isSwinging) {
+                    this.updateSwing();
+                } else if (this.gameState.hookState === 'extending') {
+                    this.extendHook();
+                } else if (this.gameState.hookState === 'retracting') {
+                    this.retractHook();
+                }
+            }
+
+            updateSwing() {
+                this.gameState.hookAngle += this.swingDirection * this.swingSpeed;
+                
+                if (this.gameState.hookAngle >= this.maxAngle) {
+                    this.gameState.hookAngle = this.maxAngle;
+                    this.swingDirection = -1;
+                } else if (this.gameState.hookAngle <= this.minAngle) {
+                    this.gameState.hookAngle = this.minAngle;
+                    this.swingDirection = 1;
+                }
+                
+                this.hookElement.style.transform = `translateX(-50%) rotate(${this.gameState.hookAngle}deg)`;
+                this.updateAimLine();
+            }
+
+            updateAimLine() {
+                const angle = this.gameState.hookAngle * Math.PI / 180;
+                const length = 150;
+                
+                this.aimLineElement.style.height = length + 'px';
+                this.aimLineElement.style.transform = `translateX(-50%) rotate(${this.gameState.hookAngle}deg)`;
+                this.aimLineElement.classList.add('visible');
+            }
+
+            launch() {
+                if (this.gameState.hookState !== 'idle') return;
+                
+                this.gameState.hookState = 'extending';
+                this.gameState.hookLength = 0;
+                this.isSwinging = false;
+                
+                this.audioManager.play('hook');
+                this.aimLineElement.classList.remove('visible');
+                this.minerElement.classList.add('working');
+                
+                // 根据力量调整钩子速度
+                this.gameState.hookSpeed = 3 + (this.gameState.power / 100) * 2;
+            }
+
+            extendHook() {
+                this.gameState.hookLength += this.gameState.hookSpeed;
+                this.ropeElement.style.height = this.gameState.hookLength + 'px';
+                
+                // 检查碰撞
+                this.checkCollisions();
+                
+                // 检查是否到达最大长度
+                if (this.gameState.hookLength >= this.gameState.maxHookLength) {
+                    this.gameState.hookState = 'retracting';
+                }
+            }
+
+            retractHook() {
+                const baseSpeed = this.gameState.hookSpeed * 1.2;
+                const weightPenalty = this.gameState.caughtTreasure ? 
+                    this.gameState.caughtTreasure.weight * 0.8 : 0;
+                const retractSpeed = Math.max(1, baseSpeed - weightPenalty);
+                
+                this.gameState.hookLength -= retractSpeed;
+                this.ropeElement.style.height = Math.max(0, this.gameState.hookLength) + 'px';
+                
+                // 移动被抓住的宝物
+                if (this.gameState.caughtTreasure) {
+                    this.updateCaughtTreasurePosition();
+                }
+                
+                // 检查是否完全收回
+                if (this.gameState.hookLength <= 0) {
+                    this.completeCatch();
+                }
+            }
+
+            checkCollisions() {
+                const hookRect = this.getHookPosition();
+                
+                for (let treasure of this.gameState.treasures) {
+                    if (!treasure.element) continue;
+                    
+                    const treasureRect = treasure.element.getBoundingClientRect();
+                    const canvasRect = document.getElementById('game-canvas').getBoundingClientRect();
+                    
+                    // 转换为相对坐标
+                    const relTreasureRect = {
+                        left: treasureRect.left - canvasRect.left,
+                        right: treasureRect.right - canvasRect.left,
+                        top: treasureRect.top - canvasRect.top,
+                        bottom: treasureRect.bottom - canvasRect.top
+                    };
+                    
+                    if (this.isColliding(hookRect, relTreasureRect)) {
+                        this.catchTreasure(treasure);
+                        break;
+                    }
+                }
+            }
+
+            getHookPosition() {
+                const angle = this.gameState.hookAngle * Math.PI / 180;
+                const canvas = document.getElementById('game-canvas');
+                const canvasRect = canvas.getBoundingClientRect();
+                
+                const hookX = canvasRect.width / 2 + Math.sin(angle) * this.gameState.hookLength;
+                const hookY = Math.cos(angle) * this.gameState.hookLength + 25;
+                
+                return {
+                    left: hookX - 15,
+                    right: hookX + 15,
+                    top: hookY - 15,
+                    bottom: hookY + 15
+                };
+            }
+
+            isColliding(rect1, rect2) {
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            }
+
+            catchTreasure(treasure) {
+                this.gameState.caughtTreasure = treasure;
+                this.gameState.hookState = 'retracting';
+                this.audioManager.play('catch');
+                
+                // 添加视觉效果
+                treasure.element.style.zIndex = '60';
+                treasure.element.style.transform = 'scale(1.1)';
+                treasure.element.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.8)';
+            }
+
+            updateCaughtTreasurePosition() {
+                if (!this.gameState.caughtTreasure) return;
+                
+                const angle = this.gameState.hookAngle * Math.PI / 180;
+                const canvas = document.getElementById('game-canvas');
+                const canvasRect = canvas.getBoundingClientRect();
+                
+                const treasureX = canvasRect.width / 2 + Math.sin(angle) * this.gameState.hookLength;
+                const treasureY = Math.cos(angle) * this.gameState.hookLength + 25;
+                
+                this.gameState.caughtTreasure.element.style.left = (treasureX - this.gameState.caughtTreasure.size / 2) + 'px';
+                this.gameState.caughtTreasure.element.style.top = (treasureY - this.gameState.caughtTreasure.size / 2) + 'px';
+            }
+
+            completeCatch() {
+                if (this.gameState.caughtTreasure) {
+                    game.collectTreasure(this.gameState.caughtTreasure);
+                    this.gameState.caughtTreasure = null;
+                }
+                
+                this.gameState.hookState = 'idle';
+                this.gameState.hookLength = 0;
+                this.isSwinging = true;
+                this.ropeElement.style.height = '0px';
+                this.hookElement.style.transform = 'translateX(-50%) rotate(0deg)';
+                this.gameState.hookAngle = 0;
+                this.minerElement.classList.remove('working');
+            }
+        }
+
+        // 特效系统
+        class EffectsManager {
+            static createParticle(x, y, type, text = '') {
+                const particle = document.createElement('div');
+                particle.className = `particle ${type}-particle`;
+                particle.textContent = text;
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                document.getElementById('game-canvas').appendChild(particle);
+                
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, type === 'coin' ? 1500 : 1000);
+            }
+
+            static showScorePopup(x, y, score, type = 'normal') {
+                const popup = document.createElement('div');
+                popup.className = `score-popup ${type}`;
+                popup.textContent = '+' + score;
+                popup.style.left = x + 'px';
+                popup.style.top = y + 'px';
+                
+                document.getElementById('game-canvas').appendChild(popup);
+                
+                // 创建金币粒子效果
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        this.createParticle(
+                            x + Math.random() * 40 - 20, 
+                            y + Math.random() * 20 - 10, 
+                            'coin', 
+                            '💰'
+                        );
+                    }, i * 100);
+                }
+                
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        popup.parentNode.removeChild(popup);
+                    }
+                }, 2000);
+            }
+
+            static showComboEffect(x, y, combo) {
+                const comboText = document.createElement('div');
+                comboText.className = 'score-popup bonus';
+                comboText.textContent = `${combo}x 连击!`;
+                comboText.style.left = x + 'px';
+                comboText.style.top = (y - 40) + 'px';
+                comboText.style.fontSize = '20px';
+                
+                document.getElementById('game-canvas').appendChild(comboText);
+                
+                // 创建闪烁粒子
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        this.createParticle(
+                            x + Math.random() * 60 - 30, 
+                            y + Math.random() * 40 - 20, 
+                            'sparkle'
+                        );
+                    }, i * 50);
+                }
+                
+                setTimeout(() => {
+                    if (comboText.parentNode) {
+                        comboText.parentNode.removeChild(comboText);
+                    }
+                }, 2000);
+            }
+
+            static showTip(message, duration = 3000) {
+                const tipsElement = document.getElementById('game-tips');
+                const contentElement = document.getElementById('tip-content');
+                
+                contentElement.textContent = message;
+                tipsElement.classList.add('visible');
+                
+                setTimeout(() => {
+                    tipsElement.classList.remove('visible');
+                }, duration);
+            }
+        }
+
+        // 主游戏类
+        class GoldMinerGame {
+            constructor() {
+                this.gameState = new GameState();
+                this.audioManager = new AudioManager();
+                this.treasureManager = new TreasureManager();
+                this.hookSystem = new HookSystem(this.gameState, this.audioManager);
+                this.effectsManager = EffectsManager;
+                
+                this.gameLoop = null;
+                this.levelTargets = [800, 1200, 1800, 2500, 3500, 5000, 7000, 10000, 15000, 20000];
+                this.tips = [
+                    '💡 连续抓取宝物可获得连击奖励！',
+                    '⚡ 力量不足时钩子会变慢，注意休息！',
+                    '💎 钻石价值最高，优先抓取！',
+                    '🪨 避免抓取石头，它们很重但价值低！',
+                    '🎁 神秘宝箱有惊喜奖励！',
+                    '⏰ 合理分配时间，不要贪心！',
+                    '🎯 瞄准角度很重要！'
+                ];
+                
+                this.initEventListeners();
+                this.showWelcomeMessage();
+            }
+
+            initEventListeners() {
+                // 点击发射钩子
+                document.getElementById('game-canvas').addEventListener('click', (e) => {
+                    if (this.gameState.isPlaying && !this.gameState.isPaused) {
+                        this.hookSystem.launch();
+                    }
+                });
+
+                // 键盘控制
+                document.addEventListener('keydown', (e) => {
+                    if (!this.gameState.isPlaying) return;
+                    
+                    switch(e.code) {
+                        case 'Space':
+                            e.preventDefault();
+                            this.hookSystem.launch();
+                            break;
+                        case 'KeyP':
+                            this.pauseGame();
+                            break;
+                        case 'KeyR':
+                            this.restartGame();
+                            break;
+                    }
+                });
+
+                // 触摸支持
+                document.getElementById('game-canvas').addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    if (this.gameState.isPlaying && !this.gameState.isPaused) {
+                        this.hookSystem.launch();
+                    }
+                });
+
+                // 窗口大小变化
+                window.addEventListener('resize', () => {
+                    this.gameState.maxHookLength = window.innerHeight - 200;
+                });
+            }
+
+            showWelcomeMessage() {
+                const messageEl = document.getElementById('game-message');
+                messageEl.style.display = 'block';
+            }
+
+            startGame() {
+                this.gameState.reset();
+                this.gameState.isPlaying = true;
+                
+                // 更新UI
+                document.getElementById('start-btn').disabled = true;
+                document.getElementById('pause-btn').disabled = false;
+                
+                // 生成宝物
+                this.generateLevel();
+                
+                // 开始游戏循环
+                this.startGameLoop();
+                
+                // 开始计时
+                this.startTimer();
+                
+                // 显示提示
+                if (this.gameState.level === 1) {
+                    setTimeout(() => {
+                        this.effectsManager.showTip('点击屏幕发射钩子抓取宝物！');
+                    }, 1000);
+                }
+                
+                this.audioManager.play('levelUp');
+            }
+
+            generateLevel() {
+                // 清除现有宝物
+                this.clearTreasures();
+                
+                // 生成新宝物
+                this.gameState.treasures = this.treasureManager.generateTreasures(this.gameState.level);
+                
+                // 渲染宝物
+                this.gameState.treasures.forEach(treasure => {
+                    this.treasureManager.renderTreasure(treasure);
+                });
+                
+                // 更新目标分数
+                const targetIndex = Math.min(this.gameState.level - 1, this.levelTargets.length - 1);
+                this.gameState.target = this.levelTargets[targetIndex];
+                
+                this.updateUI();
+            }
+
+            startGameLoop() {
+                this.gameLoop = setInterval(() => {
+                    if (!this.gameState.isPaused) {
+                        this.update();
+                    }
+                }, 16); // 60 FPS
+            }
+
+            update() {
+                this.hookSystem.update();
+                this.updatePowerSystem();
+                this.updateComboSystem();
+            }
+
+            updatePowerSystem() {
+                // 力量系统：随时间恢复
+                if (this.gameState.power < 100) {
+                    this.gameState.power = Math.min(100, this.gameState.power + 0.3);
+                    this.updateUI();
+                }
+            }
+
+            updateComboSystem() {
+                // 连击系统：超时重置
+                const now = Date.now();
+                if (now - this.gameState.lastCatchTime > 4000 && this.gameState.combo > 0) {
+                    this.gameState.combo = 0;
+                    this.gameState.comboMultiplier = 1;
+                    this.updateUI();
+                }
+            }
+
+            startTimer() {
+                this.gameState.gameTimer = setInterval(() => {
+                    if (!this.gameState.isPaused) {
+                        this.gameState.time--;
+                        this.updateUI();
+                        
+                        // 时间提醒
+                        if (this.gameState.time === 30) {
+                            this.effectsManager.showTip('⏰ 还剩30秒！加快速度！', 2000);
+                        } else if (this.gameState.time === 10) {
+                            this.effectsManager.showTip('🚨 最后10秒！', 2000);
+                        }
+                        
+                        if (this.gameState.time <= 0) {
+                            this.endGame();
+                        } else if (this.gameState.time <= 10) {
+                            // 时间警告效果
+                            document.getElementById('time').style.color = '#FF4444';
+                            document.getElementById('time').style.animation = 'pulse 0.5s infinite';
+                        }
+                    }
+                }, 1000);
+            }
+
+            collectTreasure(treasure) {
+                // 计算分数
+                let baseScore = treasure.value;
+                let bonusScore = 0;
+                
+                // 连击系统
+                const now = Date.now();
+                if (now - this.gameState.lastCatchTime < 4000) {
+                    this.gameState.combo++;
+                    this.gameState.comboMultiplier = Math.min(3, 1 + this.gameState.combo * 0.15);
+                    bonusScore = Math.floor(baseScore * (this.gameState.comboMultiplier - 1));
+                } else {
+                    this.gameState.combo = 1;
+                    this.gameState.comboMultiplier = 1;
+                }
+                
+                this.gameState.lastCatchTime = now;
+                this.gameState.maxCombo = Math.max(this.gameState.maxCombo, this.gameState.combo);
+                
+                const totalScore = baseScore + bonusScore;
+                this.gameState.score += totalScore;
+                this.gameState.totalTreasuresCollected++;
+                
+                // 消耗力量
+                const powerCost = Math.max(5, treasure.weight * 8);
+                this.gameState.power = Math.max(10, this.gameState.power - powerCost);
+                
+                // 特效和音效
+                const treasureRect = treasure.element.getBoundingClientRect();
+                const canvasRect = document.getElementById('game-canvas').getBoundingClientRect();
+                const relX = treasureRect.left - canvasRect.left + treasureRect.width / 2;
+                const relY = treasureRect.top - canvasRect.top + treasureRect.height / 2;
+                
+                this.effectsManager.showScorePopup(relX - 20, relY - 30, totalScore, bonusScore > 0 ? 'bonus' : 'normal');
+                
+                if (this.gameState.combo > 1) {
+                    this.effectsManager.showComboEffect(relX + 30, relY - 20, this.gameState.combo);
+                    this.audioManager.play('combo');
+                } else {
+                    this.audioManager.play(treasure.type);
+                }
+                
+                // 神秘宝箱特殊效果
+                if (treasure.type === 'mystery') {
+                    this.handleMysteryBox();
+                }
+                
+                // 移除宝物
+                treasure.element.remove();
+                const index = this.gameState.treasures.indexOf(treasure);
+                if (index > -1) {
+                    this.gameState.treasures.splice(index, 1);
+                }
+                
+                // 矿工表情
+                this.minerElement.classList.add('happy');
+                setTimeout(() => {
+                    this.minerElement.classList.remove('happy');
+                }, 1000);
+                
+                this.updateUI();
+                this.checkLevelComplete();
+                
+                // 随机显示提示
+                if (Math.random() < 0.3) {
+                    const randomTip = this.tips[Math.floor(Math.random() * this.tips.length)];
+                    setTimeout(() => {
+                        this.effectsManager.showTip(randomTip, 2000);
+                    }, 1000);
+                }
+            }
+
+            handleMysteryBox() {
+                const bonuses = [
+                    { type: 'score', value: 800, message: '🎉 奖励分数 +800!' },
+                    { type: 'time', value: 25, message: '⏰ 额外时间 +25秒!' },
+                    { type: 'power', value: 40, message: '⚡ 力量恢复 +40!' },
+                    { type: 'combo', value: 3, message: '🔥 连击奖励 +3!' }
+                ];
+                
+                const bonus = bonuses[Math.floor(Math.random() * bonuses.length)];
+                
+                switch(bonus.type) {
+                    case 'score':
+                        this.gameState.score += bonus.value;
+                        break;
+                    case 'time':
+                        this.gameState.time += bonus.value;
+                        break;
+                    case 'power':
+                        this.gameState.power = Math.min(100, this.gameState.power + bonus.value);
+                        break;
+                    case 'combo':
+                        this.gameState.combo += bonus.value;
+                        break;
+                }
+                
+                this.effectsManager.showTip(bonus.message, 3000);
+                this.audioManager.play('mystery');
+            }
+
+            checkLevelComplete() {
+                if (this.gameState.score >= this.gameState.target) {
+                    this.nextLevel();
+                }
+            }
+
+            nextLevel() {
+                this.gameState.level++;
+                this.gameState.time += 50; // 额外时间
+                this.gameState.power = 100; // 恢复力量
+                
+                this.audioManager.play('levelUp');
+                this.effectsManager.showTip(`🎉 恭喜通过第${this.gameState.level - 1}关！准备下一关...`, 3000);
+                
+                // 短暂暂停后生成新关卡
+                setTimeout(() => {
+                    this.generateLevel();
+                }, 2000);
+            }
+
+            pauseGame() {
+                if (!this.gameState.isPlaying) return;
+                
+                this.gameState.isPaused = !this.gameState.isPaused;
+                const pauseBtn = document.getElementById('pause-btn');
+                
+                if (this.gameState.isPaused) {
+                    pauseBtn.textContent = '▶️ 继续';
+                    this.showMessage('⏸️ 游戏暂停', '点击继续按钮恢复游戏', '继续游戏', '返回主菜单');
+                } else {
+                    pauseBtn.textContent = '⏸️ 暂停';
+                    this.hideMessage();
+                }
+            }
+
+            restartGame() {
+                this.endGame();
+                setTimeout(() => {
+                    this.startGame();
+                }, 500);
+            }
+
+            endGame() {
+                this.gameState.isPlaying = false;
+                this.gameState.clearTimer();
+                
+                if (this.gameLoop) {
+                    clearInterval(this.gameLoop);
+                    this.gameLoop = null;
+                }
+                
+                // 更新UI
+                document.getElementById('start-btn').disabled = false;
+                document.getElementById('pause-btn').disabled = true;
+                document.getElementById('time').style.color = '#FFD700';
+                document.getElementById('time').style.animation = 'none';
+                
+                // 显示结果
+                const success = this.gameState.score >= this.gameState.target;
+                const title = success ? '🏆 恭喜通关！' : '⏰ 时间到！';
+                const message = success ? 
+                    `太棒了！你成功完成了第${this.gameState.level}关！<br><br>` +
+                    `🏆 最终得分：${this.gameState.score}<br>` +
+                    `🔥 最高连击：${this.gameState.maxCombo}<br>` +
+                    `💰 收集宝物：${this.gameState.totalTreasuresCollected}个` :
+                    `游戏结束！再接再厉！<br><br>` +
+                    `🏆 最终得分：${this.gameState.score}<br>` +
+                    `🎯 目标分数：${this.gameState.target}<br>` +
+                    `📊 完成度：${Math.round((this.gameState.score / this.gameState.target) * 100)}%<br>` +
+                    `🔥 最高连击：${this.gameState.maxCombo}`;
+                
+                this.showMessage(title, message, '重新开始', '查看帮助');
+                this.audioManager.play(success ? 'levelUp' : 'gameOver');
+            }
+
+            clearTreasures() {
+                this.gameState.treasures.forEach(treasure => {
+                    if (treasure.element) {
+                        treasure.element.remove();
+                    }
+                });
+                this.gameState.treasures = [];
+            }
+
+            updateUI() {
+                document.getElementById('score').textContent = this.gameState.score.toLocaleString();
+                document.getElementById('target').textContent = this.gameState.target.toLocaleString();
+                document.getElementById('level').textContent = this.gameState.level;
+                document.getElementById('time').textContent = this.gameState.time;
+                document.getElementById('combo').textContent = this.gameState.combo;
+                document.getElementById('power').textContent = Math.round(this.gameState.power) + '%';
+                
+                // 更新进度条
+                const progress = Math.min(100, (this.gameState.score / this.gameState.target) * 100);
+                document.getElementById('progress-fill').style.width = progress + '%';
+                document.getElementById('progress-text').textContent = `${this.gameState.score.toLocaleString()} / ${this.gameState.target.toLocaleString()}`;
+            }
+
+            showMessage(title, content, primaryButton, secondaryButton = null) {
+                document.getElementById('message-title').innerHTML = title;
+                document.getElementById('message-content').innerHTML = content;
+                
+                const buttonsContainer = document.querySelector('.message-buttons');
+                buttonsContainer.innerHTML = '';
+                
+                const primaryBtn = document.createElement('button');
+                primaryBtn.className = 'message-btn';
+                primaryBtn.textContent = primaryButton;
+                primaryBtn.onclick = () => {
+                    if (primaryButton === '重新开始') {
+                        this.hideMessage();
+                        this.restartGame();
+                    } else if (primaryButton === '继续游戏') {
+                        this.pauseGame();
+                    } else {
+                        this.hideMessage();
+                    }
+                };
+                buttonsContainer.appendChild(primaryBtn);
+                
+                if (secondaryButton) {
+                    const secondaryBtn = document.createElement('button');
+                    secondaryBtn.className = 'message-btn secondary';
+                    secondaryBtn.textContent = secondaryButton;
+                    secondaryBtn.onclick = () => {
+                        if (secondaryButton === '查看帮助') {
+                            this.showHelp();
+                        } else if (secondaryButton === '返回主菜单') {
+                            this.hideMessage();
+                            this.endGame();
+                        }
+                    };
+                    buttonsContainer.appendChild(secondaryBtn);
+                }
+                
+                document.getElementById('game-message').style.display = 'block';
+            }
+
+            hideMessage() {
+                document.getElementById('game-message').style.display = 'none';
+            }
+
+            toggleAudio() {
+                const enabled = this.audioManager.toggle();
+                const audioBtn = document.getElementById('audio-btn');
+                audioBtn.textContent = enabled ? '🔊 音效' : '🔇 静音';
+                audioBtn.classList.toggle('muted', !enabled);
+            }
+
+            showHelp() {
+                const helpContent = `
+                    <strong>🎮 游戏操作：</strong><br>
+                    • 点击屏幕或按空格键发射钩子<br>
+                    • 抓取宝物获得分数达到目标即可过关<br>
+                    • 按P键暂停，按R键重新开始<br><br>
+                    
+                    <strong>💰 宝物价值：</strong><br>
+                    • 💰 金币：100分（轻）<br>
+                    • 💎 钻石：350分（很轻）<br>
+                    • 💍 红宝石：200分（轻）<br>
+                    • 💚 绿宝石：250分（轻）<br>
+                    • 🎁 神秘宝箱：500分+特殊奖励（轻）<br>
+                    • 🪨 石头：15分（很重，避免抓取）<br><br>
+                    
+                    <strong>⚡ 游戏技巧：</strong><br>
+                    • 连续抓取宝物可获得连击奖励（最高3倍）<br>
+                    • 力量不足时钩子速度会变慢<br>
+                    • 优先抓取钻石等高价值轻质宝物<br>
+                    • 神秘宝箱有随机奖励（分数/时间/力量/连击）<br>
+                    • 合理分配时间，不要贪心抓石头
+                `;
+                this.showMessage('❓ 游戏帮助', helpContent, '开始游戏', '关闭帮助');
+            }
+        }
+
+        // 全局函数
+        let game;
+
+        function initGame() {
+            game = new GoldMinerGame();
+        }
+
+        function startGame() {
+            game.startGame();
+        }
+
+        function pauseGame() {
+            game.pauseGame();
+        }
+
+        function restartGame() {
+            game.restartGame();
+        }
+
+        function toggleAudio() {
+            game.toggleAudio();
+        }
+
+        function showHelp() {
+            game.showHelp();
+        }
+
+        function hideMessage() {
+            game.hideMessage();
+        }
+
+        // 页面加载完成后初始化游戏
+        document.addEventListener('DOMContentLoaded', initGame);
+
+        // 防止页面滚动和缩放
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // 处理页面可见性变化
+        document.addEventListener('visibilitychange', function() {
+            if (game && game.gameState.isPlaying && document.hidden) {
+                game.pauseGame();
+            }
+        });
+
+        // 处理窗口失焦
+        window.addEventListener('blur', function() {
+            if (game && game.gameState.isPlaying) {
+                game.pauseGame();
+            }
+        });
+    </script>
+</body>
+</html>

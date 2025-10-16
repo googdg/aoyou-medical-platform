@@ -1,0 +1,1768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>坦克大战经典版 - Tank Battle Classic</title>
+    <meta name="description" content="经典坦克大战游戏，重现童年回忆！支持单人闯关和双人对战模式。">
+    
+    <!-- 社交媒体分享优化 -->
+    <meta property="og:title" content="坦克大战经典版 - 童年经典游戏">
+    <meta property="og:description" content="重现经典FC坦克大战，支持单人闯关和双人对战！">
+    <meta property="og:type" content="website">
+    
+    <!-- PWA支持 -->
+    <meta name="theme-color" content="#2C3E50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="坦克大战">
+    
+    <!-- 图标 -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚗</text></svg>">
+    
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #2C3E50 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* 游戏容器 */
+        .game-container {
+            position: relative;
+            background: #000;
+            border: 4px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        /* 游戏画布 */
+        #gameCanvas {
+            display: block;
+            background: #000;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        /* 游戏界面覆盖层 */
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* 游戏信息面板 */
+        .game-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #FFD700;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            pointer-events: auto;
+        }
+
+        .info-left, .info-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 10px;
+            border-radius: 15px;
+            border: 2px solid #FFD700;
+        }
+
+        /* 游戏菜单 */
+        .game-menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(44, 62, 80, 0.95) 100%);
+            color: white;
+            padding: 40px 60px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 200;
+            border: 3px solid #FFD700;
+            backdrop-filter: blur(10px);
+            pointer-events: auto;
+        }
+
+        .game-menu h1 {
+            color: #FFD700;
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .game-menu h2 {
+            color: #FFD700;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .game-menu p {
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .menu-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .menu-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            min-width: 200px;
+        }
+
+        .menu-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .menu-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .menu-btn.secondary {
+            background: linear-gradient(135deg, #95A5A6 0%, #7F8C8D 100%);
+            color: white;
+        }
+
+        /* 控制说明 */
+        .controls-info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            color: #FFD700;
+            font-size: 12px;
+            text-align: center;
+            opacity: 0.8;
+            pointer-events: auto;
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 5px;
+        }
+
+        /* 暂停界面 */
+        .pause-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 150;
+            pointer-events: auto;
+        }
+
+        .pause-menu {
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            padding: 30px 50px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #FFD700;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .game-container {
+                border: 2px solid #333;
+            }
+
+            .game-info {
+                font-size: 14px;
+                top: 5px;
+                left: 5px;
+                right: 5px;
+            }
+
+            .info-left, .info-right {
+                gap: 10px;
+            }
+
+            .info-item {
+                padding: 3px 8px;
+                font-size: 12px;
+            }
+
+            .game-menu {
+                padding: 30px 40px;
+                margin: 0 20px;
+            }
+
+            .game-menu h1 {
+                font-size: 24px;
+            }
+
+            .game-menu h2 {
+                font-size: 20px;
+            }
+
+            .controls-info {
+                font-size: 10px;
+                bottom: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-menu {
+                padding: 20px 30px;
+            }
+
+            .menu-btn {
+                padding: 12px 24px;
+                font-size: 14px;
+                min-width: 160px;
+            }
+
+            .info-left, .info-right {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+
+        /* 加载动画 */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #FFD700;
+            font-size: 18px;
+            z-index: 300;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #FFD700;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 隐藏类 */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- 游戏画布 -->
+        <canvas id="gameCanvas" width="832" height="624"></canvas>
+        
+        <!-- 游戏界面覆盖层 -->
+        <div class="game-overlay">
+            <!-- 游戏信息面板 -->
+            <div class="game-info">
+                <div class="info-left">
+                    <div class="info-item">
+                        <span>🚗</span>
+                        <span id="player1Lives">3</span>
+                    </div>
+                    <div class="info-item">
+                        <span>🏆</span>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span>🎯</span>
+                        <span id="level">1</span>
+                    </div>
+                </div>
+                <div class="info-right">
+                    <div class="info-item">
+                        <span>🤖</span>
+                        <span id="enemyCount">20</span>
+                    </div>
+                    <div class="info-item">
+                        <span>⏱️</span>
+                        <span id="gameTime">00:00</span>
+                    </div>
+                    <div class="info-item" id="player2Info" style="display: none;">
+                        <span>🚙</span>
+                        <span id="player2Lives">3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 控制说明 -->
+            <div class="controls-info">
+                <div class="controls-row">
+                    <span>玩家1: WASD移动 空格射击</span>
+                    <span>玩家2: 方向键移动 回车射击</span>
+                </div>
+                <div class="controls-row">
+                    <span>P键暂停 | R键重新开始 | ESC键返回菜单</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主菜单 -->
+        <div class="game-menu" id="mainMenu">
+            <h1>🚗 坦克大战经典版</h1>
+            <p>
+                重现经典FC坦克大战游戏！<br><br>
+                🎯 <strong>单人模式</strong>：挑战20个精心设计的关卡<br>
+                👥 <strong>双人模式</strong>：与朋友一起并肩作战<br>
+                🏆 <strong>经典玩法</strong>：原汁原味的游戏体验<br>
+                🎮 <strong>简单操作</strong>：易上手，难精通
+            </p>
+            <div class="menu-buttons">
+                <button class="menu-btn" onclick="startSinglePlayer()">🎯 单人游戏</button>
+                <button class="menu-btn" onclick="startTwoPlayer()">👥 双人游戏</button>
+                <button class="menu-btn secondary" onclick="showSettings()">⚙️ 游戏设置</button>
+                <button class="menu-btn secondary" onclick="showHelp()">❓ 游戏帮助</button>
+            </div>
+        </div>
+
+        <!-- 暂停菜单 -->
+        <div class="pause-overlay" id="pauseOverlay">
+            <div class="pause-menu">
+                <h2>⏸️ 游戏暂停</h2>
+                <div class="menu-buttons">
+                    <button class="menu-btn" onclick="resumeGame()">▶️ 继续游戏</button>
+                    <button class="menu-btn secondary" onclick="restartGame()">🔄 重新开始</button>
+                    <button class="menu-btn secondary" onclick="backToMenu()">🏠 返回主菜单</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 加载提示 -->
+        <div class="loading hidden" id="loadingIndicator">
+            正在加载游戏资源...
+        </div>
+    </div>
+
+    <!-- 引入实体组件系统 -->
+    <script src="js/entity-component-system.js"></script>
+    <!-- 引入地图系统 -->
+    <script src="js/map-system.js"></script>
+    <!-- 引入坦克系统 -->
+    <script src="js/tank-system.js"></script>
+    <!-- 引入子弹系统 -->
+    <script src="js/bullet-system.js"></script>
+    <!-- 引入AI系统 -->
+    <script src="js/ai-system.js"></script>
+    <!-- 引入高级AI系统 -->
+    <script src="js/advanced-ai-system.js"></script>
+    <!-- 引入道具系统 -->
+    <script src="js/powerup-system.js"></script>
+    <!-- 引入得分系统 -->
+    <script src="js/score-system.js"></script>
+    <!-- 引入关卡系统 -->
+    <script src="js/level-system.js"></script>
+    <!-- 引入音频系统 -->
+    <script src="js/audio-system.js"></script>
+    <!-- 引入战斗系统 -->
+    <script src="js/combat-system.js"></script>
+    
+    <script>
+        // 游戏引擎核心类
+        class GameEngine {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.gameState = 'MENU'; // MENU, PLAYING, PAUSED, GAME_OVER
+                this.gameMode = 'SINGLE'; // SINGLE, DOUBLE
+                this.lastTime = 0;
+                this.deltaTime = 0;
+                this.fps = 60;
+                this.targetFrameTime = 1000 / this.fps;
+                
+                // 游戏对象
+                this.currentScene = null;
+                this.inputManager = new InputManager();
+                this.audioManager = new AudioManager();
+                this.assetManager = new AssetManager();
+                
+                // 实体组件系统
+                this.entityManager = new ECS.EntityManager();
+                this.collisionSystem = new ECS.CollisionSystem(this.entityManager);
+                
+                // 地图系统
+                this.mapManager = new MapSystem.MapManager();
+                this.currentMap = null;
+                
+                // 坦克系统
+                this.tankManager = new TankSystem.TankManager(this.entityManager);
+                
+                // 射击系统
+                this.fireSystem = new BulletSystem.FireSystem();
+                
+                // AI系统
+                this.aiManager = new AISystem.AIManager(this.entityManager);
+                
+                // 战斗系统
+                this.combatManager = new CombatSystem.CombatManager(this.entityManager);
+                this.damageNumberSystem = new CombatSystem.DamageNumberSystem();
+                
+                // 道具系统
+                this.powerUpManager = null; // 将在地图加载后初始化
+                this.weaponUpgradeSystem = new PowerUpSystem.WeaponUpgradeSystem();
+                
+                // 得分和生命值系统
+                this.scoreComponent = new ScoreSystem.ScoreComponent();
+                this.gameStateManager = new ScoreSystem.GameStateManager();
+                this.playerLifeSystem = new ScoreSystem.LifeSystem(3, 3000);
+                
+                // 关卡系统
+                this.levelManager = new LevelSystem.LevelManager();
+                
+                // 音频系统
+                this.audioManager = new AudioSystem.AudioManager();
+                
+                // 设置战斗事件监听器
+                this.setupCombatEventListeners();
+                
+                // 游戏数据
+                this.gameData = {
+                    score: 0,
+                    level: 1,
+                    lives: 3,
+                    enemyCount: 20,
+                    gameTime: 0,
+                    player1Lives: 3,
+                    player2Lives: 3
+                };
+                
+                this.init();
+            }
+
+            async init() {
+                console.log('🎮 初始化坦克大战游戏引擎...');
+                
+                // 显示加载提示
+                this.showLoading(true);
+                
+                try {
+                    // 初始化各个系统
+                    await this.assetManager.loadAssets();
+                    await this.audioManager.initialize();
+                    this.inputManager.init();
+                    this.audioManager.init();
+                    
+                    // 设置Canvas
+                    this.setupCanvas();
+                    
+                    // 开始游戏循环
+                    this.startGameLoop();
+                    
+                    console.log('✅ 游戏引擎初始化完成');
+                    
+                } catch (error) {
+                    console.error('❌ 游戏引擎初始化失败:', error);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            setupCanvas() {
+                // 设置Canvas样式和属性
+                this.ctx.imageSmoothingEnabled = false;
+                this.ctx.textAlign = 'left';
+                this.ctx.textBaseline = 'top';
+                
+                // 清空画布
+                this.clearCanvas();
+                
+                console.log('🖼️ Canvas设置完成');
+            }
+
+            startGameLoop() {
+                console.log('🔄 启动游戏主循环');
+                this.gameLoop();
+            }
+
+            gameLoop(currentTime = 0) {
+                // 计算时间差
+                this.deltaTime = currentTime - this.lastTime;
+                this.lastTime = currentTime;
+                
+                // 限制帧率
+                if (this.deltaTime >= this.targetFrameTime) {
+                    this.update(this.deltaTime);
+                    this.render();
+                }
+                
+                // 继续循环
+                requestAnimationFrame((time) => this.gameLoop(time));
+            }
+
+            update(deltaTime) {
+                // 更新输入
+                this.inputManager.update();
+                
+                // 根据游戏状态更新
+                switch (this.gameState) {
+                    case 'MENU':
+                        this.updateMenu(deltaTime);
+                        break;
+                    case 'PLAYING':
+                        this.updateGame(deltaTime);
+                        break;
+                    case 'PAUSED':
+                        this.updatePause(deltaTime);
+                        break;
+                    case 'GAME_OVER':
+                        this.updateGameOver(deltaTime);
+                        break;
+                }
+            }
+
+            render() {
+                // 清空画布
+                this.clearCanvas();
+                
+                // 根据游戏状态渲染
+                switch (this.gameState) {
+                    case 'MENU':
+                        this.renderMenu();
+                        break;
+                    case 'PLAYING':
+                        this.renderGame();
+                        break;
+                    case 'PAUSED':
+                        this.renderGame(); // 继续显示游戏画面
+                        break;
+                    case 'GAME_OVER':
+                        this.renderGameOver();
+                        break;
+                }
+            }
+
+            clearCanvas() {
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+
+            updateMenu(deltaTime) {
+                // 菜单状态更新逻辑
+                // 这里可以添加菜单动画等
+            }
+
+            updateGame(deltaTime) {
+                // 处理输入控制
+                this.handleGameInput();
+                
+                // 更新实体管理器
+                this.entityManager.update(deltaTime);
+                
+                // 更新射击系统
+                this.fireSystem.update(deltaTime);
+                
+                // 更新AI系统
+                this.aiManager.update(deltaTime);
+                
+                // 更新道具系统
+                if (this.powerUpManager) {
+                    this.powerUpManager.update(deltaTime);
+                }
+                
+                // 更新得分和生命值系统
+                this.scoreComponent.update(deltaTime);
+                this.playerLifeSystem.update(deltaTime);
+                
+                // 更新战斗系统（替代原来的碰撞系统）
+                this.combatManager.update(deltaTime);
+                
+                // 更新伤害数字系统
+                this.damageNumberSystem.update(deltaTime);
+                
+                // 游戏状态更新逻辑
+                if (this.currentScene) {
+                    this.currentScene.update(deltaTime);
+                }
+                
+                // 更新游戏时间
+                this.gameData.gameTime += deltaTime;
+                this.updateUI();
+            }
+
+            // 处理游戏输入
+            handleGameInput() {
+                // 输入现在由TankController组件处理
+                // 这里可以处理一些全局输入，如暂停、菜单等
+            }
+
+            updatePause(deltaTime) {
+                // 暂停状态更新逻辑
+                // 暂停时不更新游戏逻辑
+            }
+
+            updateGameOver(deltaTime) {
+                // 游戏结束状态更新逻辑
+            }
+
+            renderMenu() {
+                // 渲染菜单背景
+                this.ctx.fillStyle = '#1a1a1a';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制标题背景图案
+                this.drawMenuBackground();
+            }
+
+            renderGame() {
+                // 渲染地图
+                if (this.currentMap) {
+                    this.currentMap.render(this.ctx);
+                }
+                
+                // 渲染所有实体
+                this.entityManager.render(this.ctx);
+                
+                // 渲染伤害数字
+                this.damageNumberSystem.render(this.ctx);
+                
+                // 渲染游戏场景
+                if (this.currentScene) {
+                    this.currentScene.render(this.ctx);
+                } else {
+                    // 临时渲染一些测试内容
+                    this.drawTestContent();
+                }
+            }
+
+            renderGameOver() {
+                // 渲染游戏结束画面
+                this.ctx.fillStyle = '#2a2a2a';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+
+            drawMenuBackground() {
+                // 绘制网格背景
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 1;
+                
+                const gridSize = 32;
+                for (let x = 0; x < this.canvas.width; x += gridSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.stroke();
+                }
+                
+                for (let y = 0; y < this.canvas.height; y += gridSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.stroke();
+                }
+            }
+
+            drawTestContent() {
+                // 绘制测试内容
+                this.ctx.fillStyle = '#FFD700';
+                this.ctx.font = '18px Arial';
+                this.ctx.fillText('坦克大战 - 完整系统测试', 50, 50);
+                
+                this.ctx.fillStyle = '#FFF';
+                this.ctx.font = '12px Arial';
+                this.ctx.fillText(`FPS: ${Math.round(1000 / this.deltaTime)}`, 50, 80);
+                this.ctx.fillText(`游戏状态: ${this.gameState}`, 50, 100);
+                this.ctx.fillText(`游戏模式: ${this.gameMode}`, 50, 120);
+                this.ctx.fillText(`实体数量: ${this.entityManager.getEntityCount()}`, 50, 140);
+                
+                if (this.currentMap) {
+                    this.ctx.fillText(`地图: ${this.currentMap.width}x${this.currentMap.height}`, 50, 160);
+                }
+                
+                if (this.tankManager) {
+                    const stats = this.tankManager.getStats();
+                    this.ctx.fillText(`玩家坦克: ${stats.alivePlayers}/${stats.totalPlayers}`, 50, 180);
+                    this.ctx.fillText(`敌方坦克: ${stats.aliveEnemies}/${stats.totalEnemies}`, 50, 200);
+                }
+                
+                if (this.fireSystem) {
+                    const fireStats = this.fireSystem.getStats();
+                    this.ctx.fillText(`子弹: ${fireStats.activeBullets} (池: ${fireStats.pooledBullets})`, 50, 220);
+                }
+                
+                const explosions = this.entityManager.getEntitiesByTag('explosion');
+                this.ctx.fillText(`爆炸效果: ${explosions.length}`, 50, 240);
+                
+                if (this.aiManager) {
+                    const aiStats = this.aiManager.getStats();
+                    this.ctx.fillText(`AI实体: ${aiStats.totalAI}`, 50, 260);
+                }
+                
+                if (this.combatManager) {
+                    const combatStats = this.combatManager.getStats();
+                    this.ctx.fillText(`总伤害: ${combatStats.totalDamageDealt}`, 50, 280);
+                    this.ctx.fillText(`击中: ${combatStats.bulletsHit} 碰撞: ${combatStats.collisions}`, 50, 300);
+                }
+                
+                // 显示控制提示
+                this.ctx.fillStyle = '#AAA';
+                this.ctx.font = '11px Arial';
+                this.ctx.fillText('玩家1: WASD移动，空格射击', 50, 270);
+                if (this.gameMode === 'DOUBLE') {
+                    this.ctx.fillText('玩家2: 方向键移动，回车射击', 50, 290);
+                    this.ctx.fillText('按M键切换地图，按T键添加敌人，按R键重新开始', 50, 310);
+                } else {
+                    this.ctx.fillText('按M键切换地图，按T键添加敌人，按R键重新开始', 50, 290);
+                }
+            }
+
+            drawTestTank(x, y) {
+                // 绘制简单的坦克图形
+                this.ctx.fillStyle = '#4CAF50';
+                this.ctx.fillRect(x - 16, y - 16, 32, 32);
+                
+                this.ctx.fillStyle = '#2E7D32';
+                this.ctx.fillRect(x - 12, y - 12, 24, 24);
+                
+                // 炮管
+                this.ctx.fillStyle = '#1B5E20';
+                this.ctx.fillRect(x - 2, y - 20, 4, 16);
+            }
+
+            updateUI() {
+                // 更新得分显示
+                const scoreStats = this.scoreComponent.getStats();
+                const lifeStats = this.playerLifeSystem.getStats();
+                const gameStats = this.gameStateManager.getStats();
+                
+                document.getElementById('score').textContent = scoreStats.currentScore.toLocaleString();
+                
+                // 显示关卡信息
+                if (this.levelManager.currentLevel) {
+                    document.getElementById('level').textContent = 
+                        `${this.levelManager.currentLevelId}: ${this.levelManager.currentLevel.name}`;
+                } else {
+                    document.getElementById('level').textContent = gameStats.currentLevel;
+                }
+                
+                document.getElementById('player1Lives').textContent = lifeStats.currentLives;
+                document.getElementById('enemyCount').textContent = gameStats.levelData.enemiesTotal - gameStats.levelData.enemiesDestroyed;
+                
+                // 更新游戏时间
+                const minutes = Math.floor(this.gameData.gameTime / 60000);
+                const seconds = Math.floor((this.gameData.gameTime % 60000) / 1000);
+                document.getElementById('gameTime').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                // 显示连击和倍数信息
+                if (scoreStats.comboCount > 0) {
+                    const comboElement = document.getElementById('combo');
+                    if (comboElement) {
+                        comboElement.textContent = `连击: ${scoreStats.comboCount}`;
+                        comboElement.style.display = 'block';
+                    }
+                } else {
+                    const comboElement = document.getElementById('combo');
+                    if (comboElement) {
+                        comboElement.style.display = 'none';
+                    }
+                }
+                
+                if (scoreStats.multiplier > 1.0) {
+                    const multiplierElement = document.getElementById('multiplier');
+                    if (multiplierElement) {
+                        multiplierElement.textContent = `倍数: x${scoreStats.multiplier.toFixed(1)}`;
+                        multiplierElement.style.display = 'block';
+                    }
+                } else {
+                    const multiplierElement = document.getElementById('multiplier');
+                    if (multiplierElement) {
+                        multiplierElement.style.display = 'none';
+                    }
+                }
+                
+                // 双人模式UI
+                if (this.gameMode === 'DOUBLE') {
+                    document.getElementById('player2Info').style.display = 'flex';
+                    document.getElementById('player2Lives').textContent = this.gameData.player2Lives;
+                } else {
+                    document.getElementById('player2Info').style.display = 'none';
+                }
+            }
+
+            showLoading(show) {
+                const loadingEl = document.getElementById('loadingIndicator');
+                if (show) {
+                    loadingEl.classList.remove('hidden');
+                } else {
+                    loadingEl.classList.add('hidden');
+                }
+            }
+
+            // 游戏状态控制方法
+            startGame(mode = 'SINGLE') {
+                console.log(`🎮 开始游戏 - 模式: ${mode}`);
+                this.gameMode = mode;
+                this.gameState = 'PLAYING';
+                
+                // 隐藏菜单
+                document.getElementById('mainMenu').classList.add('hidden');
+                
+                // 重置游戏数据
+                this.resetGameData();
+                
+                // 开始第一关
+                if (this.levelManager.startLevel(1)) {
+                    // 更新关卡数据到游戏状态管理器
+                    const levelData = this.levelManager.getCurrentLevelStatus();
+                    if (levelData) {
+                        this.gameStateManager.updateLevelData({
+                            enemiesTotal: levelData.enemies.total,
+                            enemiesDestroyed: 0,
+                            timeLimit: levelData.timeLimit,
+                            timeRemaining: levelData.timeLimit,
+                            objectivesTotal: levelData.objectives.length,
+                            objectivesCompleted: 0
+                        });
+                    }
+                    
+                    // 加载地图
+                    this.loadGameMap('test');
+                    
+                    // 播放背景音乐
+                    if (this.audioManager) {
+                        this.audioManager.playMusic('battle_theme', { fadeIn: true });
+                    }
+                    
+                    console.log(`✅ 游戏开始 - 关卡1: ${this.levelManager.currentLevel.name}`);
+                } else {
+                    console.error('❌ 无法开始第一关');
+                    // 回退到旧的开始方式
+                    this.loadGameMap('test');
+                    
+                    // 播放背景音乐
+                    if (this.audioManager) {
+                        this.audioManager.playMusic('battle_theme', { fadeIn: true });
+                    }
+                    
+                    console.log('✅ 游戏开始（兼容模式）');
+                }
+            }
+
+            // 加载游戏地图
+            loadGameMap(mapName) {
+                this.currentMap = this.mapManager.loadMap(mapName);
+                if (this.currentMap) {
+                    console.log('🗺️ 地图加载成功:', mapName);
+                    
+                    // 清除现有实体
+                    this.entityManager.clear();
+                    this.tankManager.clearAll();
+                    
+                    // 初始化道具管理器
+                    this.powerUpManager = new PowerUpSystem.PowerUpManager(this.entityManager, this.currentMap);
+                    console.log('✨ 道具系统初始化完成');
+                    
+                    // 创建玩家坦克
+                    this.createPlayerTanks();
+                    
+                    // 创建一些测试敌方坦克
+                    this.createTestEnemyTanks();
+                } else {
+                    console.error('❌ 地图加载失败:', mapName);
+                }
+            }
+
+            // 创建玩家坦克
+            createPlayerTanks() {
+                const playerSpawn = this.currentMap.getRandomPlayerSpawn();
+                
+                // 创建玩家1坦克
+                const player1Tank = this.tankManager.createPlayerTank(playerSpawn.x, playerSpawn.y, 1);
+                console.log('🚗 创建玩家1坦克');
+                
+                // 如果是双人模式，创建玩家2坦克
+                if (this.gameMode === 'DOUBLE') {
+                    const player2Spawn = this.currentMap.getRandomPlayerSpawn();
+                    const player2Tank = this.tankManager.createPlayerTank(player2Spawn.x, player2Spawn.y, 2);
+                    console.log('🚙 创建玩家2坦克');
+                }
+            }
+
+            // 创建测试敌方坦克
+            createTestEnemyTanks() {
+                const enemySpawns = this.currentMap.enemySpawns;
+                const enemyCount = Math.min(3, enemySpawns.length);
+                
+                for (let i = 0; i < enemyCount; i++) {
+                    const spawn = enemySpawns[i % enemySpawns.length];
+                    const tankType = i === 0 ? TankSystem.TankType.ENEMY_BASIC : 
+                                   i === 1 ? TankSystem.TankType.ENEMY_FAST : 
+                                   TankSystem.TankType.ENEMY_HEAVY;
+                    
+                    const enemyTank = this.tankManager.createEnemyTank(spawn.x, spawn.y, tankType);
+                    
+                    // 为敌方坦克添加AI
+                    this.addAIToTank(enemyTank, i);
+                    
+                    console.log('🤖 创建敌方坦克:', tankType);
+                }
+            }
+
+            // 为坦克添加AI
+            addAIToTank(tank, index = 0) {
+                // 根据索引选择不同的AI行为
+                const behaviors = [
+                    AISystem.AIBehavior.BALANCED,
+                    AISystem.AIBehavior.AGGRESSIVE,
+                    AISystem.AIBehavior.DEFENSIVE,
+                    AISystem.AIBehavior.COWARD,
+                    AISystem.AIBehavior.BERSERKER
+                ];
+                
+                const difficulties = [
+                    AdvancedAISystem.AIDifficulty.NORMAL,
+                    AdvancedAISystem.AIDifficulty.HARD,
+                    AdvancedAISystem.AIDifficulty.EASY,
+                    AdvancedAISystem.AIDifficulty.EXPERT,
+                    AdvancedAISystem.AIDifficulty.NIGHTMARE
+                ];
+                
+                const behavior = behaviors[index % behaviors.length];
+                const difficulty = difficulties[index % difficulties.length];
+                
+                // 使用高级AI控制器
+                const aiController = new AdvancedAISystem.AdvancedAIController(behavior, difficulty);
+                aiController.gameMap = this.gameMap;
+                
+                tank.addComponent(aiController);
+                this.aiManager.addAI(tank);
+                
+                console.log('🧠 添加高级AI控制器:', behavior, difficulty);
+            }
+
+            pauseGame() {
+                if (this.gameState === 'PLAYING') {
+                    console.log('⏸️ 游戏暂停');
+                    this.gameState = 'PAUSED';
+                    document.getElementById('pauseOverlay').style.display = 'flex';
+                    this.audioManager.pauseAll();
+                }
+            }
+
+            resumeGame() {
+                if (this.gameState === 'PAUSED') {
+                    console.log('▶️ 游戏继续');
+                    this.gameState = 'PLAYING';
+                    document.getElementById('pauseOverlay').style.display = 'none';
+                    this.audioManager.resumeAll();
+                }
+            }
+
+            restartGame() {
+                console.log('🔄 重新开始游戏');
+                this.resetGameData();
+                this.gameState = 'PLAYING';
+                document.getElementById('pauseOverlay').style.display = 'none';
+            }
+
+            backToMenu() {
+                console.log('🏠 返回主菜单');
+                this.gameState = 'MENU';
+                document.getElementById('mainMenu').classList.remove('hidden');
+                document.getElementById('pauseOverlay').style.display = 'none';
+                this.audioManager.stopAll();
+            }
+
+            resetGameData() {
+                this.gameData = {
+                    score: 0,
+                    level: 1,
+                    lives: 3,
+                    enemyCount: 20,
+                    gameTime: 0,
+                    player1Lives: 3,
+                    player2Lives: 3
+                };
+                this.updateUI();
+            }
+
+            // 清除所有测试实体
+            clearTestEntities() {
+                // 清除所有坦克和子弹
+                this.tankManager.clearAll();
+                const bullets = this.entityManager.getEntitiesByTag('bullet');
+                bullets.forEach(bullet => this.entityManager.removeEntity(bullet));
+                console.log('🧹 清除所有测试实体');
+            }
+
+            // 切换地图
+            switchMap() {
+                const mapList = this.mapManager.getMapList();
+                const currentMapIndex = mapList.findIndex(name => 
+                    this.currentMap && this.mapManager.mapLibrary.get(name) === this.currentMap.exportData()
+                );
+                const nextMapIndex = (currentMapIndex + 1) % mapList.length;
+                const nextMapName = mapList[nextMapIndex];
+                
+                console.log('🗺️ 切换地图:', nextMapName);
+                this.loadGameMap(nextMapName);
+            }
+
+            // 创建子弹
+            createBullet(bulletData) {
+                // 使用射击系统创建子弹
+                const bullet = this.fireSystem.createBullet(bulletData);
+                
+                // 添加到实体管理器
+                this.entityManager.addEntity(bullet);
+                
+                // 设置子弹行为
+                this.setupBulletBehavior(bullet);
+                
+                return bullet;
+            }
+
+            // 设置子弹行为
+            setupBulletBehavior(bullet) {
+                const originalUpdate = bullet.update.bind(bullet);
+                bullet.update = (deltaTime) => {
+                    originalUpdate(deltaTime);
+                    
+                    const transform = bullet.getComponent('Transform');
+                    const bulletComponent = bullet.getComponent('Bullet');
+                    
+                    if (!transform || !bulletComponent || !bulletComponent.active) return;
+                    
+                    // 检查地图碰撞
+                    if (this.currentMap) {
+                        const tilePos = this.currentMap.worldToTile(transform.x, transform.y);
+                        const tile = this.currentMap.getTile(tilePos.x, tilePos.y);
+                        
+                        if (tile && tile.isSolid()) {
+                            // 子弹击中瓦片
+                            bulletComponent.hitTile(tile, transform.x, transform.y);
+                            return;
+                        }
+                    }
+                    
+                    // 坦克碰撞现在由战斗系统处理
+                };
+            }
+
+
+
+            // 玩家坦克被摧毁事件
+            onPlayerTankDestroyed(tank) {
+                console.log('🔥 玩家坦克被摧毁');
+                
+                // 播放爆炸音效
+                const transform = tank.getComponent('Transform');
+                if (this.audioManager && transform) {
+                    this.audioManager.playSFX('tank_explosion', {
+                        position: { x: transform.x, y: transform.y }
+                    });
+                }
+                
+                // 使用生命值系统
+                if (this.playerLifeSystem.loseLife()) {
+                    // 检查游戏结束条件
+                    if (this.playerLifeSystem.isDead()) {
+                        this.endGame(false);
+                    } else {
+                        // 重生坦克（生命值系统会自动处理重生计时）
+                        this.schedulePlayerRespawn(tank);
+                    }
+                }
+            }
+            
+            // 安排玩家重生
+            schedulePlayerRespawn(destroyedTank) {
+                const checkRespawn = () => {
+                    if (!this.playerLifeSystem.isRespawning) {
+                        this.respawnPlayerTank(destroyedTank);
+                    } else {
+                        setTimeout(checkRespawn, 100);
+                    }
+                };
+                checkRespawn();
+            }
+
+            // 敌方坦克被摧毁事件
+            onEnemyTankDestroyed(tank) {
+                console.log('💥 敌方坦克被摧毁');
+                
+                // 播放爆炸音效
+                const transform = tank.getComponent('Transform');
+                if (this.audioManager && transform) {
+                    this.audioManager.playSFX('tank_explosion', {
+                        position: { x: transform.x, y: transform.y }
+                    });
+                }
+                
+                // 从AI管理器中移除
+                this.aiManager.removeAI(tank);
+                
+                // 根据坦克类型给予不同分数
+                const tankType = tank.getComponent('TankType');
+                let points = 100;
+                let enemyType = 'ENEMY_BASIC';
+                
+                if (tankType) {
+                    switch (tankType.type) {
+                        case TankSystem.TankType.ENEMY_FAST:
+                            points = 200;
+                            enemyType = 'ENEMY_FAST';
+                            break;
+                        case TankSystem.TankType.ENEMY_HEAVY:
+                            points = 300;
+                            enemyType = 'ENEMY_HEAVY';
+                            break;
+                        default:
+                            points = 100;
+                            enemyType = 'ENEMY_BASIC';
+                    }
+                }
+                
+                // 使用新的得分系统
+                this.scoreComponent.addScore(points, ScoreSystem.ScoreEventType.ENEMY_DESTROYED, {
+                    enemyType: enemyType
+                });
+                
+                // 更新关卡数据
+                const levelData = this.gameStateManager.levelData;
+                levelData.enemiesDestroyed++;
+                this.gameStateManager.updateLevelData(levelData);
+                
+                // 更新关卡系统的目标进度
+                if (this.levelManager.currentLevel) {
+                    // 更新"消灭所有敌人"目标
+                    for (let i = 0; i < this.levelManager.currentLevel.objectives.length; i++) {
+                        const objective = this.levelManager.currentLevel.objectives[i];
+                        if (objective.type === LevelSystem.ObjectiveType.DESTROY_ALL_ENEMIES) {
+                            this.levelManager.updateObjective(i, levelData.enemiesDestroyed);
+                        }
+                    }
+                }
+                
+                // 检查胜利条件
+                const aliveEnemies = this.tankManager.getAliveEnemies();
+                const levelComplete = this.levelManager.currentLevel ? 
+                    this.levelManager.checkLevelComplete() : 
+                    this.gameStateManager.checkLevelComplete();
+                
+                if (aliveEnemies.length === 0 || levelComplete) {
+                    this.levelComplete();
+                }
+            }
+
+            // 重生玩家坦克
+            respawnPlayerTank(destroyedTank) {
+                const controller = destroyedTank.getComponent('TankController');
+                if (!controller) return;
+                
+                const playerId = controller.playerId;
+                const playerSpawn = this.currentMap.getRandomPlayerSpawn();
+                
+                // 移除旧坦克
+                this.tankManager.removeTank(destroyedTank);
+                
+                // 创建新坦克
+                const newTank = this.tankManager.createPlayerTank(playerSpawn.x, playerSpawn.y, playerId);
+                
+                // 短暂无敌时间
+                const health = newTank.getComponent('Health');
+                if (health) {
+                    health.setInvulnerable(3000); // 3秒无敌
+                }
+                
+                console.log(`🔄 玩家${playerId}坦克重生`);
+            }
+
+            // 关卡完成
+            levelComplete() {
+                console.log('🎉 关卡完成！');
+                
+                // 播放关卡完成音效
+                if (this.audioManager) {
+                    this.audioManager.playSFX('level_complete');
+                }
+                
+                if (this.levelManager.currentLevel) {
+                    // 计算关卡完成时间
+                    const completionTime = this.gameData.gameTime;
+                    const currentScore = this.scoreComponent.getStats().currentScore;
+                    const objectives = this.levelManager.currentLevel.objectives;
+                    
+                    // 完成当前关卡
+                    this.levelManager.completeLevel(currentScore, completionTime, objectives);
+                    
+                    // 给予关卡完成奖励
+                    this.scoreComponent.completeLevel(
+                        Math.max(0, this.levelManager.currentLevel.timeLimit - completionTime) / 1000,
+                        objectives.filter(obj => obj.completed).length
+                    );
+                    
+                    // 检查是否还有更多关卡
+                    const nextLevelId = this.levelManager.currentLevelId + 1;
+                    const nextLevel = this.levelManager.levels.get(nextLevelId);
+                    
+                    if (nextLevel && nextLevel.isUnlocked) {
+                        // 加载下一关
+                        setTimeout(() => {
+                            this.startNextLevel(nextLevelId);
+                        }, 3000);
+                    } else {
+                        // 游戏胜利
+                        this.endGame(true);
+                    }
+                } else {
+                    // 旧的关卡完成逻辑（向后兼容）
+                    this.gameData.level++;
+                    this.scoreComponent.addScore(1000, ScoreSystem.ScoreEventType.LEVEL_COMPLETED);
+                    
+                    if (this.gameData.level > 10) {
+                        this.endGame(true);
+                    } else {
+                        setTimeout(() => {
+                            this.loadGameMap('test');
+                        }, 2000);
+                    }
+                }
+            }
+            
+            // 开始下一关
+            startNextLevel(levelId) {
+                if (this.levelManager.startLevel(levelId)) {
+                    // 重置游戏状态
+                    this.gameData.gameTime = 0;
+                    
+                    // 更新关卡数据到游戏状态管理器
+                    const levelData = this.levelManager.getCurrentLevelStatus();
+                    if (levelData) {
+                        this.gameStateManager.updateLevelData({
+                            enemiesTotal: levelData.enemies.total,
+                            enemiesDestroyed: 0,
+                            timeLimit: levelData.timeLimit,
+                            timeRemaining: levelData.timeLimit,
+                            objectivesTotal: levelData.objectives.length,
+                            objectivesCompleted: 0
+                        });
+                    }
+                    
+                    // 重新加载地图
+                    this.loadGameMap('test');
+                    
+                    console.log(`🚀 开始关卡 ${levelId}: ${this.levelManager.currentLevel.name}`);
+                } else {
+                    console.error(`❌ 无法开始关卡 ${levelId}`);
+                    this.endGame(false);
+                }
+            }
+
+            // 创建爆炸效果
+            createExplosion(x, y, radius = 50) {
+                const explosion = new ECS.Entity('Explosion');
+                
+                // 添加变换组件
+                explosion.addComponent(new ECS.Transform(x, y, 0));
+                
+                // 添加爆炸组件
+                explosion.addComponent(new BulletSystem.Explosion(radius, 1000));
+                explosion.addComponent(new BulletSystem.ExplosionRenderer());
+                
+                // 添加标签
+                explosion.addTag('explosion');
+                explosion.addTag('effect');
+                
+                // 添加到实体管理器
+                this.entityManager.addEntity(explosion);
+                
+                // 播放爆炸音效
+                if (this.audioManager) {
+                    this.audioManager.playSound('explosion');
+                }
+                
+                return explosion;
+            }
+
+            // 设置战斗事件监听器
+            setupCombatEventListeners() {
+                // 监听伤害事件，显示伤害数字
+                this.combatManager.addEventListener(CombatSystem.CombatEvent.DAMAGE_DEALT, (data) => {
+                    const transform = data.target.getComponent('Transform');
+                    if (transform) {
+                        this.damageNumberSystem.showDamage(
+                            transform.x, 
+                            transform.y - 20, 
+                            data.damage, 
+                            data.damageType
+                        );
+                    }
+                });
+                
+                // 监听坦克摧毁事件
+                this.combatManager.addEventListener(CombatSystem.CombatEvent.TANK_DESTROYED, (data) => {
+                    console.log('💥 战斗系统：坦克被摧毁');
+                });
+                
+                // 监听子弹击中事件
+                this.combatManager.addEventListener(CombatSystem.CombatEvent.BULLET_HIT, (data) => {
+                    console.log('🎯 战斗系统：子弹击中目标，伤害:', data.damage);
+                });
+                
+                // 监听碰撞事件
+                this.combatManager.addEventListener(CombatSystem.CombatEvent.COLLISION_OCCURRED, (data) => {
+                    console.log('💥 战斗系统：发生碰撞');
+                });
+            }
+
+            // 游戏结束
+            endGame(victory) {
+                this.gameState = 'GAME_OVER';
+                
+                // 播放游戏结束音效
+                if (this.audioManager) {
+                    if (victory) {
+                        this.audioManager.playMusic('victory_theme');
+                    } else {
+                        this.audioManager.playSFX('game_over');
+                    }
+                }
+                
+                const title = victory ? '🏆 恭喜胜利！' : '💀 游戏结束';
+                const combatStats = this.combatManager.getStats();
+                const scoreStats = this.scoreComponent.getStats();
+                const message = victory ? 
+                    `太棒了！你完成了所有关卡！<br>最终得分：${scoreStats.currentScore}<br>总伤害：${combatStats.totalDamageDealt}<br>摧毁坦克：${combatStats.tanksDestroyed}` :
+                    `游戏结束！<br>最终得分：${scoreStats.currentScore}<br>到达关卡：${this.gameData.level}<br>总伤害：${combatStats.totalDamageDealt}`;
+                
+                // 显示结果（这里可以添加游戏结束界面）
+                setTimeout(() => {
+                    alert(title + '\n' + message.replace(/<br>/g, '\n'));
+                    this.backToMenu();
+                }, 1000);
+            }
+        }
+
+        // 输入管理器
+        class InputManager {
+            constructor() {
+                this.keys = {};
+                this.keyPressed = {};
+                this.keyReleased = {};
+            }
+
+            init() {
+                console.log('⌨️ 初始化输入管理器');
+                
+                // 键盘事件监听
+                document.addEventListener('keydown', (e) => this.onKeyDown(e));
+                document.addEventListener('keyup', (e) => this.onKeyUp(e));
+                
+                // 防止默认行为
+                document.addEventListener('keydown', (e) => {
+                    if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            onKeyDown(event) {
+                const key = event.code;
+                if (!this.keys[key]) {
+                    this.keyPressed[key] = true;
+                }
+                this.keys[key] = true;
+            }
+
+            onKeyUp(event) {
+                const key = event.code;
+                this.keys[key] = false;
+                this.keyReleased[key] = true;
+            }
+
+            update() {
+                // 清除单次按键状态
+                this.keyPressed = {};
+                this.keyReleased = {};
+            }
+
+            isKeyDown(key) {
+                return !!this.keys[key];
+            }
+
+            isKeyPressed(key) {
+                return !!this.keyPressed[key];
+            }
+
+            isKeyReleased(key) {
+                return !!this.keyReleased[key];
+            }
+        }
+
+        // 音频管理器
+        class AudioManager {
+            constructor() {
+                this.sounds = new Map();
+                this.musicVolume = 0.7;
+                this.sfxVolume = 0.8;
+                this.muted = false;
+                this.currentMusic = null;
+            }
+
+            init() {
+                console.log('🔊 初始化音频管理器');
+                
+                // 这里后续会加载音频文件
+                this.createTestSounds();
+            }
+
+            createTestSounds() {
+                // 创建测试音效（使用Web Audio API）
+                try {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.audioContext = audioContext;
+                    console.log('✅ Web Audio API 初始化成功');
+                } catch (error) {
+                    console.warn('⚠️ Web Audio API 不支持，使用静音模式');
+                    this.muted = true;
+                }
+            }
+
+            playSound(name, volume = 1) {
+                if (this.muted) return;
+                
+                // 这里后续会实现音效播放
+                console.log(`🔊 播放音效: ${name}`);
+            }
+
+            playMusic(name, loop = true) {
+                if (this.muted) return;
+                
+                // 这里后续会实现背景音乐播放
+                console.log(`🎵 播放音乐: ${name}`);
+            }
+
+            pauseAll() {
+                // 暂停所有音频
+                console.log('⏸️ 暂停所有音频');
+            }
+
+            resumeAll() {
+                // 恢复所有音频
+                console.log('▶️ 恢复所有音频');
+            }
+
+            stopAll() {
+                // 停止所有音频
+                console.log('⏹️ 停止所有音频');
+            }
+
+            setVolume(type, volume) {
+                if (type === 'music') {
+                    this.musicVolume = volume;
+                } else if (type === 'sfx') {
+                    this.sfxVolume = volume;
+                }
+                console.log(`🔊 设置${type}音量: ${volume}`);
+            }
+
+            toggleMute() {
+                this.muted = !this.muted;
+                console.log(`🔇 音频${this.muted ? '静音' : '开启'}`);
+                return this.muted;
+            }
+        }
+
+        // 资源管理器
+        class AssetManager {
+            constructor() {
+                this.images = new Map();
+                this.sounds = new Map();
+                this.loaded = false;
+            }
+
+            async loadAssets() {
+                console.log('📦 开始加载游戏资源...');
+                
+                try {
+                    // 这里后续会加载实际的图片和音频资源
+                    await this.loadTestAssets();
+                    
+                    this.loaded = true;
+                    console.log('✅ 游戏资源加载完成');
+                } catch (error) {
+                    console.error('❌ 资源加载失败:', error);
+                    throw error;
+                }
+            }
+
+            async loadTestAssets() {
+                // 创建测试用的Canvas图像
+                await this.createTestSprites();
+            }
+
+            async createTestSprites() {
+                // 创建测试精灵图
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 32;
+                canvas.height = 32;
+                
+                // 创建玩家坦克精灵
+                ctx.fillStyle = '#4CAF50';
+                ctx.fillRect(0, 0, 32, 32);
+                ctx.fillStyle = '#2E7D32';
+                ctx.fillRect(4, 4, 24, 24);
+                
+                this.images.set('player_tank', canvas);
+                
+                console.log('🎨 测试精灵创建完成');
+            }
+
+            getImage(name) {
+                return this.images.get(name);
+            }
+
+            getSound(name) {
+                return this.sounds.get(name);
+            }
+        }
+
+        // 全局游戏实例
+        let game;
+
+        // 全局函数
+        function startSinglePlayer() {
+            if (game.audioManager) {
+                game.audioManager.playSFX('menu_select');
+            }
+            game.startGame('SINGLE');
+        }
+
+        function startTwoPlayer() {
+            if (game.audioManager) {
+                game.audioManager.playSFX('menu_select');
+            }
+            game.startGame('DOUBLE');
+        }
+
+        function showSettings() {
+            alert('设置功能将在后续版本中实现');
+        }
+
+        function showHelp() {
+            alert('游戏帮助：\n\n玩家1控制：WASD移动，空格射击\n玩家2控制：方向键移动，回车射击\n\nP键暂停，R键重新开始，ESC键返回菜单');
+        }
+
+        function resumeGame() {
+            game.resumeGame();
+        }
+
+        function restartGame() {
+            game.restartGame();
+        }
+
+        function backToMenu() {
+            game.backToMenu();
+        }
+
+        // 页面加载完成后初始化游戏
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 页面加载完成，初始化坦克大战游戏');
+            game = new GameEngine();
+        });
+
+        // 全局键盘事件处理
+        document.addEventListener('keydown', (e) => {
+            if (!game) return;
+            
+            switch (e.code) {
+                case 'KeyP':
+                    if (game.gameState === 'PLAYING') {
+                        game.pauseGame();
+                    } else if (game.gameState === 'PAUSED') {
+                        game.resumeGame();
+                    }
+                    break;
+                case 'KeyR':
+                    if (game.gameState === 'PLAYING' || game.gameState === 'PAUSED') {
+                        game.restartGame();
+                    }
+                    break;
+                case 'Escape':
+                    if (game.gameState === 'PLAYING' || game.gameState === 'PAUSED') {
+                        game.backToMenu();
+                    }
+                    break;
+                case 'KeyT':
+                    // 创建测试敌方坦克
+                    if (game.gameState === 'PLAYING' && game.currentMap) {
+                        const spawn = game.currentMap.getRandomEnemySpawn();
+                        const enemyTank = game.tankManager.createEnemyTank(spawn.x, spawn.y, TankSystem.TankType.ENEMY_BASIC);
+                        
+                        // 添加AI
+                        const aiStats = game.aiManager.getStats();
+                        game.addAIToTank(enemyTank, aiStats.totalAI);
+                        
+                        console.log('🤖 创建带AI的敌方坦克');
+                    }
+                    break;
+                case 'KeyC':
+                    // 清除测试实体
+                    if (game.gameState === 'PLAYING') {
+                        game.clearTestEntities();
+                    }
+                    break;
+                case 'KeyP':
+                    // 生成随机道具
+                    if (game.gameState === 'PLAYING' && game.powerUpManager) {
+                        game.powerUpManager.spawnRandomPowerUp();
+                        console.log('✨ 生成随机道具');
+                    }
+                    break;
+                case 'KeyO':
+                    // 测试得分系统
+                    if (game.gameState === 'PLAYING') {
+                        game.scoreComponent.addScore(500, ScoreSystem.ScoreEventType.BONUS_ACHIEVED);
+                        console.log('💰 测试奖励得分');
+                    }
+                    break;
+                case 'KeyL':
+                    // 测试生命值系统
+                    if (game.gameState === 'PLAYING') {
+                        game.playerLifeSystem.gainLife();
+                        console.log('❤️ 获得额外生命');
+                    }
+                    break;
+                case 'KeyN':
+                    // 开始下一关
+                    if (game.gameState === 'PLAYING' && game.levelManager.currentLevel) {
+                        const nextLevelId = game.levelManager.currentLevelId + 1;
+                        if (game.levelManager.levels.has(nextLevelId)) {
+                            game.startNextLevel(nextLevelId);
+                            console.log('🚀 跳转到下一关');
+                        }
+                    }
+                    break;
+                case 'KeyB':
+                    // 开始指定关卡
+                    if (game.gameState === 'PLAYING') {
+                        const levelId = prompt('输入关卡ID (1-16):');
+                        if (levelId && !isNaN(levelId)) {
+                            const id = parseInt(levelId);
+                            if (game.levelManager.levels.has(id)) {
+                                // 临时解锁关卡用于测试
+                                game.levelManager.levels.get(id).isUnlocked = true;
+                                game.startNextLevel(id);
+                                console.log(`🎯 开始关卡 ${id}`);
+                            }
+                        }
+                    }
+                    break;
+                case 'KeyV':
+                    // 调整音量
+                    if (game.audioManager) {
+                        const currentVolume = game.audioManager.masterVolume;
+                        const newVolume = currentVolume > 0.5 ? 0.2 : 1.0;
+                        game.audioManager.setMasterVolume(newVolume);
+                        console.log(`🔊 音量调整: ${Math.round(newVolume * 100)}%`);
+                    }
+                    break;
+                case 'KeyU':
+                    // 切换音乐
+                    if (game.audioManager) {
+                        const musicList = ['main_theme', 'battle_theme', 'boss_theme'];
+                        const currentMusic = game.audioManager.currentMusic?.id;
+                        const currentIndex = musicList.indexOf(currentMusic);
+                        const nextIndex = (currentIndex + 1) % musicList.length;
+                        const nextMusic = musicList[nextIndex];
+                        
+                        game.audioManager.playMusic(nextMusic, { crossFade: true });
+                        console.log(`🎵 切换音乐: ${nextMusic}`);
+                    }
+                    break;
+                case 'KeyM':
+                    // 切换地图
+                    if (game.gameState === 'PLAYING') {
+                        game.switchMap();
+                    }
+                    break;
+            }
+        });
+
+        // 防止页面滚动和缩放
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // 处理页面可见性变化
+        document.addEventListener('visibilitychange', function() {
+            if (game && game.gameState === 'PLAYING' && document.hidden) {
+                game.pauseGame();
+            }
+        });
+
+        // 处理窗口失焦
+        window.addEventListener('blur', function() {
+            if (game && game.gameState === 'PLAYING') {
+                game.pauseGame();
+            }
+        });
+    </script>
+</body>
+</html>

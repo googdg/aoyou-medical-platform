@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医学分类系统测试</title>
+    <link rel="stylesheet" href="./css/aoyou-medical.css">
+    <style>
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .category-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #2E86AB;
+            transition: transform 0.3s ease;
+        }
+        .category-card:hover {
+            transform: translateY(-2px);
+        }
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .category-icon {
+            font-size: 24px;
+        }
+        .category-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2E86AB;
+        }
+        .category-description {
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .category-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .stat-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2E86AB;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        .test-actions {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            padding: 10px 20px;
+            background: #2E86AB;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .test-btn:hover {
+            background: #1E5F7F;
+        }
+        .test-btn.secondary {
+            background: #6c757d;
+        }
+        .overview-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .overview-card {
+            background: linear-gradient(135deg, #2E86AB, #5BA3C7);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .overview-number {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .overview-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>医学分类系统测试</h1>
+        
+        <div class="test-section">
+            <h2>📊 平台概览</h2>
+            <div id="overview-stats" class="overview-stats">
+                <!-- 概览统计将通过JavaScript生成 -->
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🏥 医学分类板块</h2>
+            <p>平台共设置7个医学专业分类，每个分类包含不同类型的专业视频内容：</p>
+            <div id="category-grid" class="category-grid">
+                <!-- 分类卡片将通过JavaScript生成 -->
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🧪 功能测试</h2>
+            <div class="test-actions">
+                <button onclick="loadVideoData()" class="test-btn">加载视频数据</button>
+                <button onclick="testCategoryFilter()" class="test-btn">测试分类筛选</button>
+                <button onclick="testCategoryStats()" class="test-btn">测试统计功能</button>
+                <button onclick="testVideoGeneration()" class="test-btn">测试视频生成</button>
+                <button onclick="exportCategoryData()" class="test-btn secondary">导出分类数据</button>
+            </div>
+            <div id="test-results" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: none;">
+                <h4>测试结果：</h4>
+                <div id="test-output"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🚀 打开完整应用</h2>
+            <p>测试完成后，您可以打开完整的应用来体验分类系统：</p>
+            <a href="./aoyou-medical-platform.html" target="_blank" class="test-btn" style="display: inline-block; text-decoration: none; text-align: center;">
+                打开 Aoyou Digital 医学学习平台
+            </a>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 分类系统特性</h2>
+            <ul>
+                <li><strong>7个专业分类</strong>：基础医学、临床医学、医学影像、药学治疗、前沿技术、伦理法规、继续教育</li>
+                <li><strong>丰富的视频类型</strong>：每个分类包含多种子类型的专业视频内容</li>
+                <li><strong>智能标签系统</strong>：视频自动标记难度等级、讲师信息、评分等</li>
+                <li><strong>实时统计</strong>：显示每个分类的视频数量和总时长</li>
+                <li><strong>分类信息面板</strong>：长按或悬停显示分类详细信息</li>
+                <li><strong>视觉标识</strong>：每个分类都有独特的图标和颜色标识</li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="./js/aoyou-medical-app.js"></script>
+    
+    <script>
+        let videoData = [];
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVideoData();
+        });
+        
+        function loadVideoData() {
+            // 创建临时应用实例来生成视频数据
+            const tempApp = {
+                generateMockVideoData: window.AoyouMedicalApp.prototype.generateMockVideoData,
+                getVideoTypesByCategory: window.AoyouMedicalApp.prototype.getVideoTypesByCategory,
+                getRandomDifficulty: window.AoyouMedicalApp.prototype.getRandomDifficulty,
+                getRandomInstructor: window.AoyouMedicalApp.prototype.getRandomInstructor
+            };
+            
+            videoData = tempApp.generateMockVideoData();
+            
+            updateOverviewStats();
+            updateCategoryGrid();
+            showTestResult('✅ 视频数据加载成功，共生成 ' + videoData.length + ' 个视频');
+        }
+        
+        function updateOverviewStats() {
+            const container = document.getElementById('overview-stats');
+            
+            const totalVideos = videoData.length;
+            const totalDuration = videoData.reduce((sum, video) => sum + video.duration, 0);
+            const totalViews = videoData.reduce((sum, video) => sum + video.viewCount, 0);
+            const averageRating = videoData.length > 0 
+                ? (videoData.reduce((sum, video) => sum + parseFloat(video.rating || 0), 0) / videoData.length).toFixed(1)
+                : 0;
+            
+            container.innerHTML = `
+                <div class="overview-card">
+                    <div class="overview-number">${totalVideos}</div>
+                    <div class="overview-label">总视频数</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-number">${Math.round(totalDuration / 60)}</div>
+                    <div class="overview-label">总时长(分钟)</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-number">${formatNumber(totalViews)}</div>
+                    <div class="overview-label">总观看量</div>
+                </div>
+                <div class="overview-card">
+                    <div class="overview-number">${averageRating}</div>
+                    <div class="overview-label">平均评分</div>
+                </div>
+            `;
+        }
+        
+        function updateCategoryGrid() {
+            const container = document.getElementById('category-grid');
+            
+            const categories = [
+                { id: 'basic', name: '基础医学', icon: '📚', description: '解剖学、生理学、病理学等医学基础知识', color: '#FF6B6B' },
+                { id: 'clinical', name: '临床医学', icon: '🩺', description: '内科、外科、妇产科、儿科等临床实践', color: '#4ECDC4' },
+                { id: 'imaging', name: '医学影像', icon: '🔬', description: 'X光、CT、MRI、超声等影像诊断技术', color: '#45B7D1' },
+                { id: 'pharmacy', name: '药学治疗', icon: '💊', description: '药理学、临床用药、治疗方案制定', color: '#96CEB4' },
+                { id: 'technology', name: '前沿技术', icon: '🤖', description: '人工智能、精准医学、新兴医疗技术', color: '#FFEAA7' },
+                { id: 'ethics', name: '伦理法规', icon: '⚖️', description: '医疗法规、伦理规范、质量管理', color: '#DDA0DD' },
+                { id: 'education', name: '继续教育', icon: '🎓', description: '学术会议、专家讲座、技能培训', color: '#98D8C8' }
+            ];
+            
+            container.innerHTML = categories.map(category => {
+                const categoryVideos = videoData.filter(video => video.category === category.id);
+                const totalDuration = categoryVideos.reduce((sum, video) => sum + video.duration, 0);
+                const totalViews = categoryVideos.reduce((sum, video) => sum + video.viewCount, 0);
+                const averageRating = categoryVideos.length > 0 
+                    ? (categoryVideos.reduce((sum, video) => sum + parseFloat(video.rating || 0), 0) / categoryVideos.length).toFixed(1)
+                    : 0;
+                
+                return `
+                    <div class="category-card" style="border-left-color: ${category.color}">
+                        <div class="category-header">
+                            <div class="category-icon">${category.icon}</div>
+                            <div class="category-name">${category.name}</div>
+                        </div>
+                        <div class="category-description">${category.description}</div>
+                        <div class="category-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">${categoryVideos.length}</div>
+                                <div class="stat-label">视频数量</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${Math.round(totalDuration / 60)}</div>
+                                <div class="stat-label">总时长(分钟)</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${formatNumber(totalViews)}</div>
+                                <div class="stat-label">总观看量</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${averageRating}</div>
+                                <div class="stat-label">平均评分</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function testCategoryFilter() {
+            const categories = ['basic', 'clinical', 'imaging', 'pharmacy', 'technology', 'ethics', 'education'];
+            let results = '<h4>分类筛选测试结果：</h4><ul>';
+            
+            categories.forEach(category => {
+                const filteredVideos = videoData.filter(video => video.category === category);
+                const categoryName = getCategoryName(category);
+                results += `<li><strong>${categoryName}</strong>: ${filteredVideos.length} 个视频</li>`;
+            });
+            
+            results += '</ul>';
+            showTestResult(results);
+        }
+        
+        function testCategoryStats() {
+            const stats = {};
+            const categories = ['basic', 'clinical', 'imaging', 'pharmacy', 'technology', 'ethics', 'education'];
+            
+            categories.forEach(category => {
+                const videos = videoData.filter(video => video.category === category);
+                const totalDuration = videos.reduce((sum, video) => sum + video.duration, 0);
+                const totalViews = videos.reduce((sum, video) => sum + video.viewCount, 0);
+                
+                stats[category] = {
+                    videoCount: videos.length,
+                    totalDuration: Math.round(totalDuration / 60),
+                    totalViews: totalViews,
+                    averageRating: videos.length > 0 
+                        ? (videos.reduce((sum, video) => sum + parseFloat(video.rating || 0), 0) / videos.length).toFixed(1)
+                        : 0
+                };
+            });
+            
+            let results = '<h4>分类统计测试结果：</h4>';
+            results += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+            results += '<tr style="background: #f8f9fa;"><th style="padding: 8px; border: 1px solid #ddd;">分类</th><th style="padding: 8px; border: 1px solid #ddd;">视频数</th><th style="padding: 8px; border: 1px solid #ddd;">时长(分钟)</th><th style="padding: 8px; border: 1px solid #ddd;">观看量</th><th style="padding: 8px; border: 1px solid #ddd;">评分</th></tr>';
+            
+            Object.keys(stats).forEach(category => {
+                const stat = stats[category];
+                const categoryName = getCategoryName(category);
+                results += `<tr><td style="padding: 8px; border: 1px solid #ddd;">${categoryName}</td><td style="padding: 8px; border: 1px solid #ddd;">${stat.videoCount}</td><td style="padding: 8px; border: 1px solid #ddd;">${stat.totalDuration}</td><td style="padding: 8px; border: 1px solid #ddd;">${formatNumber(stat.totalViews)}</td><td style="padding: 8px; border: 1px solid #ddd;">${stat.averageRating}</td></tr>`;
+            });
+            
+            results += '</table>';
+            showTestResult(results);
+        }
+        
+        function testVideoGeneration() {
+            const difficultyCount = {};
+            const instructorCount = {};
+            
+            videoData.forEach(video => {
+                // 统计难度分布
+                difficultyCount[video.difficulty] = (difficultyCount[video.difficulty] || 0) + 1;
+                
+                // 统计讲师分布
+                if (video.instructor) {
+                    instructorCount[video.instructor.name] = (instructorCount[video.instructor.name] || 0) + 1;
+                }
+            });
+            
+            let results = '<h4>视频生成测试结果：</h4>';
+            results += '<p><strong>难度分布：</strong></p><ul>';
+            Object.keys(difficultyCount).forEach(difficulty => {
+                const difficultyNames = { 'beginner': '入门', 'intermediate': '进阶', 'advanced': '高级' };
+                results += `<li>${difficultyNames[difficulty] || difficulty}: ${difficultyCount[difficulty]} 个</li>`;
+            });
+            results += '</ul>';
+            
+            results += '<p><strong>讲师分布：</strong></p><ul>';
+            Object.keys(instructorCount).slice(0, 5).forEach(instructor => {
+                results += `<li>${instructor}: ${instructorCount[instructor]} 个视频</li>`;
+            });
+            results += '</ul>';
+            
+            const newVideos = videoData.filter(video => video.isNew).length;
+            const hotVideos = videoData.filter(video => video.isHot).length;
+            const premiumVideos = videoData.filter(video => video.isPremium).length;
+            
+            results += `<p><strong>特殊标记：</strong> 新视频 ${newVideos} 个，热门视频 ${hotVideos} 个，精品内容 ${premiumVideos} 个</p>`;
+            
+            showTestResult(results);
+        }
+        
+        function exportCategoryData() {
+            const exportData = {
+                totalVideos: videoData.length,
+                categories: {},
+                generatedAt: new Date().toISOString()
+            };
+            
+            const categories = ['basic', 'clinical', 'imaging', 'pharmacy', 'technology', 'ethics', 'education'];
+            
+            categories.forEach(category => {
+                const videos = videoData.filter(video => video.category === category);
+                exportData.categories[category] = {
+                    name: getCategoryName(category),
+                    videoCount: videos.length,
+                    totalDuration: videos.reduce((sum, video) => sum + video.duration, 0),
+                    videos: videos.map(video => ({
+                        id: video.id,
+                        title: video.title,
+                        duration: video.duration,
+                        difficulty: video.difficulty,
+                        rating: video.rating,
+                        instructor: video.instructor?.name
+                    }))
+                };
+            });
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'aoyou-category-data.json';
+            link.click();
+            
+            showTestResult('✅ 分类数据已导出到 aoyou-category-data.json 文件');
+        }
+        
+        function getCategoryName(categoryId) {
+            const names = {
+                'basic': '基础医学',
+                'clinical': '临床医学',
+                'imaging': '医学影像',
+                'pharmacy': '药学治疗',
+                'technology': '前沿技术',
+                'ethics': '伦理法规',
+                'education': '继续教育'
+            };
+            return names[categoryId] || categoryId;
+        }
+        
+        function formatNumber(num) {
+            if (num >= 10000) {
+                return (num / 10000).toFixed(1) + '万';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'k';
+            }
+            return num.toString();
+        }
+        
+        function showTestResult(message) {
+            const results = document.getElementById('test-results');
+            const output = document.getElementById('test-output');
+            
+            results.style.display = 'block';
+            output.innerHTML = message;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主页内容测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background: #007cba;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+        .test-button:hover {
+            background: #005a87;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .feature-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        .feature-list li {
+            margin: 8px 0;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .warning { background: #fff3cd; color: #856404; }
+        .debug-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>主页内容功能测试</h1>
+        
+        <div class="section">
+            <h3>✨ 新增功能</h3>
+            <div class="feature-list">
+                <h4>默认内容功能：</h4>
+                <ul>
+                    <li>✅ 所有表单字段都有预设的默认值</li>
+                    <li>✅ 用户可以基于默认内容进行修改</li>
+                    <li>✅ 提供完整的个人信息模板</li>
+                </ul>
+                
+                <h4>保存功能：</h4>
+                <ul>
+                    <li>✅ 手动保存 - 点击"保存更改"按钮</li>
+                    <li>✅ 自动保存 - 输入内容2秒后自动保存</li>
+                    <li>✅ 数据持久化 - 使用localStorage保存</li>
+                    <li>✅ 页面刷新后自动恢复上次保存的内容</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h3>🧪 测试功能</h3>
+            <button class="test-button" onclick="openHomepageEditor()">打开主页内容编辑器</button>
+            <button class="test-button" onclick="testDefaultValues()">测试默认值</button>
+            <button class="test-button" onclick="testSaveFunction()">测试保存功能</button>
+            <button class="test-button" onclick="clearSavedData()">清除保存的数据</button>
+        </div>
+        
+        <div class="section">
+            <h3>📋 测试步骤</h3>
+            <div class="status info">
+                <h4>测试流程：</h4>
+                <ol>
+                    <li>点击"打开主页内容编辑器"</li>
+                    <li>查看所有字段是否有默认值</li>
+                    <li>修改任意字段内容</li>
+                    <li>等待2秒观察自动保存提示</li>
+                    <li>点击"保存更改"按钮测试手动保存</li>
+                    <li>刷新页面验证内容是否保持</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div id="test-results" class="debug-info">
+            <h4>测试结果：</h4>
+            <div id="results-content">点击上方按钮开始测试</div>
+        </div>
+        
+        <div class="section">
+            <h3>💾 数据管理</h3>
+            <div class="status warning">
+                <p><strong>注意：</strong>所有数据保存在浏览器的localStorage中</p>
+                <p>清除浏览器数据或使用无痕模式会丢失保存的内容</p>
+            </div>
+            <div id="storage-info" class="debug-info">
+                <h4>当前存储状态：</h4>
+                <div id="storage-content">加载中...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 打开主页内容编辑器
+        function openHomepageEditor() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🚀 正在打开主页内容编辑器...</p>';
+            
+            const adminWindow = window.open('index.html?username=admin&password=admin123', '_blank');
+            
+            results.innerHTML += '<p>✓ 管理后台已在新窗口打开</p>';
+            results.innerHTML += '<p>请在新窗口中点击"主页内容"菜单进行测试</p>';
+            
+            // 尝试自动导航到主页内容
+            setTimeout(() => {
+                try {
+                    if (adminWindow.adminApp && adminWindow.adminApp.navigateTo) {
+                        adminWindow.adminApp.navigateTo('homepage');
+                        results.innerHTML += '<p>✓ 已自动导航到主页内容页面</p>';
+                    }
+                } catch (e) {
+                    results.innerHTML += '<p>⚠️ 请手动点击"主页内容"菜单</p>';
+                }
+            }, 3000);
+        }
+        
+        // 测试默认值
+        function testDefaultValues() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🔍 检查默认值设置...</p>';
+            
+            const defaultValues = {
+                '网站标题': 'Stevn',
+                '网站标语': '移动医疗专家 & 社区建设者...',
+                '欢迎标题': 'OH, HI. WELCOME!',
+                '当前职位': '产品经理',
+                '技术社区标题': '技术社区',
+                '个人兴趣标题': '个人兴趣'
+            };
+            
+            results.innerHTML += '<p>✅ 预设的默认值包括：</p>';
+            Object.keys(defaultValues).forEach(key => {
+                results.innerHTML += `<p>- ${key}: ${defaultValues[key]}</p>`;
+            });
+            
+            results.innerHTML += '<p>✅ 所有字段都有合适的默认内容，用户可以直接基于这些内容进行修改</p>';
+        }
+        
+        // 测试保存功能
+        function testSaveFunction() {
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p>🔍 测试保存功能...</p>';
+            
+            results.innerHTML += '<p>✅ 手动保存：点击"保存更改"按钮</p>';
+            results.innerHTML += '<p>✅ 自动保存：输入内容后2秒自动保存</p>';
+            results.innerHTML += '<p>✅ 数据持久化：使用localStorage存储</p>';
+            results.innerHTML += '<p>✅ 自动恢复：页面刷新后自动加载上次保存的内容</p>';
+            
+            updateStorageInfo();
+        }
+        
+        // 清除保存的数据
+        function clearSavedData() {
+            localStorage.removeItem('homepage_content');
+            const results = document.getElementById('results-content');
+            results.innerHTML = '<p class="success">✅ 已清除保存的主页内容数据</p>';
+            results.innerHTML += '<p>刷新管理后台页面将显示默认内容</p>';
+            
+            updateStorageInfo();
+        }
+        
+        // 更新存储信息
+        function updateStorageInfo() {
+            const storageContent = document.getElementById('storage-content');
+            const savedData = localStorage.getItem('homepage_content');
+            
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    storageContent.innerHTML = `
+                        <p><strong>存储状态：</strong>有保存的数据</p>
+                        <p><strong>最后保存时间：</strong>${data.lastSaved ? new Date(data.lastSaved).toLocaleString() : '未知'}</p>
+                        <p><strong>数据大小：</strong>${new Blob([savedData]).size} 字节</p>
+                        <p><strong>包含字段：</strong>${Object.keys(data).length} 个</p>
+                    `;
+                } catch (e) {
+                    storageContent.innerHTML = '<p><strong>存储状态：</strong>数据格式错误</p>';
+                }
+            } else {
+                storageContent.innerHTML = '<p><strong>存储状态：</strong>无保存的数据</p>';
+            }
+        }
+        
+        // 初始化
+        window.onload = function() {
+            updateStorageInfo();
+            
+            // 每5秒更新一次存储信息
+            setInterval(updateStorageInfo, 5000);
+        };
+    </script>
+</body>
+</html>

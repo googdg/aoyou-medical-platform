@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邀请码注册系统测试</title>
+    <link rel="stylesheet" href="./css/aoyou-medical.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-codes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .code-item {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #2E86AB;
+        }
+        .code-value {
+            font-family: monospace;
+            font-weight: bold;
+            color: #2E86AB;
+            font-size: 16px;
+        }
+        .code-desc {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #2E86AB, #5BA3C7);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>邀请码注册系统测试</h1>
+        
+        <div class="test-section">
+            <h2>📋 可用邀请码</h2>
+            <p>以下是系统中配置的有效邀请码，您可以使用这些邀请码进行测试：</p>
+            <div id="invite-codes" class="test-codes">
+                <!-- 邀请码将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>📊 注册统计</h2>
+            <div id="registration-stats" class="stats-grid">
+                <!-- 统计数据将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🧪 功能测试</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <button onclick="testInviteCodeValidation()" class="submit-btn">测试邀请码验证</button>
+                <button onclick="testRegistrationFlow()" class="submit-btn">测试注册流程</button>
+                <button onclick="testErrorHandling()" class="submit-btn">测试错误处理</button>
+                <button onclick="clearTestData()" class="submit-btn" style="background: #E74C3C;">清除测试数据</button>
+            </div>
+            <div id="test-results" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: none;">
+                <h4>测试结果：</h4>
+                <div id="test-output"></div>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🚀 打开完整应用</h2>
+            <p>测试完成后，您可以打开完整的应用来体验邀请码注册流程：</p>
+            <a href="./aoyou-medical-platform.html" target="_blank" class="submit-btn" style="display: inline-block; text-decoration: none; text-align: center;">
+                打开 Aoyou Digital 医学学习平台
+            </a>
+        </div>
+        
+        <div class="test-section">
+            <h2>📝 使用说明</h2>
+            <ol>
+                <li><strong>浏览内容</strong>：用户可以直接浏览首页和视频列表</li>
+                <li><strong>点击视频</strong>：未登录用户点击视频时会显示邀请码输入页面</li>
+                <li><strong>输入邀请码</strong>：输入4位数字邀请码（如1234、5678等）</li>
+                <li><strong>自动注册</strong>：验证成功后自动创建用户并进入平台</li>
+                <li><strong>开始观看</strong>：注册成功后自动播放选中的视频</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="./js/aoyou-medical-auth.js"></script>
+    
+    <script>
+        // 页面加载完成后显示邀请码和统计信息
+        document.addEventListener('DOMContentLoaded', function() {
+            displayInviteCodes();
+            displayRegistrationStats();
+        });
+        
+        function displayInviteCodes() {
+            const container = document.getElementById('invite-codes');
+            if (!window.AoyouMedicalAuth) {
+                container.innerHTML = '<p>邀请码系统未加载</p>';
+                return;
+            }
+            
+            const codes = window.AoyouMedicalAuth.validInviteCodes;
+            container.innerHTML = codes.map(code => `
+                <div class="code-item">
+                    <div class="code-value">${code}</div>
+                    <div class="code-desc">4位数字邀请码</div>
+                    <div class="code-desc">状态: 有效</div>
+                </div>
+            `).join('');
+        }
+        
+        function displayRegistrationStats() {
+            const container = document.getElementById('registration-stats');
+            
+            // 简化的统计信息
+            const user = JSON.parse(localStorage.getItem('aoyou_user') || 'null');
+            const hasUser = !!user;
+            
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${window.AoyouMedicalAuth.validInviteCodes.length}</div>
+                    <div class="stat-label">可用邀请码</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${hasUser ? '1' : '0'}</div>
+                    <div class="stat-label">当前用户</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${hasUser ? user.points : '0'}</div>
+                    <div class="stat-label">用户积分</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${hasUser ? user.level : '0'}</div>
+                    <div class="stat-label">用户等级</div>
+                </div>
+            `;
+        }
+        
+        function testInviteCodeValidation() {
+            const results = document.getElementById('test-results');
+            const output = document.getElementById('test-output');
+            
+            results.style.display = 'block';
+            output.innerHTML = '<p>正在测试邀请码验证...</p>';
+            
+            const testCodes = [
+                { code: '1234', expected: true, desc: '有效邀请码' },
+                { code: '5678', expected: true, desc: '有效邀请码' },
+                { code: '0000', expected: true, desc: '有效邀请码' },
+                { code: '9876', expected: false, desc: '无效邀请码' },
+                { code: 'abcd', expected: false, desc: '格式错误（字母）' },
+                { code: '12', expected: false, desc: '长度不足' },
+                { code: '12345', expected: false, desc: '长度超限' },
+                { code: '', expected: false, desc: '空邀请码' }
+            ];
+            
+            let results_html = '<ul>';
+            
+            testCodes.forEach(test => {
+                const isValid = window.AoyouMedicalAuth.isValidInviteCode(test.code);
+                const formatValid = /^\d{4}$/.test(test.code);
+                const passed = (formatValid && isValid) === test.expected;
+                const status = passed ? '✅' : '❌';
+                const color = passed ? 'green' : 'red';
+                
+                results_html += `<li style="color: ${color}">
+                    ${status} ${test.desc}: "${test.code}" 
+                    ${passed ? '通过' : '失败'}
+                </li>`;
+            });
+            
+            results_html += '</ul>';
+            output.innerHTML = results_html;
+        }
+        
+        function testRegistrationFlow() {
+            const results = document.getElementById('test-results');
+            const output = document.getElementById('test-output');
+            
+            results.style.display = 'block';
+            output.innerHTML = '<p>正在测试注册流程...</p>';
+            
+            const testData = {
+                name: '测试用户' + Date.now(),
+                hospital: '测试医院',
+                department: '测试科室'
+            };
+            
+            const validation = window.AoyouMedicalAuth.validateUserInfo(testData);
+            const usernameExists = window.AoyouMedicalAuth.isUsernameExists(testData.name);
+            const completeness = window.AoyouMedicalAuth.calculateProfileCompleteness(testData);
+            
+            output.innerHTML = `
+                <h4>注册流程测试结果：</h4>
+                <ul>
+                    <li style="color: ${validation.valid ? 'green' : 'red'}">
+                        ${validation.valid ? '✅' : '❌'} 用户信息验证: ${validation.valid ? '通过' : validation.errors.join(', ')}
+                    </li>
+                    <li style="color: ${!usernameExists ? 'green' : 'red'}">
+                        ${!usernameExists ? '✅' : '❌'} 用户名唯一性: ${!usernameExists ? '通过' : '用户名已存在'}
+                    </li>
+                    <li style="color: green">
+                        ✅ 资料完整度计算: ${completeness}%
+                    </li>
+                </ul>
+                <p><strong>测试数据:</strong></p>
+                <pre>${JSON.stringify(testData, null, 2)}</pre>
+            `;
+        }
+        
+        function testErrorHandling() {
+            const results = document.getElementById('test-results');
+            const output = document.getElementById('test-output');
+            
+            results.style.display = 'block';
+            output.innerHTML = '<p>正在测试错误处理...</p>';
+            
+            const errorTests = [
+                { 
+                    name: '空用户名', 
+                    data: { name: '', hospital: '医院', department: '科室' },
+                    shouldFail: true 
+                },
+                { 
+                    name: '用户名过短', 
+                    data: { name: 'A', hospital: '医院', department: '科室' },
+                    shouldFail: true 
+                },
+                { 
+                    name: '用户名过长', 
+                    data: { name: 'A'.repeat(25), hospital: '医院', department: '科室' },
+                    shouldFail: true 
+                },
+                { 
+                    name: '特殊字符用户名', 
+                    data: { name: 'Test@#$', hospital: '医院', department: '科室' },
+                    shouldFail: true 
+                },
+                { 
+                    name: '正常用户名', 
+                    data: { name: '张医生', hospital: '医院', department: '科室' },
+                    shouldFail: false 
+                }
+            ];
+            
+            let results_html = '<h4>错误处理测试结果：</h4><ul>';
+            
+            errorTests.forEach(test => {
+                const validation = window.AoyouMedicalAuth.validateUserInfo(test.data);
+                const passed = validation.valid !== test.shouldFail;
+                const status = passed ? '✅' : '❌';
+                const color = passed ? 'green' : 'red';
+                
+                results_html += `<li style="color: ${color}">
+                    ${status} ${test.name}: ${passed ? '通过' : '失败'}
+                    ${!validation.valid ? ` (${validation.errors.join(', ')})` : ''}
+                </li>`;
+            });
+            
+            results_html += '</ul>';
+            output.innerHTML = results_html;
+        }
+        
+        function clearTestData() {
+            if (confirm('确定要清除所有测试数据吗？这将删除所有注册记录、邀请码使用记录等。')) {
+                const keysToRemove = [
+                    'aoyou_users',
+                    'aoyou_user',
+                    'aoyou_used_codes',
+                    'aoyou_invite_usage',
+                    'aoyou_registration_events',
+                    'aoyou_points_history',
+                    'aoyou_device_id'
+                ];
+                
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                });
+                
+                alert('测试数据已清除！');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

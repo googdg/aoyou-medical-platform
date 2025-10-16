@@ -1,0 +1,219 @@
+# 奥友医学科普学习平台 - Git忽略文件
+
+# 构建输出
+dist/
+build/
+*.min.js
+*.min.css
+
+# 依赖
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 环境配置
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 日志文件
+logs/
+*.log
+deploy.log
+
+# 备份文件
+backup/
+*.backup
+*.bak
+
+# 临时文件
+.tmp/
+temp/
+*.tmp
+*.temp
+
+# 缓存
+.cache/
+.parcel-cache/
+.eslintcache
+
+# 编辑器配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 测试覆盖率
+coverage/
+*.lcov
+
+# 运行时文件
+*.pid
+*.seed
+*.pid.lock
+
+# 可选的npm缓存目录
+.npm
+
+# 可选的eslint缓存
+.eslintcache
+
+# 可选的REPL历史
+.node_repl_history
+
+# 输出的npm包
+*.tgz
+
+# Yarn完整性文件
+.yarn-integrity
+
+# dotenv环境变量文件
+.env
+
+# 下一个.js构建输出
+.next
+
+# Nuxt.js构建/生成输出
+.nuxt
+dist
+
+# Gatsby文件
+.cache/
+public
+
+# Storybook构建输出
+.out
+.storybook-out
+
+# 临时文件夹
+.tmp
+.temp
+
+# 运行时数据
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# 目录用于检测工具
+lib-cov
+
+# 覆盖率目录由nyc使用
+coverage
+
+# nyc测试覆盖率
+.nyc_output
+
+# Grunt中间存储
+.grunt
+
+# Bower依赖目录
+bower_components
+
+# node-waf配置
+.lock-wscript
+
+# 编译的二进制插件
+build/Release
+
+# 依赖目录
+node_modules/
+jspm_packages/
+
+# TypeScript v1声明文件
+typings/
+
+# 可选的npm缓存目录
+.npm
+
+# 可选的eslint缓存
+.eslintcache
+
+# 可选的REPL历史
+.node_repl_history
+
+# 输出的npm包
+*.tgz
+
+# Yarn完整性文件
+.yarn-integrity
+
+# dotenv环境变量文件
+.env
+
+# 项目特定忽略
+# 开发时的测试文件（保留一些重要的测试文件）
+debug-*.html
+*-test-temp.html
+
+# 用户上据文件（但保留演示数据）
+uploads/user-*
+user-data/
+real-user-data/
+
+# 分析和统计数据
+analytics-data/
+reports/
+logs/
+
+# 本地配置文件
+config.local.js
+settings.local.json
+.env.local
+
+# 证书和密钥文件
+*.pem
+*.key
+*.crt
+*.p12
+
+# 数据库文件（但保留演示数据库）
+*.db
+*.sqlite
+*.sqlite3
+!demo.db
+!sample.sqlite
+
+# 压缩和备份文件
+*.zip
+*.tar.gz
+*.rar
+backup-*
+*.backup
+
+# 大文件（GitHub限制）
+*.mp4
+*.mov
+*.avi
+*.mkv
+# 但保留小的演示视频
+!demo-video-*.mp4
+!sample-*.mp4
+
+# 文档生成
+docs/build/
+docs/dist/
+
+# IDE和编辑器文件
+.vscode/settings.json
+.idea/workspace.xml
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+desktop.ini

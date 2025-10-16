@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高级AI系统测试 - 坦克大战</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+        
+        .danger { background-color: #f44336; }
+        .danger:hover { background-color: #da190b; }
+        
+        .warning { background-color: #ff9800; }
+        .warning:hover { background-color: #e68900; }
+        
+        .info { background-color: #2196F3; }
+        .info:hover { background-color: #1976D2; }
+        
+        canvas {
+            border: 2px solid #444;
+            background-color: #000;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+        
+        .ai-info {
+            background-color: #1a1a2e;
+            border-left: 4px solid #16213e;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .ai-strategy {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        
+        .ai-difficulty {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .log {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            margin-top: 10px;
+        }
+        
+        .performance-chart {
+            background-color: #333;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 高级AI系统测试</h1>
+            <p>测试坦克大战游戏的高级人工智能系统</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🎮 游戏控制</h2>
+            <div class="controls">
+                <button id="startTest">开始测试</button>
+                <button id="pauseTest">暂停/继续</button>
+                <button id="resetTest" class="warning">重置测试</button>
+                <button id="stopTest" class="danger">停止测试</button>
+            </div>
+            
+            <div class="controls">
+                <label>AI难度: 
+                    <select id="difficultySelect">
+                        <option value="easy">简单</option>
+                        <option value="normal" selected>普通</option>
+                        <option value="hard">困难</option>
+                        <option value="expert">专家</option>
+                        <option value="nightmare">噩梦</option>
+                    </select>
+                </label>
+                
+                <label>AI数量: 
+                    <input type="range" id="aiCountSlider" min="1" max="8" value="3">
+                    <span id="aiCountValue">3</span>
+                </label>
+                
+                <button id="spawnAI" class="info">生成AI坦克</button>
+                <button id="clearAI" class="warning">清除AI</button>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 游戏画面</h2>
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 AI性能统计</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalAI">0</div>
+                    <div class="stat-label">AI坦克数量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgReactionTime">0ms</div>
+                    <div class="stat-label">平均反应时间</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgAccuracy">0%</div>
+                    <div class="stat-label">平均射击精度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="strategySwitches">0</div>
+                    <div class="stat-label">策略切换次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="teamworkEvents">0</div>
+                    <div class="stat-label">团队协作事件</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="learningProgress">0%</div>
+                    <div class="stat-label">学习进度</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧠 AI状态信息</h2>
+            <div id="aiStatusContainer">
+                <!-- AI状态信息将在这里动态生成 -->
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📈 性能监控</h2>
+            <div class="performance-chart">
+                <canvas id="performanceChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 系统日志</h2>
+            <div class="controls">
+                <button id="clearLog" class="warning">清除日志</button>
+                <button id="exportLog" class="info">导出日志</button>
+            </div>
+            <div id="systemLog" class="log"></div>
+        </div>
+    </div>
+
+    <!-- 引入依赖 -->
+    <script src="../js/entity-component-system.js"></script>
+    <script src="../js/map-system.js"></script>
+    <script src="../js/tank-system.js"></script>
+    <script src="../js/bullet-system.js"></script>
+    <script src="../js/ai-system.js"></script>
+    <script src="../js/advanced-ai-system.js"></script>
+    <script src="../js/combat-system.js"></script>
+
+    <script>
+        // 高级AI系统测试类
+        class AdvancedAISystemTest {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.isRunning = false;
+                this.isPaused = false;
+                
+                // 游戏系统
+                this.entityManager = new EntityManager();
+                this.gameMap = null;
+                this.aiTanks = [];
+                this.playerTank = null;
+                
+                // 测试统计
+                this.stats = {
+                    totalAI: 0,
+                    reactionTimes: [],
+                    accuracyScores: [],
+                    strategySwitches: 0,
+                    teamworkEvents: 0,
+                    learningProgress: 0
+                };
+                
+                // 性能监控
+                this.performanceData = {
+                    fps: [],
+                    aiDecisions: [],
+                    memoryUsage: []
+                };
+                
+                this.lastTime = 0;
+                this.frameCount = 0;
+                this.fpsCounter = 0;
+                
+                this.initializeUI();
+                this.initializeGame();
+                this.startPerformanceMonitoring();
+            }
+
+            initializeUI() {
+                // 绑定控制按钮
+                document.getElementById('startTest').addEventListener('click', () => this.startTest());
+                document.getElementById('pauseTest').addEventListener('click', () => this.togglePause());
+                document.getElementById('resetTest').addEventListener('click', () => this.resetTest());
+                document.getElementById('stopTest').addEventListener('click', () => this.stopTest());
+                
+                document.getElementById('spawnAI').addEventListener('click', () => this.spawnAITank());
+                document.getElementById('clearAI').addEventListener('click', () => this.clearAI());
+                document.getElementById('clearLog').addEventListener('click', () => this.clearLog());
+                document.getElementById('exportLog').addEventListener('click', () => this.exportLog());
+                
+                // AI数量滑块
+                const aiCountSlider = document.getElementById('aiCountSlider');
+                const aiCountValue = document.getElementById('aiCountValue');
+                aiCountSlider.addEventListener('input', (e) => {
+                    aiCountValue.textContent = e.target.value;
+                });
+                
+                this.log('高级AI系统测试初始化完成');
+            }
+
+            initializeGame() {
+                // 创建游戏地图
+                this.gameMap = new GameMap(25, 19, 32);
+                this.gameMap.generateRandomMap();
+                
+                // 创建玩家坦克（用于AI测试目标）
+                this.createPlayerTank();
+                
+                this.log('游戏环境初始化完成');
+            }
+
+            createPlayerTank() {
+                const playerEntity = this.entityManager.createEntity();
+                playerEntity.addTag('player');
+                
+                // 添加组件
+                playerEntity.addComponent(new Transform(400, 300, 0));
+                playerEntity.addComponent(new Movement(100));
+                playerEntity.addComponent(new Health(100, 100));
+                playerEntity.addComponent(new Weapon('normal', 25, 500, 300));
+                
+                // 添加渲染组件
+                const renderer = new Renderer('#00ff00', 24, 24);
+                renderer.shape = 'tank';
+                playerEntity.addComponent(renderer);
+                
+                // 添加碰撞体
+                playerEntity.addComponent(new Collider(24, 24, 'player'));
+                
+                this.playerTank = playerEntity;
+                this.log('玩家坦克创建完成');
+            }
+
+            spawnAITank() {
+                const difficulty = document.getElementById('difficultySelect').value;
+                const strategies = Object.values(AdvancedAISystem.AIStrategy);
+                const strategy = strategies[Math.floor(Math.random() * strategies.length)];
+                
+                // 随机生成位置
+                let x, y;
+                do {
+                    x = Math.random() * (this.canvas.width - 50) + 25;
+                    y = Math.random() * (this.canvas.height - 50) + 25;
+                } while (!this.gameMap.isPassable(x, y));
+                
+                const aiEntity = this.entityManager.createEntity();
+                aiEntity.addTag('enemy');
+                
+                // 添加基础组件
+                aiEntity.addComponent(new Transform(x, y, Math.random() * Math.PI * 2));
+                aiEntity.addComponent(new Movement(80 + Math.random() * 40));
+                aiEntity.addComponent(new Health(100, 100));
+                aiEntity.addComponent(new Weapon('normal', 25, 600, 250));
+                
+                // 添加渲染组件
+                const renderer = new Renderer('#ff4444', 24, 24);
+                renderer.shape = 'tank';
+                aiEntity.addComponent(renderer);
+                
+                // 添加碰撞体
+                aiEntity.addComponent(new Collider(24, 24, 'enemy'));
+                
+                // 添加高级AI控制器
+                const aiController = new AdvancedAISystem.AdvancedAIController(
+                    AISystem.AIBehavior.BALANCED,
+                    difficulty
+                );
+                aiController.entity = aiEntity;
+                aiController.gameMap = this.gameMap;
+                aiController.strategy = strategy;
+                
+                aiEntity.addComponent(aiController);
+                
+                this.aiTanks.push(aiEntity);
+                this.stats.totalAI++;
+                
+                this.log(`生成AI坦克 - 难度: ${difficulty}, 策略: ${strategy}`);
+                this.updateStats();
+            }
+
+            clearAI() {
+                for (const aiTank of this.aiTanks) {
+                    this.entityManager.removeEntity(aiTank);
+                }
+                this.aiTanks = [];
+                this.stats.totalAI = 0;
+                this.log('清除所有AI坦克');
+                this.updateStats();
+            }
+
+            startTest() {
+                if (this.isRunning) return;
+                
+                this.isRunning = true;
+                this.isPaused = false;
+                
+                // 生成初始AI坦克
+                const aiCount = parseInt(document.getElementById('aiCountSlider').value);
+                for (let i = 0; i < aiCount; i++) {
+                    this.spawnAITank();
+                }
+                
+                this.gameLoop();
+                this.log('测试开始');
+            }
+
+            togglePause() {
+                if (!this.isRunning) return;
+                
+                this.isPaused = !this.isPaused;
+                if (!this.isPaused) {
+                    this.gameLoop();
+                }
+                this.log(this.isPaused ? '测试暂停' : '测试继续');
+            }
+
+            resetTest() {
+                this.stopTest();
+                this.clearAI();
+                this.stats = {
+                    totalAI: 0,
+                    reactionTimes: [],
+                    accuracyScores: [],
+                    strategySwitches: 0,
+                    teamworkEvents: 0,
+                    learningProgress: 0
+                };
+                this.performanceData = {
+                    fps: [],
+                    aiDecisions: [],
+                    memoryUsage: []
+                };
+                this.updateStats();
+                this.log('测试重置');
+            }
+
+            stopTest() {
+                this.isRunning = false;
+                this.isPaused = false;
+                this.log('测试停止');
+            }
+
+            gameLoop(currentTime = 0) {
+                if (!this.isRunning || this.isPaused) return;
+                
+                const deltaTime = currentTime - this.lastTime;
+                this.lastTime = currentTime;
+                
+                // 更新FPS计数
+                this.frameCount++;
+                if (currentTime - this.fpsCounter >= 1000) {
+                    this.performanceData.fps.push(this.frameCount);
+                    if (this.performanceData.fps.length > 60) {
+                        this.performanceData.fps.shift();
+                    }
+                    this.frameCount = 0;
+                    this.fpsCounter = currentTime;
+                }
+                
+                // 更新游戏逻辑
+                this.update(deltaTime);
+                
+                // 渲染
+                this.render();
+                
+                // 更新统计信息
+                this.updateStats();
+                this.updateAIStatus();
+                
+                requestAnimationFrame((time) => this.gameLoop(time));
+            }
+
+            update(deltaTime) {
+                // 更新所有实体
+                const entities = this.entityManager.getAllEntities();
+                for (const entity of entities) {
+                    // 更新AI控制器
+                    const aiController = entity.getComponent('AdvancedAIController') || 
+                                       entity.getComponent('AIController');
+                    if (aiController) {
+                        aiController.update(deltaTime);
+                        
+                        // 收集AI性能数据
+                        this.collectAIPerformanceData(aiController);
+                    }
+                    
+                    // 更新移动
+                    const movement = entity.getComponent('Movement');
+                    const transform = entity.getComponent('Transform');
+                    if (movement && transform) {
+                        transform.x += movement.velocity.x * deltaTime / 1000;
+                        transform.y += movement.velocity.y * deltaTime / 1000;
+                        
+                        // 边界检查
+                        transform.x = Math.max(12, Math.min(this.canvas.width - 12, transform.x));
+                        transform.y = Math.max(12, Math.min(this.canvas.height - 12, transform.y));
+                    }
+                }
+                
+                // 简单的碰撞检测和战斗逻辑
+                this.handleCombat();
+            }
+
+            collectAIPerformanceData(aiController) {
+                if (aiController.difficultyConfig) {
+                    this.stats.reactionTimes.push(aiController.difficultyConfig.reactionTime);
+                    this.stats.accuracyScores.push(aiController.difficultyConfig.accuracy * 100);
+                    
+                    // 保持数组大小
+                    if (this.stats.reactionTimes.length > 100) {
+                        this.stats.reactionTimes.shift();
+                        this.stats.accuracyScores.shift();
+                    }
+                }
+                
+                // 检测策略切换
+                if (aiController.lastStrategy && aiController.lastStrategy !== aiController.strategy) {
+                    this.stats.strategySwitches++;
+                    this.log(`AI策略切换: ${aiController.lastStrategy} -> ${aiController.strategy}`);
+                }
+                aiController.lastStrategy = aiController.strategy;
+                
+                // 检测团队协作事件
+                if (aiController.teamwork && aiController.teamwork.communicationMessages.length > 0) {
+                    this.stats.teamworkEvents += aiController.teamwork.communicationMessages.length;
+                }
+                
+                // 学习进度
+                if (aiController.learning && aiController.learning.behaviorPatterns.size > 0) {
+                    this.stats.learningProgress = Math.min(100, 
+                        aiController.learning.behaviorPatterns.size * 10);
+                }
+            }
+
+            handleCombat() {
+                // 简化的战斗逻辑
+                const entities = this.entityManager.getAllEntities();
+                
+                for (const entity of entities) {
+                    const aiController = entity.getComponent('AdvancedAIController');
+                    if (aiController && aiController.wantToFire) {
+                        // 模拟射击
+                        aiController.wantToFire = false;
+                        this.log(`AI坦克 ${entity.id} 开火`);
+                    }
+                }
+            }
+
+            render() {
+                // 清空画布
+                this.ctx.fillStyle = '#000000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 渲染地图
+                if (this.gameMap) {
+                    this.renderMap();
+                }
+                
+                // 渲染所有实体
+                const entities = this.entityManager.getAllEntities();
+                for (const entity of entities) {
+                    this.renderEntity(entity);
+                }
+                
+                // 渲染AI调试信息
+                this.renderAIDebugInfo();
+            }
+
+            renderMap() {
+                const tileSize = this.gameMap.tileSize;
+                
+                for (let y = 0; y < this.gameMap.height; y++) {
+                    for (let x = 0; x < this.gameMap.width; x++) {
+                        const tile = this.gameMap.getTile(x, y);
+                        const pixelX = x * tileSize;
+                        const pixelY = y * tileSize;
+                        
+                        switch (tile) {
+                            case 1: // 墙壁
+                                this.ctx.fillStyle = '#8B4513';
+                                this.ctx.fillRect(pixelX, pixelY, tileSize, tileSize);
+                                break;
+                            case 2: // 钢墙
+                                this.ctx.fillStyle = '#696969';
+                                this.ctx.fillRect(pixelX, pixelY, tileSize, tileSize);
+                                break;
+                            case 3: // 水域
+                                this.ctx.fillStyle = '#4169E1';
+                                this.ctx.fillRect(pixelX, pixelY, tileSize, tileSize);
+                                break;
+                        }
+                    }
+                }
+            }
+
+            renderEntity(entity) {
+                const transform = entity.getComponent('Transform');
+                const renderer = entity.getComponent('Renderer');
+                
+                if (!transform || !renderer) return;
+                
+                this.ctx.save();
+                this.ctx.translate(transform.x, transform.y);
+                this.ctx.rotate(transform.rotation);
+                
+                this.ctx.fillStyle = renderer.color;
+                
+                if (renderer.shape === 'tank') {
+                    // 绘制坦克
+                    this.ctx.fillRect(-renderer.width/2, -renderer.height/2, 
+                                    renderer.width, renderer.height);
+                    
+                    // 绘制炮管
+                    this.ctx.fillRect(0, -2, renderer.width/2, 4);
+                } else {
+                    // 默认矩形
+                    this.ctx.fillRect(-renderer.width/2, -renderer.height/2, 
+                                    renderer.width, renderer.height);
+                }
+                
+                this.ctx.restore();
+            }
+
+            renderAIDebugInfo() {
+                // 渲染AI的视野范围、路径等调试信息
+                for (const aiTank of this.aiTanks) {
+                    const transform = aiTank.getComponent('Transform');
+                    const aiController = aiTank.getComponent('AdvancedAIController');
+                    
+                    if (!transform || !aiController) continue;
+                    
+                    // 绘制视野范围
+                    this.ctx.strokeStyle = 'rgba(255, 255, 0, 0.3)';
+                    this.ctx.beginPath();
+                    this.ctx.arc(transform.x, transform.y, aiController.config?.viewDistance || 200, 0, Math.PI * 2);
+                    this.ctx.stroke();
+                    
+                    // 绘制攻击范围
+                    this.ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)';
+                    this.ctx.beginPath();
+                    this.ctx.arc(transform.x, transform.y, aiController.config?.attackRange || 150, 0, Math.PI * 2);
+                    this.ctx.stroke();
+                    
+                    // 绘制危险区域
+                    if (aiController.dangerZones) {
+                        for (const zone of aiController.dangerZones) {
+                            this.ctx.fillStyle = 'rgba(255, 0, 0, 0.1)';
+                            this.ctx.beginPath();
+                            this.ctx.arc(zone.x, zone.y, zone.radius, 0, Math.PI * 2);
+                            this.ctx.fill();
+                        }
+                    }
+                    
+                    // 绘制安全区域
+                    if (aiController.safeZones) {
+                        for (const zone of aiController.safeZones.slice(0, 3)) { // 只显示前3个
+                            this.ctx.fillStyle = 'rgba(0, 255, 0, 0.1)';
+                            this.ctx.beginPath();
+                            this.ctx.arc(zone.x, zone.y, 30, 0, Math.PI * 2);
+                            this.ctx.fill();
+                        }
+                    }
+                }
+            }
+
+            updateStats() {
+                document.getElementById('totalAI').textContent = this.stats.totalAI;
+                
+                const avgReactionTime = this.stats.reactionTimes.length > 0 ?
+                    Math.round(this.stats.reactionTimes.reduce((a, b) => a + b, 0) / this.stats.reactionTimes.length) : 0;
+                document.getElementById('avgReactionTime').textContent = avgReactionTime + 'ms';
+                
+                const avgAccuracy = this.stats.accuracyScores.length > 0 ?
+                    Math.round(this.stats.accuracyScores.reduce((a, b) => a + b, 0) / this.stats.accuracyScores.length) : 0;
+                document.getElementById('avgAccuracy').textContent = avgAccuracy + '%';
+                
+                document.getElementById('strategySwitches').textContent = this.stats.strategySwitches;
+                document.getElementById('teamworkEvents').textContent = this.stats.teamworkEvents;
+                document.getElementById('learningProgress').textContent = this.stats.learningProgress + '%';
+            }
+
+            updateAIStatus() {
+                const container = document.getElementById('aiStatusContainer');
+                container.innerHTML = '';
+                
+                for (let i = 0; i < this.aiTanks.length; i++) {
+                    const aiTank = this.aiTanks[i];
+                    const aiController = aiTank.getComponent('AdvancedAIController');
+                    const health = aiTank.getComponent('Health');
+                    
+                    if (!aiController) continue;
+                    
+                    const statusDiv = document.createElement('div');
+                    statusDiv.className = 'ai-info';
+                    statusDiv.innerHTML = `
+                        <h4>AI坦克 #${i + 1}</h4>
+                        <p><span class="ai-strategy">策略:</span> ${aiController.strategy || 'unknown'}</p>
+                        <p><span class="ai-difficulty">难度:</span> ${aiController.difficulty || 'normal'}</p>
+                        <p>状态: ${aiController.currentState || 'idle'}</p>
+                        <p>生命值: ${health ? health.current : 0}/${health ? health.max : 0}</p>
+                        <p>目标: ${aiController.target ? '有目标' : '无目标'}</p>
+                        <p>危险区域: ${aiController.dangerZones ? aiController.dangerZones.length : 0}</p>
+                        <p>安全区域: ${aiController.safeZones ? aiController.safeZones.length : 0}</p>
+                    `;
+                    container.appendChild(statusDiv);
+                }
+            }
+
+            startPerformanceMonitoring() {
+                setInterval(() => {
+                    if (!this.isRunning) return;
+                    
+                    // 更新性能图表
+                    this.updatePerformanceChart();
+                }, 1000);
+            }
+
+            updatePerformanceChart() {
+                const canvas = document.getElementById('performanceChart');
+                const ctx = canvas.getContext('2d');
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制FPS图表
+                if (this.performanceData.fps.length > 1) {
+                    ctx.strokeStyle = '#4CAF50';
+                    ctx.beginPath();
+                    
+                    const maxFPS = Math.max(...this.performanceData.fps, 60);
+                    const stepX = canvas.width / (this.performanceData.fps.length - 1);
+                    
+                    for (let i = 0; i < this.performanceData.fps.length; i++) {
+                        const x = i * stepX;
+                        const y = canvas.height - (this.performanceData.fps[i] / maxFPS) * canvas.height;
+                        
+                        if (i === 0) {
+                            ctx.moveTo(x, y);
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    }
+                    
+                    ctx.stroke();
+                    
+                    // 绘制标签
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '12px Arial';
+                    ctx.fillText(`FPS: ${this.performanceData.fps[this.performanceData.fps.length - 1] || 0}`, 10, 20);
+                }
+            }
+
+            log(message) {
+                const logElement = document.getElementById('systemLog');
+                const timestamp = new Date().toLocaleTimeString();
+                logElement.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+                logElement.scrollTop = logElement.scrollHeight;
+            }
+
+            clearLog() {
+                document.getElementById('systemLog').innerHTML = '';
+            }
+
+            exportLog() {
+                const logContent = document.getElementById('systemLog').textContent;
+                const blob = new Blob([logContent], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ai-test-log-${new Date().toISOString().slice(0, 19)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        // 启动测试
+        let aiTest;
+        window.addEventListener('load', () => {
+            aiTest = new AdvancedAISystemTest();
+        });
+    </script>
+</body>
+</html>

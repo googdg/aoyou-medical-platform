@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>坦克系统测试 - Tank System Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #tankCanvas {
+            border: 2px solid #333;
+            background: #000;
+        }
+        .controls {
+            margin: 10px 0;
+        }
+        .tank-info {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .tank-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .tank-sample {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .tank-color {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚗 坦克系统测试</h1>
+    
+    <div class="test-container">
+        <h2>📋 测试结果</h2>
+        <div id="testResults"></div>
+        <button onclick="runAllTests()">🚀 运行所有测试</button>
+        <button onclick="clearResults()">🧹 清除结果</button>
+    </div>
+
+    <div class="test-container">
+        <h2>🎮 坦克可视化测试</h2>
+        <canvas id="tankCanvas" width="800" height="600"></canvas>
+        <div class="controls">
+            <button onclick="createPlayerTank()">🚗 创建玩家坦克</button>
+            <button onclick="createEnemyTank('basic')">🤖 基础敌坦克</button>
+            <button onclick="createEnemyTank('fast')">⚡ 快速敌坦克</button>
+            <button onclick="createEnemyTank('heavy')">🛡️ 重型敌坦克</button>
+            <button onclick="clearTanks()">🧹 清除坦克</button>
+        </div>
+        <div class="controls">
+            <button onclick="testMovement()">🏃 测试移动</button>
+            <button onclick="testFiring()">💥 测试射击</button>
+            <button onclick="testCollision()">💥 测试碰撞</button>
+            <button onclick="testDamage()">🩸 测试伤害</button>
+        </div>
+        <div class="controls">
+            <p><strong>控制说明：</strong> WASD移动第一个坦克，空格射击</p>
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>📊 坦克信息</h2>
+        <div class="tank-info" id="tankInfo">
+            <p>坦克数量: <span id="tankCount">0</span></p>
+            <p>子弹数量: <span id="bulletCount">0</span></p>
+        </div>
+        
+        <h3>坦克类型</h3>
+        <div class="tank-types">
+            <div class="tank-sample">
+                <div class="tank-color" style="background: #4CAF50;"></div>
+                <span>玩家坦克</span>
+            </div>
+            <div class="tank-sample">
+                <div class="tank-color" style="background: #FF5722;"></div>
+                <span>基础敌坦克</span>
+            </div>
+            <div class="tank-sample">
+                <div class="tank-color" style="background: #E91E63;"></div>
+                <span>快速敌坦克</span>
+            </div>
+            <div class="tank-sample">
+                <div class="tank-color" style="background: #795548;"></div>
+                <span>重型敌坦克</span>
+            </div>
+            <div class="tank-sample">
+                <div class="tank-color" style="background: #9C27B0;"></div>
+                <span>特殊敌坦克</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入依赖 -->
+    <script src="../js/entity-component-system.js"></script>
+    <script src="../js/map-system.js"></script>
+    <script src="../js/tank-system.js"></script>
+    
+    <script>
+        // 测试管理器
+        class TankTestManager {
+            constructor() {
+                this.results = [];
+                this.entityManager = new ECS.EntityManager();
+                this.tankManager = new TankSystem.TankManager(this.entityManager);
+                this.canvas = document.getElementById('tankCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.imageSmoothingEnabled = false;
+                
+                // 模拟输入管理器
+                this.inputManager = {
+                    keys: {},
+                    isKeyDown: (key) => !!this.keys[key],
+                    isKeyPressed: (key) => !!this.keys[key]
+                };
+                
+                // 设置全局引用
+                window.game = {
+                    inputManager: this.inputManager,
+                    currentMap: null,
+                    createBullet: (bulletData) => this.createBullet(bulletData),
+                    onPlayerTankDestroyed: () => console.log('玩家坦克被摧毁'),
+                    onEnemyTankDestroyed: () => console.log('敌方坦克被摧毁')
+                };
+                
+                this.initInput();
+                this.startRenderLoop();
+            }
+
+            initInput() {
+                document.addEventListener('keydown', (e) => {
+                    this.inputManager.keys[e.code] = true;
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.inputManager.keys[e.code] = false;
+                });
+            }
+
+            // 创建子弹
+            createBullet(bulletData) {
+                const bullet = new ECS.Entity('Bullet');
+                
+                bullet.addComponent(new ECS.Transform(bulletData.x, bulletData.y, 0));
+                bullet.addComponent(new ECS.Renderer(null, 4, 4, '#FFD700'));
+                bullet.addComponent(new ECS.Collider(4, 4));
+                
+                const movement = new ECS.Movement(bulletData.bulletSpeed || 300);
+                movement.setVelocity(bulletData.velocityX, bulletData.velocityY);
+                bullet.addComponent(movement);
+                
+                bullet.addTag('bullet');
+                bullet.damage = bulletData.damage || 1;
+                bullet.owner = bulletData.owner;
+                
+                this.entityManager.addEntity(bullet);
+                
+                // 简单的生命周期
+                setTimeout(() => {
+                    this.entityManager.removeEntity(bullet);
+                }, 2000);
+                
+                return bullet;
+            }
+
+            // 添加测试结果
+            addResult(testName, passed, message = '') {
+                this.results.push({
+                    name: testName,
+                    passed: passed,
+                    message: message,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                this.updateResultsDisplay();
+            }
+
+            // 更新结果显示
+            updateResultsDisplay() {
+                const container = document.getElementById('testResults');
+                container.innerHTML = '';
+                
+                this.results.forEach(result => {
+                    const div = document.createElement('div');
+                    div.className = `test-result ${result.passed ? 'test-pass' : 'test-fail'}`;
+                    div.innerHTML = `
+                        <strong>${result.passed ? '✅' : '❌'} ${result.name}</strong>
+                        <br><small>${result.timestamp}</small>
+                        ${result.message ? `<br>${result.message}` : ''}
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            // 清除结果
+            clearResults() {
+                this.results = [];
+                this.updateResultsDisplay();
+            }
+
+            // 开始渲染循环
+            startRenderLoop() {
+                const render = () => {
+                    this.update();
+                    this.render();
+                    this.updateInfo();
+                    requestAnimationFrame(render);
+                };
+                render();
+            }
+
+            // 更新
+            update() {
+                this.entityManager.update(16);
+            }
+
+            // 渲染
+            render() {
+                // 清空画布
+                this.ctx.fillStyle = '#222';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 绘制网格
+                this.drawGrid();
+                
+                // 渲染所有实体
+                this.entityManager.render(this.ctx);
+            }
+
+            // 绘制网格
+            drawGrid() {
+                this.ctx.strokeStyle = '#333';
+                this.ctx.lineWidth = 1;
+                
+                const gridSize = 50;
+                for (let x = 0; x < this.canvas.width; x += gridSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.canvas.height);
+                    this.ctx.stroke();
+                }
+                
+                for (let y = 0; y < this.canvas.height; y += gridSize) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y);
+                    this.ctx.lineTo(this.canvas.width, y);
+                    this.ctx.stroke();
+                }
+            }
+
+            // 更新信息显示
+            updateInfo() {
+                const tanks = this.entityManager.getEntitiesByTag('tank');
+                const bullets = this.entityManager.getEntitiesByTag('bullet');
+                
+                document.getElementById('tankCount').textContent = tanks.length;
+                document.getElementById('bulletCount').textContent = bullets.length;
+            }
+        }
+
+        // 全局测试管理器
+        let testManager;
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            testManager = new TankTestManager();
+            console.log('🚗 坦克测试管理器初始化完成');
+        });
+
+        // 测试函数
+        function testTankCreation() {
+            try {
+                const tank = TankSystem.TankFactory.createPlayerTank(100, 100, 1);
+                
+                const hasTransform = tank.hasComponent('Transform');
+                const hasController = tank.hasComponent('TankController');
+                const hasRenderer = tank.hasComponent('TankRenderer');
+                const hasWeapon = tank.hasComponent('Weapon');
+                const hasHealth = tank.hasComponent('Health');
+                
+                const passed = hasTransform && hasController && hasRenderer && hasWeapon && hasHealth;
+                testManager.addResult('坦克创建测试', passed, 
+                    passed ? '坦克组件创建完整' : '坦克组件缺失');
+                return passed;
+            } catch (error) {
+                testManager.addResult('坦克创建测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testTankController() {
+            try {
+                const controller = new TankSystem.TankController(TankSystem.TankType.PLAYER, 1);
+                
+                const hasControls = controller.controls !== null;
+                const correctType = controller.tankType === TankSystem.TankType.PLAYER;
+                const correctPlayer = controller.playerId === 1;
+                
+                const passed = hasControls && correctType && correctPlayer;
+                testManager.addResult('坦克控制器测试', passed,
+                    passed ? '控制器配置正确' : '控制器配置错误');
+                return passed;
+            } catch (error) {
+                testManager.addResult('坦克控制器测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testTankRenderer() {
+            try {
+                const renderer = new TankSystem.TankRenderer(TankSystem.TankType.PLAYER);
+                
+                const hasConfig = renderer.config !== null;
+                const correctColor = renderer.config.color === '#4CAF50';
+                const correctSize = renderer.width === 30;
+                
+                const passed = hasConfig && correctColor && correctSize;
+                testManager.addResult('坦克渲染器测试', passed,
+                    passed ? '渲染器配置正确' : '渲染器配置错误');
+                return passed;
+            } catch (error) {
+                testManager.addResult('坦克渲染器测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testTankTypes() {
+            try {
+                const types = [
+                    TankSystem.TankType.PLAYER,
+                    TankSystem.TankType.ENEMY_BASIC,
+                    TankSystem.TankType.ENEMY_FAST,
+                    TankSystem.TankType.ENEMY_HEAVY
+                ];
+                
+                let allConfigsExist = true;
+                for (const type of types) {
+                    if (!TankSystem.TankConfig[type]) {
+                        allConfigsExist = false;
+                        break;
+                    }
+                }
+                
+                const passed = allConfigsExist && types.length === 4;
+                testManager.addResult('坦克类型测试', passed,
+                    passed ? '所有坦克类型配置完整' : '坦克类型配置缺失');
+                return passed;
+            } catch (error) {
+                testManager.addResult('坦克类型测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testTankManager() {
+            try {
+                const entityManager = new ECS.EntityManager();
+                const tankManager = new TankSystem.TankManager(entityManager);
+                
+                const playerTank = tankManager.createPlayerTank(100, 100, 1);
+                const enemyTank = tankManager.createEnemyTank(200, 200);
+                
+                entityManager.update(16); // 处理待添加的实体
+                
+                const stats = tankManager.getStats();
+                const correctStats = stats.totalPlayers === 1 && stats.totalEnemies === 1;
+                
+                const passed = playerTank && enemyTank && correctStats;
+                testManager.addResult('坦克管理器测试', passed,
+                    passed ? '坦克管理器功能正常' : '坦克管理器功能异常');
+                return passed;
+            } catch (error) {
+                testManager.addResult('坦克管理器测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        function testTankDirection() {
+            try {
+                const directions = [
+                    TankSystem.TankDirection.UP,
+                    TankSystem.TankDirection.RIGHT,
+                    TankSystem.TankDirection.DOWN,
+                    TankSystem.TankDirection.LEFT
+                ];
+                
+                const correctValues = directions[0] === 0 && 
+                                    directions[1] === 90 && 
+                                    directions[2] === 180 && 
+                                    directions[3] === 270;
+                
+                const passed = correctValues;
+                testManager.addResult('坦克方向测试', passed,
+                    passed ? '坦克方向枚举正确' : '坦克方向枚举错误');
+                return passed;
+            } catch (error) {
+                testManager.addResult('坦克方向测试', false, `错误: ${error.message}`);
+                return false;
+            }
+        }
+
+        // 运行所有测试
+        function runAllTests() {
+            testManager.clearResults();
+            
+            const tests = [
+                testTankCreation,
+                testTankController,
+                testTankRenderer,
+                testTankTypes,
+                testTankManager,
+                testTankDirection
+            ];
+            
+            let passedCount = 0;
+            tests.forEach(test => {
+                if (test()) passedCount++;
+            });
+            
+            const allPassed = passedCount === tests.length;
+            testManager.addResult('总体测试结果', allPassed,
+                `${passedCount}/${tests.length} 个测试通过`);
+            
+            console.log(`🚗 坦克系统测试完成: ${passedCount}/${tests.length} 通过`);
+        }
+
+        // 清除结果
+        function clearResults() {
+            testManager.clearResults();
+        }
+
+        // 创建玩家坦克
+        function createPlayerTank() {
+            const x = Math.random() * (testManager.canvas.width - 100) + 50;
+            const y = Math.random() * (testManager.canvas.height - 100) + 50;
+            testManager.tankManager.createPlayerTank(x, y, 1);
+            console.log('🚗 创建玩家坦克');
+        }
+
+        // 创建敌方坦克
+        function createEnemyTank(type) {
+            const x = Math.random() * (testManager.canvas.width - 100) + 50;
+            const y = Math.random() * (testManager.canvas.height - 100) + 50;
+            
+            let tankType;
+            switch(type) {
+                case 'basic': tankType = TankSystem.TankType.ENEMY_BASIC; break;
+                case 'fast': tankType = TankSystem.TankType.ENEMY_FAST; break;
+                case 'heavy': tankType = TankSystem.TankType.ENEMY_HEAVY; break;
+                default: tankType = TankSystem.TankType.ENEMY_BASIC;
+            }
+            
+            testManager.tankManager.createEnemyTank(x, y, tankType);
+            console.log('🤖 创建敌方坦克:', type);
+        }
+
+        // 清除坦克
+        function clearTanks() {
+            testManager.tankManager.clearAll();
+            console.log('🧹 清除所有坦克');
+        }
+
+        // 测试移动
+        function testMovement() {
+            const tanks = testManager.entityManager.getEntitiesByTag('tank');
+            if (tanks.length === 0) {
+                alert('请先创建坦克');
+                return;
+            }
+            
+            // 给第一个坦克添加随机移动
+            const tank = tanks[0];
+            const controller = tank.getComponent('TankController');
+            if (controller) {
+                // 模拟按键
+                const directions = ['KeyW', 'KeyS', 'KeyA', 'KeyD'];
+                const randomDir = directions[Math.floor(Math.random() * directions.length)];
+                testManager.inputManager.keys[randomDir] = true;
+                
+                setTimeout(() => {
+                    testManager.inputManager.keys[randomDir] = false;
+                }, 1000);
+            }
+            
+            console.log('🏃 测试坦克移动');
+        }
+
+        // 测试射击
+        function testFiring() {
+            const tanks = testManager.entityManager.getEntitiesByTag('tank');
+            if (tanks.length === 0) {
+                alert('请先创建坦克');
+                return;
+            }
+            
+            // 让所有坦克射击
+            tanks.forEach(tank => {
+                const weapon = tank.getComponent('Weapon');
+                if (weapon && weapon.tryFire()) {
+                    const bulletData = weapon.createBulletData();
+                    if (bulletData) {
+                        testManager.createBullet(bulletData);
+                    }
+                }
+            });
+            
+            console.log('💥 测试坦克射击');
+        }
+
+        // 测试碰撞
+        function testCollision() {
+            const tanks = testManager.entityManager.getEntitiesByTag('tank');
+            if (tanks.length < 2) {
+                alert('需要至少2个坦克来测试碰撞');
+                return;
+            }
+            
+            // 将两个坦克移动到相近位置
+            const tank1 = tanks[0];
+            const tank2 = tanks[1];
+            
+            const transform1 = tank1.getComponent('Transform');
+            const transform2 = tank2.getComponent('Transform');
+            
+            if (transform1 && transform2) {
+                transform2.setPosition(transform1.x + 20, transform1.y + 20);
+                console.log('💥 强制坦克碰撞测试');
+            }
+        }
+
+        // 测试伤害
+        function testDamage() {
+            const tanks = testManager.entityManager.getEntitiesByTag('tank');
+            if (tanks.length === 0) {
+                alert('请先创建坦克');
+                return;
+            }
+            
+            // 对第一个坦克造成伤害
+            const tank = tanks[0];
+            const health = tank.getComponent('Health');
+            if (health) {
+                health.takeDamage(1);
+                console.log('🩸 对坦克造成伤害');
+            }
+        }
+    </script>
+</body>
+</html>

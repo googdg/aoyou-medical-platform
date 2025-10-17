@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邀请码功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #4a9eff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #3a8eef;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* 邀请码弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 15px 0;
+            box-sizing: border-box;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .modal-btn.cancel {
+            background: #666;
+            color: white;
+        }
+        .modal-btn.confirm {
+            background: #4a9eff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 邀请码功能测试</h1>
+        
+        <div id="status" class="status info">
+            状态：未测试
+        </div>
+        
+        <h3>测试步骤：</h3>
+        <ol>
+            <li>点击"测试邀请码弹窗"按钮</li>
+            <li>应该弹出邀请码输入框</li>
+            <li>输入任意数字（如1234）</li>
+            <li>点击确认</li>
+            <li>再次点击测试按钮，应该不再弹窗</li>
+            <li>点击"重置状态"重新测试</li>
+        </ol>
+        
+        <div style="margin: 30px 0;">
+            <button class="test-button" onclick="testInviteCode()">🎯 测试邀请码弹窗</button>
+            <button class="test-button" onclick="resetStatus()" style="background: #dc3545;">🔄 重置状态</button>
+            <button class="test-button" onclick="checkStatus()" style="background: #28a745;">📊 检查状态</button>
+        </div>
+        
+        <h3>调试信息：</h3>
+        <div id="debug-info" style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-family: monospace; font-size: 14px;">
+            等待测试...
+        </div>
+    </div>
+
+    <!-- 邀请码弹窗 -->
+    <div id="invite-modal" class="modal">
+        <div class="modal-content">
+            <h2>🏥 邀请码验证</h2>
+            <p style="color: #666; margin-bottom: 20px;">请输入邀请码观看所有视频</p>
+            <div style="background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                <p style="color: #4a9eff; font-size: 14px; margin: 0;">
+                    💡 提示：请输入任意数字作为邀请码
+                </p>
+            </div>
+            <input type="text" id="invite-code" placeholder="请输入任意数字邀请码" maxlength="10">
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="cancelInvite()">取消</button>
+                <button class="modal-btn confirm" onclick="verifyInvite()">确认观看</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 检查是否已验证（会话级别）
+        function isVerified() {
+            return sessionStorage.getItem('invite_verified') === 'true';
+        }
+        
+        // 设置验证状态
+        function setVerified() {
+            sessionStorage.setItem('invite_verified', 'true');
+        }
+        
+        // 显示弹窗
+        function showModal() {
+            document.getElementById('invite-modal').classList.add('show');
+            document.getElementById('invite-code').focus();
+        }
+        
+        // 隐藏弹窗
+        function hideModal() {
+            document.getElementById('invite-modal').classList.remove('show');
+            document.getElementById('invite-code').value = '';
+        }
+        
+        // 测试邀请码功能
+        function testInviteCode() {
+            updateDebug('🔍 检查验证状态...');
+            
+            if (isVerified()) {
+                updateStatus('success', '✅ 已验证，直接访问视频');
+                updateDebug('✅ 用户已验证，跳过邀请码弹窗');
+            } else {
+                updateStatus('info', '🔐 未验证，显示邀请码弹窗');
+                updateDebug('🔐 用户未验证，显示邀请码弹窗');
+                showModal();
+            }
+        }
+        
+        // 验证邀请码
+        function verifyInvite() {
+            const code = document.getElementById('invite-code').value.trim();
+            updateDebug(`🔍 验证邀请码: "${code}"`);
+            
+            if (code.length > 0) {
+                setVerified();
+                hideModal();
+                updateStatus('success', '🎉 邀请码验证成功！可以观看视频了');
+                updateDebug('✅ 邀请码验证成功，状态已保存到sessionStorage');
+            } else {
+                updateStatus('error', '❌ 请输入邀请码');
+                updateDebug('❌ 邀请码为空');
+            }
+        }
+        
+        // 取消验证
+        function cancelInvite() {
+            hideModal();
+            updateStatus('info', '❌ 已取消验证');
+            updateDebug('❌ 用户取消了邀请码验证');
+        }
+        
+        // 重置状态
+        function resetStatus() {
+            sessionStorage.removeItem('invite_verified');
+            updateStatus('info', '🔄 状态已重置，可以重新测试');
+            updateDebug('🔄 验证状态已从sessionStorage中清除');
+        }
+        
+        // 检查状态
+        function checkStatus() {
+            const verified = isVerified();
+            const sessionData = sessionStorage.getItem('invite_verified');
+            
+            updateStatus(verified ? 'success' : 'info', 
+                verified ? '✅ 当前状态：已验证' : '🔐 当前状态：未验证');
+            
+            updateDebug(`📊 状态检查:
+- isVerified(): ${verified}
+- sessionStorage值: "${sessionData}"
+- sessionStorage类型: ${typeof sessionData}`);
+        }
+        
+        // 更新状态显示
+        function updateStatus(type, message) {
+            const statusEl = document.getElementById('status');
+            statusEl.className = `status ${type}`;
+            statusEl.textContent = message;
+        }
+        
+        // 更新调试信息
+        function updateDebug(message) {
+            const debugEl = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugEl.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            debugEl.scrollTop = debugEl.scrollHeight;
+        }
+        
+        // 页面加载时检查状态
+        window.onload = function() {
+            checkStatus();
+        };
+    </script>
+</body>
+</html>

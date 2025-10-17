@@ -13,21 +13,22 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #0f0f0f;
-            color: #fff;
+            background: #ffffff;
+            color: #333333;
             line-height: 1.4;
         }
         
         /* 顶部导航栏 */
         .header {
-            position: fixed;
+            position: fixed !important;
             top: 0;
             left: 0;
             right: 0;
             height: 56px;
-            background: #0f0f0f;
-            border-bottom: 1px solid #272727;
+            background: #ffffff !important;
+            border-bottom: 1px solid #e0e0e0 !important;
             display: flex;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             align-items: center;
             padding: 0 16px;
             z-index: 1000;
@@ -42,7 +43,7 @@
         .menu-btn {
             background: none;
             border: none;
-            color: #fff;
+            color: #333333;
             font-size: 20px;
             cursor: pointer;
             padding: 8px;
@@ -51,7 +52,7 @@
         }
         
         .menu-btn:hover {
-            background: #272727;
+            background: #f5f5f5;
         }
         
         .logo {
@@ -59,7 +60,7 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: #fff;
+            color: #333333;
         }
         
         .logo-icon {
@@ -91,31 +92,37 @@
         
         .search-input {
             flex: 1;
-            background: #121212;
-            border: 1px solid #303030;
+            background: #ffffff;
+            border: 1px solid #cccccc;
             border-right: none;
             padding: 0 16px;
-            color: #fff;
+            color: #333333;
             font-size: 16px;
             border-radius: 20px 0 0 20px;
         }
         
         .search-input:focus {
             outline: none;
-            border-color: #065fd4;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
         }
         
         .search-btn {
             width: 64px;
-            background: #222;
-            border: 1px solid #303030;
+            background: #f8f9fa;
+            border: 1px solid #cccccc;
             border-left: none;
-            color: #fff;
+            color: #333333;
             cursor: pointer;
             border-radius: 0 20px 20px 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .search-btn:hover {
+            background: #e9ecef;
         }
         
         .search-btn:hover {
@@ -162,8 +169,8 @@
         .category-tabs {
             position: sticky;
             top: 56px;
-            background: #0f0f0f;
-            border-bottom: 1px solid #272727;
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
             padding: 12px 24px;
             overflow-x: auto;
             white-space: nowrap;
@@ -181,9 +188,9 @@
         }
         
         .tab-item {
-            background: #272727;
-            color: #fff;
-            border: none;
+            background: #f8f9fa;
+            color: #333333;
+            border: 1px solid #e0e0e0;
             padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
@@ -194,12 +201,14 @@
         }
         
         .tab-item:hover {
-            background: #3f3f3f;
+            background: #e9ecef;
+            border-color: #4a9eff;
         }
         
         .tab-item.active {
-            background: #fff;
-            color: #0f0f0f;
+            background: #4a9eff;
+            color: #ffffff;
+            border-color: #4a9eff;
         }
         
         /* 视频网格 */
@@ -230,7 +239,8 @@
             position: relative;
             width: 100%;
             aspect-ratio: 16/9;
-            background: #272727;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
             border-radius: 12px;
             overflow: hidden;
             margin-bottom: 12px;
@@ -297,7 +307,7 @@
         .video-title {
             font-size: 16px;
             font-weight: 600;
-            color: #fff;
+            color: #333333;
             line-height: 1.3;
             margin-bottom: 4px;
             display: -webkit-box;
@@ -308,12 +318,12 @@
         
         .video-meta {
             font-size: 14px;
-            color: #aaa;
+            color: #666666;
             line-height: 1.3;
         }
         
         .channel-name {
-            color: #aaa;
+            color: #666666;
             margin-bottom: 2px;
         }
         
@@ -340,7 +350,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -348,11 +358,12 @@
         }
         
         .login-content {
-            background: #212121;
+            background: #ffffff;
             border-radius: 12px;
             padding: 32px;
             width: 400px;
             max-width: 90vw;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
         
         .login-title {
@@ -360,6 +371,7 @@
             font-weight: 600;
             margin-bottom: 24px;
             text-align: center;
+            color: #333333;
         }
         
         .form-group {
@@ -370,27 +382,28 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: #fff;
+            color: #333333;
         }
         
         .form-input {
             width: 100%;
             padding: 12px 16px;
-            background: #0f0f0f;
-            border: 1px solid #303030;
+            background: #ffffff;
+            border: 1px solid #cccccc;
             border-radius: 8px;
-            color: #fff;
+            color: #333333;
             font-size: 16px;
         }
         
         .form-input:focus {
             outline: none;
-            border-color: #065fd4;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
         }
         
         .login-btn {
             width: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #4a9eff, #7b68ee);
             color: white;
             border: none;
             padding: 12px;
@@ -403,6 +416,7 @@
         
         .login-btn:hover {
             transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
         }
         
         /* 视频播放器模态框样式已移除，现在使用详情页面 */
@@ -414,7 +428,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0f0f0f;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -438,7 +452,7 @@
         .heartbeat {
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #4a9eff, #7b68ee);
             border-radius: 50%;
             position: absolute;
             top: 50%;
@@ -450,7 +464,7 @@
         .pulse-ring {
             width: 80px;
             height: 80px;
-            border: 2px solid rgba(102, 126, 234, 0.3);
+            border: 2px solid rgba(74, 158, 255, 0.3);
             border-radius: 50%;
             position: absolute;
             animation: pulse 2s ease-out infinite;
@@ -481,7 +495,7 @@
         }
         
         .loader-text {
-            color: #fff;
+            color: #333333;
             font-size: 16px;
             font-weight: 500;
             animation: fadeInOut 2s ease-in-out infinite;
@@ -513,27 +527,16 @@
             transform: translateX(100%);
         }
         
-        /* 顶部导航栏滚动效果 */
+        /* 顶部导航栏滚动效果增强 */
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 56px;
-            background: #0f0f0f;
-            border-bottom: 1px solid #272727;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-            z-index: 1000;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .header.scrolled {
-            background: rgba(15, 15, 15, 0.95);
+            background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-            border-bottom-color: rgba(39, 39, 39, 0.8);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            border-bottom-color: rgba(224, 224, 224, 0.8) !important;
         }
         
         /* 视频卡片悬停动画增强 */
@@ -550,21 +553,11 @@
         }
         
         .video-card:hover .video-thumbnail {
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.2);
         }
         
-        /* 分类标签动画 */
+        /* 分类标签动画增强 */
         .tab-item {
-            background: #272727;
-            color: #fff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
             position: relative;
             overflow: hidden;
         }
@@ -576,7 +569,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(74, 158, 255, 0.2), transparent);
             transition: left 0.5s;
         }
         
@@ -585,22 +578,20 @@
         }
         
         .tab-item:hover {
-            background: #3f3f3f;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
         }
         
         .tab-item.active {
-            background: #fff;
-            color: #0f0f0f;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
         }
         
-        /* 搜索框动画 */
+        /* 搜索框动画增强 */
         .search-input:focus {
             outline: none;
-            border-color: #065fd4;
-            box-shadow: 0 0 0 3px rgba(6, 95, 212, 0.1);
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
         }
         
         /* 提示消息增强 */
@@ -608,16 +599,16 @@
             position: fixed;
             top: 80px;
             right: 20px;
-            background: linear-gradient(135deg, #212121, #2a2a2a);
-            color: #fff;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            color: #333333;
             padding: 16px 20px;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
             z-index: 3000;
             transform: translateX(100%);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid #667eea;
-            backdrop-filter: blur(10px);
+            border-left: 4px solid #4a9eff;
+            border: 1px solid #e0e0e0;
         }
         
         .toast.show {
@@ -751,6 +742,17 @@
                 font-size: 13px;
             }
         }
+
+        /* 强制白色主题 - 最高优先级 */
+        .header {
+            background: #ffffff !important;
+            border-bottom: 1px solid #e0e0e0 !important;
+        }
+        
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-bottom-color: rgba(224, 224, 224, 0.8) !important;
+        }
     </style>
 </head>
 <body>
@@ -787,10 +789,7 @@
         
         <div class="header-right">
             <!-- 移除消息功能图标，第一期版本不包含消息功能 -->
-            <div id="user-info" class="hidden">
-                <div class="user-avatar" id="user-avatar">U</div>
-            </div>
-            <button id="login-btn" class="user-avatar">登录</button>
+            <!-- 用户信息区域已移除，直接通过视频邀请码验证访问 -->
         </div>
     </header>
 
@@ -820,25 +819,7 @@
         </div>
     </main>
 
-    <!-- 登录模态框 -->
-    <div id="login-modal" class="login-modal hidden">
-        <div class="login-content">
-            <h2 class="login-title">登录医学视频平台</h2>
-            <div class="form-group">
-                <label class="form-label">邀请码</label>
-                <input type="text" class="form-input" id="invite-code" value="AOYOU2024" placeholder="请输入邀请码">
-            </div>
-            <div class="form-group">
-                <label class="form-label">用户名</label>
-                <input type="text" class="form-input" id="username" value="demo" placeholder="请输入用户名">
-            </div>
-            <div class="form-group">
-                <label class="form-label">密码</label>
-                <input type="password" class="form-input" id="password" value="demo123" placeholder="请输入密码">
-            </div>
-            <button class="login-btn" id="login-submit">登录</button>
-        </div>
-    </div>
+    <!-- 登录模态框已移除，现在直接通过视频邀请码验证访问 -->
 
     <!-- 视频访问邀请码弹窗 -->
     <div id="video-access-modal" class="login-modal hidden">
@@ -867,62 +848,7 @@
 
     <script>
         // 全局函数定义（需要被onclick访问的函数）
-        function verifyVideoAccess() {
-            var accessCode = document.getElementById('video-access-code').value.trim();
-            var verifyBtn = document.querySelector('#video-access-modal .login-btn:last-child');
-            
-            // 检查是否输入了邀请码
-            if (!accessCode) {
-                showToast('请输入邀请码');
-                return;
-            }
-
-            // 检查是否为数字
-            if (!/^\d+$/.test(accessCode)) {
-                showToast('邀请码必须为数字');
-                return;
-            }
-
-            // 显示验证中状态
-            if (verifyBtn) {
-                verifyBtn.innerHTML = '🔄 验证中...';
-                verifyBtn.disabled = true;
-            }
-            
-            // 模拟验证过程
-            setTimeout(function() {
-                // 验证通过，永久保存验证状态
-                localStorage.setItem('aoyou_video_access_verified', 'true');
-                
-                // 跳转到视频详情页
-                hideVideoAccessModal();
-                showToast('🎉 邀请码验证成功！正在进入视频...');
-                
-                // 恢复按钮状态
-                if (verifyBtn) {
-                    verifyBtn.innerHTML = '确认观看';
-                    verifyBtn.disabled = false;
-                }
-                
-                // 显示页面切换动画并跳转
-                setTimeout(function() {
-                    var pendingVideoId = window.pendingVideoId;
-                    if (pendingVideoId) {
-                        showPageTransition(function() {
-                            window.location.href = './video-detail.html?id=' + pendingVideoId;
-                        });
-                    }
-                }, 800);
-            }, 1000);
-        }
-
-        function cancelVideoAccess() {
-            hideVideoAccessModal();
-            showToast('已取消视频访问');
-        }
-
-        // 这些函数需要在IIFE内部定义后再暴露
-        var showToast, hideVideoAccessModal, showPageTransition;
+        // 全局函数将在IIFE内部定义并暴露
 
         (function() {
             'use strict';
@@ -1059,8 +985,7 @@
                 
                 // 根据类型添加不同的图标
                 var icon = '🏥';
-                if (message.includes('登录')) icon = '👋';
-                else if (message.includes('升级')) icon = '🎉';
+                if (message.includes('升级')) icon = '🎉';
                 else if (message.includes('观看')) icon = '📚';
                 else if (message.includes('分享')) icon = '📤';
                 else if (message.includes('保存')) icon = '💾';
@@ -1158,11 +1083,6 @@
 
             // 播放视频 - 跳转到视频详情页
             function playVideo(videoId) {
-                if (!currentUser) {
-                    showLoginModal();
-                    return;
-                }
-
                 // 检查是否已经验证过视频访问权限
                 if (isVideoAccessVerified()) {
                     // 已验证，直接跳转
@@ -1177,15 +1097,7 @@
 
             // 这些函数已移除，因为现在跳转到详情页面
 
-            // 显示登录模态框
-            function showLoginModal() {
-                document.getElementById('login-modal').classList.remove('hidden');
-            }
-
-            // 隐藏登录模态框
-            function hideLoginModal() {
-                document.getElementById('login-modal').classList.add('hidden');
-            }
+            // 登录相关函数已移除，现在直接通过视频邀请码验证
 
             // 视频访问邀请码相关函数
             var pendingVideoId = null;
@@ -1285,89 +1197,13 @@
                 }, 1000);
             }
 
-            // 处理登录
-            function handleLogin() {
-                var inviteCode = document.getElementById('invite-code').value.trim();
-                var username = document.getElementById('username').value.trim();
-                var password = document.getElementById('password').value.trim();
+            // 登录处理函数已移除，现在直接通过视频邀请码验证
 
-                if (!inviteCode || !username || !password) {
-                    showToast('请填写完整信息');
-                    return;
-                }
+            // 用户数据管理函数已移除
 
-                if (inviteCode !== 'AOYOU2024') {
-                    showToast('邀请码错误');
-                    return;
-                }
 
-                currentUser = {
-                    username: username,
-                    inviteCode: inviteCode,
-                    joinDate: new Date().toLocaleDateString()
-                };
 
-                loadUserData();
-                saveUserData();
-                updateUserUI();
-                hideLoginModal();
-                showToast('登录成功！欢迎来到医学视频平台');
-            }
 
-            // 加载用户数据
-            function loadUserData() {
-                try {
-                    var savedData = localStorage.getItem('aoyou_user_data');
-                    if (savedData) {
-                        var userData = JSON.parse(savedData);
-                        userPoints = userData.points || 0;
-                        userLevel = userData.level || 1;
-                    }
-                } catch (error) {
-                    console.log('加载用户数据失败');
-                    userPoints = 0;
-                    userLevel = 1;
-                }
-            }
-
-            // 保存用户数据
-            function saveUserData() {
-                if (currentUser) {
-                    try {
-                        var userData = {
-                            username: currentUser.username,
-                            inviteCode: currentUser.inviteCode,
-                            joinDate: currentUser.joinDate,
-                            points: userPoints,
-                            level: userLevel,
-                            lastLogin: new Date().toISOString()
-                        };
-                        localStorage.setItem('aoyou_user_data', JSON.stringify(userData));
-                    } catch (error) {
-                        console.log('保存用户数据失败');
-                    }
-                }
-            }
-
-            // 更新用户UI
-            function updateUserUI() {
-                var loginBtn = document.getElementById('login-btn');
-                var userInfo = document.getElementById('user-info');
-                var userAvatar = document.getElementById('user-avatar');
-                // 积分功能暂时隐藏
-                // var userPointsEl = document.getElementById('user-points');
-
-                if (currentUser) {
-                    loginBtn.classList.add('hidden');
-                    userInfo.classList.remove('hidden');
-                    userAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
-                    // 积分功能暂时隐藏
-                    // userPointsEl.textContent = userPoints;
-                } else {
-                    loginBtn.classList.remove('hidden');
-                    userInfo.classList.add('hidden');
-                }
-            }
 
             // 处理分类切换
             function handleCategoryChange(category) {
@@ -1495,12 +1331,24 @@
             document.addEventListener('DOMContentLoaded', function() {
                 console.log('医学视频平台已加载');
                 
+                // 调试：检查关键元素是否存在
+                console.log('search-input:', document.getElementById('search-input'));
+                console.log('video-access-modal:', document.getElementById('video-access-modal'));
+                console.log('video-access-code:', document.getElementById('video-access-code'));
+                console.log('video-grid:', document.getElementById('video-grid'));
+                
                 // 设置滚动效果
                 setupScrollEffects();
                 
-                // 绑定事件
-                document.getElementById('login-btn').addEventListener('click', showLoginModal);
-                document.getElementById('login-submit').addEventListener('click', handleLogin);
+                // 强制确保导航栏为白色主题
+                var header = document.querySelector('.header');
+                if (header) {
+                    header.style.backgroundColor = '#ffffff';
+                    header.style.borderBottom = '1px solid #e0e0e0';
+                    console.log('强制设置导航栏为白色主题');
+                }
+                
+                // 登录相关事件已移除，现在直接通过视频邀请码验证
                 
                 // 分类标签事件
                 var categoryTabs = document.querySelectorAll('.tab-item');
@@ -1513,54 +1361,56 @@
 
                 // 搜索事件
                 var searchInput = document.getElementById('search-input');
-                searchInput.addEventListener('input', handleSearch);
-                searchInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        handleSearch();
-                    }
-                });
+                if (searchInput) {
+                    searchInput.addEventListener('input', handleSearch);
+                    searchInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            handleSearch();
+                        }
+                    });
+                }
 
-                // 点击模态框背景关闭
-                document.getElementById('login-modal').addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        hideLoginModal();
-                    }
-                });
+                // 登录模态框已移除，相关事件监听器也已移除
 
                 // 视频访问弹窗背景点击关闭
-                document.getElementById('video-access-modal').addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        hideVideoAccessModal();
-                    }
-                });
+                var videoAccessModal = document.getElementById('video-access-modal');
+                if (videoAccessModal) {
+                    videoAccessModal.addEventListener('click', function(e) {
+                        if (e.target === this) {
+                            hideVideoAccessModal();
+                        }
+                    });
+                }
 
                 // 视频访问邀请码输入框事件
                 var videoAccessInput = document.getElementById('video-access-code');
                 
-                videoAccessInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        verifyVideoAccess();
-                    }
-                });
+                if (videoAccessInput) {
+                    videoAccessInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            verifyVideoAccess();
+                        }
+                    });
 
-                // 输入实时验证
-                videoAccessInput.addEventListener('input', function(e) {
-                    var value = e.target.value;
-                    var verifyBtn = document.querySelector('#video-access-modal .login-btn:last-child');
-                    
-                    if (value.length > 0) {
-                        if (/^\d+$/.test(value)) {
-                            e.target.style.borderColor = '#4a9eff';
-                            if (verifyBtn) verifyBtn.style.opacity = '1';
+                    // 输入实时验证
+                    videoAccessInput.addEventListener('input', function(e) {
+                        var value = e.target.value;
+                        var verifyBtn = document.querySelector('#video-access-modal .login-btn:last-child');
+                        
+                        if (value.length > 0) {
+                            if (/^\d+$/.test(value)) {
+                                e.target.style.borderColor = '#4a9eff';
+                                if (verifyBtn) verifyBtn.style.opacity = '1';
+                            } else {
+                                e.target.style.borderColor = '#ff6b6b';
+                                if (verifyBtn) verifyBtn.style.opacity = '0.6';
+                            }
                         } else {
-                            e.target.style.borderColor = '#ff6b6b';
+                            e.target.style.borderColor = '#333';
                             if (verifyBtn) verifyBtn.style.opacity = '0.6';
                         }
-                    } else {
-                        e.target.style.borderColor = '#333';
-                        if (verifyBtn) verifyBtn.style.opacity = '0.6';
-                    }
-                });
+                    });
+                }
 
                 // 绑定视频访问弹窗按钮事件（使用事件监听器）
                 var cancelBtn = document.querySelector('#video-access-modal .login-btn:first-child');
@@ -1578,29 +1428,26 @@
                     });
                 }
 
-                // 尝试自动登录
-                try {
-                    var savedData = localStorage.getItem('aoyou_user_data');
-                    if (savedData) {
-                        var userData = JSON.parse(savedData);
-                        currentUser = userData;
-                        userPoints = userData.points || 0;
-                        userLevel = userData.level || 1;
-                        updateUserUI();
-                        showToast('欢迎回来，' + currentUser.username + '！');
-                    }
-                } catch (error) {
-                    console.log('自动登录失败');
-                }
+                // 用户登录系统已移除，现在直接通过视频邀请码验证访问
 
                 // 初始渲染
-                renderVideos();
+                try {
+                    renderVideos();
+                    console.log('视频渲染完成');
+                } catch (error) {
+                    console.error('视频渲染失败:', error);
+                }
                 
                 // 设置卡片动画
                 setupCardAnimations();
                 
                 // 隐藏加载器
-                hidePageLoader();
+                try {
+                    hidePageLoader();
+                    console.log('加载器隐藏完成');
+                } catch (error) {
+                    console.error('隐藏加载器失败:', error);
+                }
                 
                 // 页面加载完成后的提示
                 setTimeout(function() {

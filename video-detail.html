@@ -13,8 +13,8 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #0f0f0f;
-            color: #fff;
+            background: #ffffff;
+            color: #333333;
             line-height: 1.4;
         }
         
@@ -25,18 +25,19 @@
             left: 0;
             right: 0;
             height: 56px;
-            background: #0f0f0f;
-            border-bottom: 1px solid #272727;
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
             padding: 0 16px;
             z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .back-btn {
             background: none;
             border: none;
-            color: #fff;
+            color: #333333;
             font-size: 20px;
             cursor: pointer;
             padding: 8px;
@@ -46,7 +47,7 @@
         }
         
         .back-btn:hover {
-            background: #272727;
+            background: #f5f5f5;
         }
         
         .logo {
@@ -54,7 +55,7 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: #fff;
+            color: #333333;
         }
         
         .logo-icon {
@@ -120,7 +121,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #aaa;
+            color: #666666;
             font-size: 14px;
             margin-bottom: 16px;
         }
@@ -132,9 +133,9 @@
         }
         
         .action-btn {
-            background: #272727;
-            border: none;
-            color: #fff;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            color: #333333;
             padding: 10px 16px;
             border-radius: 18px;
             cursor: pointer;
@@ -143,19 +144,23 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
         
         .action-btn:hover {
-            background: #3f3f3f;
+            background: #e9ecef;
+            border-color: #4a9eff;
         }
         
         .action-btn.primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #4a9eff, #7b68ee);
+            color: #ffffff;
+            border-color: #4a9eff;
         }
         
         .action-btn.primary:hover {
-            background: linear-gradient(135deg, #5a6fd8, #6a4190);
+            background: linear-gradient(135deg, #3d8bfd, #6c5ce7);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
         }
         
         /* 频道信息 */
@@ -164,7 +169,7 @@
             align-items: center;
             gap: 12px;
             padding: 16px 0;
-            border-bottom: 1px solid #272727;
+            border-bottom: 1px solid #e0e0e0;
             margin-bottom: 16px;
         }
         
@@ -192,11 +197,11 @@
         
         .channel-subscribers {
             font-size: 12px;
-            color: #aaa;
+            color: #666666;
         }
         
         .subscribe-btn {
-            background: #cc0000;
+            background: #4a9eff;
             color: white;
             border: none;
             padding: 10px 16px;
@@ -204,11 +209,17 @@
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .subscribe-btn:hover {
+            background: #3d8bfd;
         }
         
         /* 视频描述 */
         .video-description {
-            background: #1a1a1a;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 24px;
@@ -216,13 +227,14 @@
         
         .description-header {
             font-size: 14px;
-            color: #aaa;
+            color: #666666;
             margin-bottom: 8px;
         }
         
         .description-text {
             font-size: 14px;
             line-height: 1.5;
+            color: #333333;
         }
         
         /* 侧边栏 */
@@ -231,7 +243,8 @@
         }
         
         .sidebar-section {
-            background: #1a1a1a;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
             border-radius: 12px;
             padding: 16px;
             margin-bottom: 16px;
@@ -249,7 +262,7 @@
         }
         
         .points-badge {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #4a9eff, #7b68ee);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
@@ -261,7 +274,7 @@
         
         .points-text {
             font-size: 14px;
-            color: #aaa;
+            color: #666666;
         }
         
         /* 相关视频 */
@@ -276,7 +289,7 @@
         }
         
         .related-video:hover {
-            background: #272727;
+            background: #e9ecef;
         }
         
         .related-thumbnail {
@@ -309,7 +322,7 @@
         
         .related-meta {
             font-size: 12px;
-            color: #aaa;
+            color: #666666;
         }
         
         /* 页面进入动画 */
@@ -338,8 +351,8 @@
             left: 0;
             right: 0;
             height: 56px;
-            background: #0f0f0f;
-            border-bottom: 1px solid #272727;
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             align-items: center;
             padding: 0 16px;
@@ -348,16 +361,16 @@
         }
         
         .header.scrolled {
-            background: rgba(15, 15, 15, 0.95);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
         
         /* 返回按钮动画 */
         .back-btn {
             background: none;
             border: none;
-            color: #fff;
+            color: #333333;
             font-size: 20px;
             cursor: pointer;
             padding: 8px;
@@ -369,7 +382,7 @@
         }
         
         .back-btn:hover {
-            background: #272727;
+            background: #f5f5f5;
             transform: translateX(-2px);
         }
         
@@ -396,56 +409,30 @@
             }
         }
         
-        /* 操作按钮动画 */
+        /* 操作按钮动画增强 */
         .action-btn {
-            background: #272727;
-            border: none;
-            color: #fff;
-            padding: 10px 16px;
-            border-radius: 18px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
         
         .action-btn:hover {
-            background: #3f3f3f;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         
         .action-btn:active {
             transform: translateY(-1px) scale(0.98);
         }
         
-        .action-btn.primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-        
         .action-btn.primary:hover {
-            background: linear-gradient(135deg, #5a6fd8, #6a4190);
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 20px rgba(74, 158, 255, 0.4);
         }
         
-        /* 相关视频悬停效果 */
+        /* 相关视频悬停效果增强 */
         .related-video {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .related-video:hover {
-            background: #272727;
             transform: translateX(4px);
         }
         
@@ -454,16 +441,16 @@
             position: fixed;
             top: 80px;
             right: 20px;
-            background: linear-gradient(135deg, #212121, #2a2a2a);
-            color: #fff;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            color: #333333;
             padding: 16px 20px;
             border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
             z-index: 3000;
             transform: translateX(100%);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid #667eea;
-            backdrop-filter: blur(10px);
+            border-left: 4px solid #4a9eff;
+            border: 1px solid #e0e0e0;
         }
         
         .toast.show {

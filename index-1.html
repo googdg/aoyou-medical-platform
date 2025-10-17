@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奥友数字 - 项目展示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+        .header p {
+            font-size: 20px;
+            opacity: 0.9;
+            margin: 0;
+        }
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        }
+        .project-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .project-title {
+            font-size: 28px;
+            margin-bottom: 12px;
+            color: #333;
+            font-weight: 600;
+        }
+        .project-description {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        .project-features {
+            text-align: left;
+            margin-bottom: 24px;
+        }
+        .project-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .project-features li {
+            padding: 4px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        .project-features li::before {
+            content: '✓';
+            color: #10B981;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .project-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        .featured {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .featured .project-title,
+        .featured .project-description,
+        .featured .project-features li {
+            color: white;
+        }
+        .featured .project-features li::before {
+            color: #FFD700;
+        }
+        .featured::before {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 奥友数字</h1>
+            <p>创新数字解决方案展示平台</p>
+        </div>
+        
+        <div class="projects-grid">
+            <!-- 主要项目 - 医学学习平台 -->
+            <div class="project-card featured">
+                <div class="project-icon">🏥</div>
+                <div class="project-title">奥友医学科普学习平台</div>
+                <div class="project-description">
+                    专业的医学科普学习平台，为医学专业人士和学习者提供高质量的医学教育内容。
+                    采用现代化的技术架构，提供完整的学习体验。
+                </div>
+                <div class="project-features">
+                    <ul>
+                        <li>邀请码注册系统，无需手机号</li>
+                        <li>7个医学分类板块，涵盖全面</li>
+                        <li>完整的视频播放和互动系统</li>
+                        <li>8级用户等级系统，激励学习</li>
+                        <li>微信分享集成，社交传播</li>
+                        <li>移动端优化，随时随地学习</li>
+                        <li>数据持久化，学习进度保存</li>
+                        <li>性能优化，流畅体验</li>
+                    </ul>
+                </div>
+                <div class="project-buttons">
+                    <a href="aoyou-medical-platform.html" class="btn btn-primary">
+                        🚀 进入平台
+                    </a>
+                    <a href="aoyou-video-demo.html" class="btn btn-secondary">
+                        🎥 视频演示
+                    </a>
+                    <a href="aoyou-medical-test.html" class="btn btn-secondary">
+                        🧪 功能测试
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 游戏项目 -->
+            <div class="project-card">
+                <div class="project-icon">🏆</div>
+                <div class="project-title">黄金矿工游戏</div>
+                <div class="project-description">
+                    经典的黄金矿工游戏重制版，采用现代Web技术开发，
+                    支持多种游戏模式和道具系统。
+                </div>
+                <div class="project-features">
+                    <ul>
+                        <li>经典游戏玩法</li>
+                        <li>多种道具系统</li>
+                        <li>关卡挑战模式</li>
+                        <li>成就系统</li>
+                    </ul>
+                </div>
+                <div class="project-buttons">
+                    <a href="gold-miner-game.html" class="btn btn-primary">
+                        🎮 开始游戏
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="project-icon">👻</div>
+                <div class="project-title">小鬼消消乐</div>
+                <div class="project-description">
+                    可爱的小鬼主题消除游戏，结合策略和技巧，
+                    提供丰富的游戏体验和挑战。
+                </div>
+                <div class="project-features">
+                    <ul>
+                        <li>可爱小鬼主题</li>
+                        <li>策略消除玩法</li>
+                        <li>特殊道具系统</li>
+                        <li>关卡进度保存</li>
+                    </ul>
+                </div>
+                <div class="project-buttons">
+                    <a href="ghost-match3.html" class="btn btn-primary">
+                        🎮 开始游戏
+                    </a>
+                </div>
+            </div>
+            
+            <div class="project-card">
+                <div class="project-icon">🚗</div>
+                <div class="project-title">坦克大战经典版</div>
+                <div class="project-description">
+                    经典坦克大战游戏的现代化重制版，
+                    保留原汁原味的游戏体验。
+                </div>
+                <div class="project-features">
+                    <ul>
+                        <li>经典坦克大战</li>
+                        <li>AI敌人系统</li>
+                        <li>多种武器道具</li>
+                        <li>关卡编辑器</li>
+                    </ul>
+                </div>
+                <div class="project-buttons">
+                    <a href="tank-battle-classic.html" class="btn btn-primary">
+                        🎮 开始游戏
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

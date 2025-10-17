@@ -3,259 +3,1477 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>奥友数字 - 项目展示</title>
+    <title>优质医学科普及学术视频平台</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #ffffff;
+            color: #333333;
+            line-height: 1.4;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        
+        /* 顶部导航栏 */
         .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 50px;
-        }
-        .header h1 {
-            font-size: 48px;
-            margin-bottom: 16px;
-            font-weight: 700;
-        }
-        .header p {
-            font-size: 20px;
-            opacity: 0.9;
-            margin: 0;
-        }
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-        .project-card {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .project-card::before {
-            content: '';
-            position: absolute;
+            position: fixed !important;
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 56px;
+            background: #ffffff !important;
+            border-bottom: 1px solid #e0e0e0 !important;
+            display: flex;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            align-items: center;
+            padding: 0 16px;
+            z-index: 1000;
         }
-        .project-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
-        .project-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #333333;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
         }
-        .project-title {
-            font-size: 28px;
-            margin-bottom: 12px;
-            color: #333;
+        
+        .menu-btn:hover {
+            background: #f5f5f5;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #333333;
+        }
+        
+        .logo-icon {
+            font-size: 24px;
+        }
+        
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        
+        .header-center {
+            flex: 1;
+            max-width: 640px;
+            margin: 0 40px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-container {
+            flex: 1;
+            display: flex;
+            height: 40px;
+        }
+        
+        .search-input {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-right: none;
+            padding: 0 16px;
+            color: #333333;
+            font-size: 16px;
+            border-radius: 20px 0 0 20px;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+        }
+        
+        .search-btn {
+            width: 64px;
+            background: #f8f9fa;
+            border: 1px solid #cccccc;
+            border-left: none;
+            color: #333333;
+            cursor: pointer;
+            border-radius: 0 20px 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .search-btn:hover {
+            background: #e9ecef;
+        }
+        
+        .search-btn:hover {
+            background: #303030;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
             font-weight: 600;
         }
-        .project-description {
-            color: #666;
-            margin-bottom: 24px;
-            line-height: 1.6;
-            font-size: 16px;
-        }
-        .project-features {
-            text-align: left;
-            margin-bottom: 24px;
-        }
-        .project-features ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .project-features li {
-            padding: 4px 0;
-            color: #555;
-            font-size: 14px;
-        }
-        .project-features li::before {
-            content: '✓';
-            color: #10B981;
-            font-weight: bold;
+        
+        .points-badge {
+            background: #ff4444;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
             margin-right: 8px;
+            display: none; /* 积分功能暂时隐藏 */
         }
-        .project-buttons {
+        
+        /* 主内容区域 */
+        .main-content {
+            margin-top: 56px;
+            padding: 0;
+        }
+        
+        /* 分类标签栏 */
+        .category-tabs {
+            position: sticky;
+            top: 56px;
+            background: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 12px 24px;
+            overflow-x: auto;
+            white-space: nowrap;
+            z-index: 999;
+        }
+        
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tab-list {
             display: flex;
             gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
+            min-width: max-content;
         }
-        .btn {
-            padding: 12px 24px;
+        
+        .tab-item {
+            background: #f8f9fa;
+            color: #333333;
+            border: 1px solid #e0e0e0;
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            text-decoration: none;
-            display: inline-flex;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .tab-item:hover {
+            background: #e9ecef;
+            border-color: #4a9eff;
+        }
+        
+        .tab-item.active {
+            background: #4a9eff;
+            color: #ffffff;
+            border-color: #4a9eff;
+        }
+        
+        /* 视频网格 */
+        .video-container {
+            padding: 24px;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+        
+        /* 视频卡片 */
+        .video-card {
+            background: transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .video-card:hover {
+            transform: scale(1.02);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .thumbnail-image {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+        
+        .video-duration {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .video-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #ff4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .video-info {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .channel-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+        
+        .video-details {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .video-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333333;
+            line-height: 1.3;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .video-meta {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.3;
+        }
+        
+        .channel-name {
+            color: #666666;
+            margin-bottom: 2px;
+        }
+        
+        .video-stats {
+            display: flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
+        }
+        
+        .points-reward {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: none; /* 积分功能暂时隐藏 */
+        }
+        
+        /* 登录模态框 */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .login-content {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-align: center;
+            color: #333333;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: 500;
+            color: #333333;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 8px;
+            color: #333333;
+            font-size: 16px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 2px rgba(74, 158, 255, 0.2);
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #4a9eff, #7b68ee);
+            color: white;
             border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
         }
-        .btn-primary:hover {
+        
+        /* 视频播放器模态框样式已移除，现在使用详情页面 */
+        
+        /* 页面加载动画 */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .medical-loader {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .heartbeat {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4a9eff, #7b68ee);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        .pulse-ring {
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            border-radius: 50%;
+            position: absolute;
+            animation: pulse 2s ease-out infinite;
+        }
+        
+        .pulse-ring:nth-child(2) {
+            animation-delay: 0.5s;
+        }
+        
+        .pulse-ring:nth-child(3) {
+            animation-delay: 1s;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+        
+        .loader-text {
+            color: #333333;
+            font-size: 16px;
+            font-weight: 500;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        /* 页面切换动画 */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            z-index: 8888;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .page-transition.active {
+            transform: translateX(0);
+        }
+        
+        .page-transition.exit {
+            transform: translateX(100%);
+        }
+        
+        /* 顶部导航栏滚动效果增强 */
+        .header {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            border-bottom-color: rgba(224, 224, 224, 0.8) !important;
+        }
+        
+        /* 视频卡片悬停动画增强 */
+        .video-card {
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+        }
+        
+        .video-card:hover {
+            transform: translateY(-8px);
+            filter: brightness(1.1);
+        }
+        
+        .video-card:hover .video-thumbnail {
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.2);
+        }
+        
+        /* 分类标签动画增强 */
+        .tab-item {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(74, 158, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .tab-item:hover::before {
+            left: 100%;
+        }
+        
+        .tab-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.2);
         }
-        .btn-secondary {
-            background: #f8f9fa;
-            color: #495057;
-            border: 1px solid #dee2e6;
+        
+        .tab-item.active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
         }
-        .btn-secondary:hover {
-            background: #e9ecef;
+        
+        /* 搜索框动画增强 */
+        .search-input:focus {
+            outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
         }
-        .featured {
-            grid-column: 1 / -1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        
+        /* 提示消息增强 */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            color: #333333;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            z-index: 3000;
+            transform: translateX(100%);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid #4a9eff;
+            border: 1px solid #e0e0e0;
         }
-        .featured .project-title,
-        .featured .project-description,
-        .featured .project-features li {
-            color: white;
+        
+        .toast.show {
+            transform: translateX(0);
         }
-        .featured .project-features li::before {
-            color: #FFD700;
+        
+        .toast::before {
+            content: '🏥';
+            margin-right: 8px;
         }
-        .featured::before {
-            display: none;
+        
+        /* 登录模态框动画 */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .login-modal:not(.hidden) {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .login-content {
+            background: #212121;
+            border-radius: 16px;
+            padding: 32px;
+            width: 400px;
+            max-width: 90vw;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .login-modal:not(.hidden) .login-content {
+            transform: scale(1) translateY(0);
+        }
+
+        /* 视频访问弹窗特殊样式 */
+        #video-access-modal .login-content {
+            border: 2px solid #4a9eff;
+            box-shadow: 0 20px 60px rgba(74, 158, 255, 0.3);
+        }
+
+        #video-access-modal .login-title {
+            background: linear-gradient(135deg, #4a9eff, #7b68ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        #video-access-code {
+            text-align: center;
+            font-size: 18px;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+        
+        /* 按钮点击反馈 */
+        .btn, .action-btn, .tab-item, .menu-btn, .search-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after, .action-btn::after, .tab-item::after, .menu-btn::after, .search-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        .btn:active::after, .action-btn:active::after, .tab-item:active::after, 
+        .menu-btn:active::after, .search-btn:active::after {
+            width: 200px;
+            height: 200px;
+        }
+        
+        /* 隐藏类 */
+        .hidden {
+            display: none !important;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-center {
+                display: none;
+            }
+            
+            .logo-text {
+                font-size: 14px;
+                max-width: 120px;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .video-container {
+                padding: 16px;
+            }
+            
+            .category-tabs {
+                padding: 12px 16px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo-text {
+                display: none; /* 在很小的屏幕上隐藏文字，只显示图标 */
+            }
+            
+            .tab-item {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        }
+
+        /* 强制白色主题 - 最高优先级 */
+        .header {
+            background: #ffffff !important;
+            border-bottom: 1px solid #e0e0e0 !important;
+        }
+        
+        .header.scrolled {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-bottom-color: rgba(224, 224, 224, 0.8) !important;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🚀 奥友数字</h1>
-            <p>创新数字解决方案展示平台</p>
+    <!-- 页面加载动画 -->
+    <div id="page-loader" class="page-loader">
+        <div class="medical-loader">
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring"></div>
+            <div class="heartbeat"></div>
+        </div>
+        <div class="loader-text">加载医学视频平台...</div>
+    </div>
+    
+    <!-- 页面切换动画 -->
+    <div id="page-transition" class="page-transition"></div>
+    
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-btn">☰</button>
+            <a href="#" class="logo">
+                <span class="logo-icon">🏥</span>
+                <span class="logo-text">优质医学科普及学术视频</span>
+            </a>
         </div>
         
-        <div class="projects-grid">
-            <!-- 主要项目 - 医学学习平台 -->
-            <div class="project-card featured">
-                <div class="project-icon">🏥</div>
-                <div class="project-title">奥友医学科普学习平台</div>
-                <div class="project-description">
-                    专业的医学科普学习平台，为医学专业人士和学习者提供高质量的医学教育内容。
-                    采用现代化的技术架构，提供完整的学习体验。
-                </div>
-                <div class="project-features">
-                    <ul>
-                        <li>邀请码注册系统，无需手机号</li>
-                        <li>7个医学分类板块，涵盖全面</li>
-                        <li>完整的视频播放和互动系统</li>
-                        <li>8级用户等级系统，激励学习</li>
-                        <li>微信分享集成，社交传播</li>
-                        <li>移动端优化，随时随地学习</li>
-                        <li>数据持久化，学习进度保存</li>
-                        <li>性能优化，流畅体验</li>
-                    </ul>
-                </div>
-                <div class="project-buttons">
-                    <a href="aoyou-medical-platform.html" class="btn btn-primary">
-                        🚀 进入平台
-                    </a>
-                    <a href="aoyou-video-demo.html" class="btn btn-secondary">
-                        🎥 视频演示
-                    </a>
-                    <a href="aoyou-medical-test.html" class="btn btn-secondary">
-                        🧪 功能测试
-                    </a>
-                </div>
-            </div>
-            
-            <!-- 游戏项目 -->
-            <div class="project-card">
-                <div class="project-icon">🏆</div>
-                <div class="project-title">黄金矿工游戏</div>
-                <div class="project-description">
-                    经典的黄金矿工游戏重制版，采用现代Web技术开发，
-                    支持多种游戏模式和道具系统。
-                </div>
-                <div class="project-features">
-                    <ul>
-                        <li>经典游戏玩法</li>
-                        <li>多种道具系统</li>
-                        <li>关卡挑战模式</li>
-                        <li>成就系统</li>
-                    </ul>
-                </div>
-                <div class="project-buttons">
-                    <a href="gold-miner-game.html" class="btn btn-primary">
-                        🎮 开始游戏
-                    </a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="project-icon">👻</div>
-                <div class="project-title">小鬼消消乐</div>
-                <div class="project-description">
-                    可爱的小鬼主题消除游戏，结合策略和技巧，
-                    提供丰富的游戏体验和挑战。
-                </div>
-                <div class="project-features">
-                    <ul>
-                        <li>可爱小鬼主题</li>
-                        <li>策略消除玩法</li>
-                        <li>特殊道具系统</li>
-                        <li>关卡进度保存</li>
-                    </ul>
-                </div>
-                <div class="project-buttons">
-                    <a href="ghost-match3.html" class="btn btn-primary">
-                        🎮 开始游戏
-                    </a>
-                </div>
-            </div>
-            
-            <div class="project-card">
-                <div class="project-icon">🚗</div>
-                <div class="project-title">坦克大战经典版</div>
-                <div class="project-description">
-                    经典坦克大战游戏的现代化重制版，
-                    保留原汁原味的游戏体验。
-                </div>
-                <div class="project-features">
-                    <ul>
-                        <li>经典坦克大战</li>
-                        <li>AI敌人系统</li>
-                        <li>多种武器道具</li>
-                        <li>关卡编辑器</li>
-                    </ul>
-                </div>
-                <div class="project-buttons">
-                    <a href="tank-battle-classic.html" class="btn btn-primary">
-                        🎮 开始游戏
-                    </a>
-                </div>
+        <div class="header-center">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="搜索医学视频..." id="search-input">
+                <button class="search-btn">🔍</button>
             </div>
         </div>
+        
+        <div class="header-right">
+            <!-- 移除消息功能图标，第一期版本不包含消息功能 -->
+            <!-- 用户信息区域已移除，直接通过视频邀请码验证访问 -->
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="main-content">
+        <!-- 分类标签栏 -->
+        <div class="category-tabs">
+            <div class="tab-list" id="category-tabs">
+                <button class="tab-item active" data-category="all">全部</button>
+                <button class="tab-item" data-category="demo">🎬 平台演示</button>
+                <button class="tab-item" data-category="clinical">🩺 临床医学</button>
+                <button class="tab-item" data-category="basic">📚 基础医学</button>
+                <button class="tab-item" data-category="surgery">🔬 外科手术</button>
+                <button class="tab-item" data-category="internal">🫁 内科诊疗</button>
+                <button class="tab-item" data-category="pharmacy">💊 药学治疗</button>
+                <button class="tab-item" data-category="technology">🤖 前沿技术</button>
+                <button class="tab-item" data-category="ethics">⚖️ 伦理法规</button>
+                <button class="tab-item" data-category="education">🎓 继续教育</button>
+            </div>
+        </div>
+
+        <!-- 视频网格 -->
+        <div class="video-container">
+            <div class="video-grid" id="video-grid">
+                <!-- 视频卡片将在这里动态生成 -->
+            </div>
+        </div>
+    </main>
+
+    <!-- 登录模态框已移除，现在直接通过视频邀请码验证访问 -->
+
+    <!-- 视频访问邀请码弹窗 -->
+    <div id="video-access-modal" class="login-modal hidden">
+        <div class="login-content">
+            <h2 class="login-title">🏥 邀请码验证</h2>
+            <p style="color: #aaa; margin-bottom: 20px; text-align: center;">请输入邀请码观看所有视频</p>
+            <div style="background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 15px;">
+                <p style="color: #4a9eff; font-size: 14px; text-align: center; margin: 0;">
+                    💡 提示：请输入任意数字作为邀请码
+                </p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">邀请码</label>
+                <input type="text" id="video-access-code" class="form-input" placeholder="请输入任意数字邀请码" maxlength="10">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="cancelVideoAccess()" class="login-btn" style="background: #666; flex: 1;">取消</button>
+                <button onclick="verifyVideoAccess()" class="login-btn" style="flex: 2;" id="verify-btn">确认观看</button>
+            </div>
+
+        </div>
     </div>
+
+    <!-- 提示消息 -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // 全局函数定义（需要被onclick访问的函数）
+        // 全局函数将在IIFE内部定义并暴露
+
+        (function() {
+            'use strict';
+            
+            // 全局变量
+            var currentUser = null;
+            var userPoints = 0;
+            var userLevel = 1;
+            var currentCategory = 'all';
+
+            // 视频数据 - 所有视频都使用演示视频
+            var videoData = [
+                {
+                    id: 'aoyou_demo_2_0',
+                    title: '奥友医学平台演示视频 2.0 - 完整功能展示',
+                    category: 'demo',
+                    categoryName: '平台演示',
+                    icon: '🎬',
+                    points: 50,
+                    duration: '5:20',
+                    views: '2.8万',
+                    uploadTime: '2天前',
+                    isDemo: true,
+                    videoUrl: './videos/aoyou-demo-video-2.0.mp4',
+                    description: '完整功能演示，展示平台核心特性和医学教育功能',
+                    instructor: '医学视频团队'
+                },
+                {
+                    id: 'clinical_001',
+                    title: '心血管疾病诊断与治疗 - 临床实践指南',
+                    category: 'clinical',
+                    categoryName: '临床医学',
+                    icon: '❤️',
+                    points: 15,
+                    duration: '5:20',
+                    views: '1.2万',
+                    uploadTime: '1周前',
+                    videoUrl: './videos/aoyou-demo-video-2.0.mp4',
+                    description: '系统学习心血管疾病的诊疗方法（演示视频）',
+                    instructor: '张教授'
+                },
+                {
+                    id: 'basic_001',
+                    title: '人体解剖学基础 - 循环系统详解',
+                    category: 'basic',
+                    categoryName: '基础医学',
+                    icon: '🧠',
+                    points: 12,
+                    duration: '5:20',
+                    views: '8.5千',
+                    uploadTime: '3天前',
+                    videoUrl: './videos/aoyou-demo-video-2.0.mp4',
+                    description: '深入了解人体循环系统结构和功能（演示视频）',
+                    instructor: '李教授'
+                },
+                {
+                    id: 'surgery_001',
+                    title: '腹腔镜手术技术 - 微创手术新进展',
+                    category: 'surgery',
+                    categoryName: '外科手术',
+                    icon: '🔬',
+                    points: 20,
+                    duration: '5:20',
+                    views: '6.2千',
+                    uploadTime: '5天前',
+                    videoUrl: './videos/aoyou-demo-video-2.0.mp4',
+                    description: '学习现代微创手术技术和操作要点（演示视频）',
+                    instructor: '王主任'
+                },
+                {
+                    id: 'internal_001',
+                    title: '呼吸系统疾病诊疗 - 常见病例分析',
+                    category: 'internal',
+                    categoryName: '内科诊疗',
+                    icon: '🫁',
+                    points: 18,
+                    duration: '5:20',
+                    views: '4.8千',
+                    uploadTime: '1周前',
+                    videoUrl: './videos/aoyou-demo-video-2.0.mp4',
+                    description: '掌握呼吸系统疾病的诊断和治疗方法（演示视频）',
+                    instructor: '陈医生'
+                },
+                {
+                    id: 'pharmacy_001',
+                    title: '抗生素合理使用 - 临床用药指导',
+                    category: 'pharmacy',
+                    categoryName: '药学治疗',
+                    icon: '💊',
+                    points: 15,
+                    duration: '5:20',
+                    views: '7.1千',
+                    uploadTime: '4天前',
+                    videoUrl: './videos/aoyou-demo-video-2.0.mp4',
+                    description: '学习抗生素的正确使用原则和注意事项（演示视频）',
+                    instructor: '赵药师'
+                },
+                {
+                    id: 'technology_001',
+                    title: 'AI在医学影像中的应用 - 前沿技术解析',
+                    category: 'technology',
+                    categoryName: '前沿技术',
+                    icon: '🤖',
+                    points: 25,
+                    duration: '5:20',
+                    views: '1.5万',
+                    uploadTime: '2天前',
+                    videoUrl: './videos/aoyou-demo-video-2.0.mp4',
+                    description: '探索人工智能在医疗诊断中的最新应用（演示视频）',
+                    instructor: '刘博士'
+                },
+                {
+                    id: 'ethics_001',
+                    title: '医学伦理学基础 - 临床决策中的伦理考量',
+                    category: 'ethics',
+                    categoryName: '伦理法规',
+                    icon: '⚖️',
+                    points: 10,
+                    duration: '5:20',
+                    views: '3.2千',
+                    uploadTime: '6天前',
+                    videoUrl: './videos/aoyou-demo-video-2.0.mp4',
+                    description: '了解医学伦理的基本原则和实践应用（演示视频）',
+                    instructor: '孙教授'
+                }
+            ];
+
+            // 显示提示消息
+            function showToast(message, duration, type) {
+                duration = duration || 3000;
+                type = type || 'info';
+                
+                var toast = document.getElementById('toast');
+                
+                // 根据类型添加不同的图标
+                var icon = '🏥';
+                if (message.includes('升级')) icon = '🎉';
+                else if (message.includes('观看')) icon = '📚';
+                else if (message.includes('分享')) icon = '📤';
+                else if (message.includes('保存')) icon = '💾';
+                else if (message.includes('点赞')) icon = '👍';
+                
+                toast.innerHTML = '<span style="margin-right: 8px;">' + icon + '</span>' + message;
+                toast.classList.add('show');
+                
+                // 添加震动效果（如果支持）
+                if (navigator.vibrate && (message.includes('成功') || message.includes('完成'))) {
+                    navigator.vibrate(50);
+                }
+                
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+            
+            // 立即暴露showToast到全局作用域
+            window.showToast = showToast;
+
+            // 格式化数字
+            function formatNumber(num) {
+                if (num >= 10000) {
+                    return (num / 10000).toFixed(1) + '万';
+                } else if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + '千';
+                }
+                return num.toString();
+            }
+
+            // 渲染视频卡片
+            function renderVideoCard(video) {
+                return '<div class="video-card" onclick="playVideo(\'' + video.id + '\')">' +
+                    '<div class="video-thumbnail">' +
+                    '<div class="thumbnail-image">' + video.icon + '</div>' +
+                    '<div class="video-duration">' + video.duration + '</div>' +
+                    (video.isDemo ? '<div class="video-badge">演示</div>' : '') +
+                    '</div>' +
+                    '<div class="video-info">' +
+                    '<div class="channel-avatar">' + video.instructor.charAt(0) + '</div>' +
+                    '<div class="video-details">' +
+                    '<div class="video-title">' + video.title + '</div>' +
+                    '<div class="video-meta">' +
+                    '<div class="channel-name">' + video.instructor + '</div>' +
+                    '<div class="video-stats">' +
+                    '<span>' + video.views + ' 次观看</span>' +
+                    '<span>•</span>' +
+                    '<span>' + video.uploadTime + '</span>' +
+                    // 积分功能暂时隐藏
+                    // '<span class="points-reward">+' + video.points + ' 积分</span>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>';
+            }
+
+            // 渲染视频列表
+            function renderVideos() {
+                var videoGrid = document.getElementById('video-grid');
+                var filteredVideos = currentCategory === 'all' ? 
+                    videoData : 
+                    videoData.filter(function(video) {
+                        return video.category === currentCategory;
+                    });
+                
+                var html = '';
+                for (var i = 0; i < filteredVideos.length; i++) {
+                    html += renderVideoCard(filteredVideos[i]);
+                }
+                
+                videoGrid.innerHTML = html;
+            }
+
+            // 页面切换动画
+            function showPageTransition(callback) {
+                var transition = document.getElementById('page-transition');
+                transition.classList.add('active');
+                
+                setTimeout(function() {
+                    if (callback) callback();
+                    
+                    setTimeout(function() {
+                        transition.classList.add('exit');
+                        setTimeout(function() {
+                            transition.classList.remove('active', 'exit');
+                        }, 400);
+                    }, 100);
+                }, 200);
+            }
+            
+            // 立即暴露showPageTransition到全局作用域
+            window.showPageTransition = showPageTransition;
+
+            // 播放视频 - 跳转到视频详情页
+            function playVideo(videoId) {
+                // 检查是否已经验证过视频访问权限
+                if (isVideoAccessVerified()) {
+                    // 已验证，直接跳转
+                    showPageTransition(function() {
+                        window.location.href = './video-detail.html?id=' + videoId;
+                    });
+                } else {
+                    // 未验证，显示邀请码弹窗
+                    showVideoAccessModal(videoId);
+                }
+            }
+
+            // 这些函数已移除，因为现在跳转到详情页面
+
+            // 登录相关函数已移除，现在直接通过视频邀请码验证
+
+            // 视频访问邀请码相关函数
+            var pendingVideoId = null;
+            
+            // 检查用户是否已经验证过邀请码（会话级别）
+            function isVideoAccessVerified() {
+                return sessionStorage.getItem('aoyou_video_access_verified') === 'true';
+            }
+            
+            // 设置邀请码验证状态（会话级别）
+            function setVideoAccessVerified() {
+                sessionStorage.setItem('aoyou_video_access_verified', 'true');
+            }
+
+            // 显示视频访问邀请码弹窗
+            function showVideoAccessModal(videoId) {
+                pendingVideoId = videoId;
+                document.getElementById('video-access-modal').classList.remove('hidden');
+                document.getElementById('video-access-code').focus();
+            }
+
+            // 隐藏视频访问邀请码弹窗
+            function hideVideoAccessModal() {
+                document.getElementById('video-access-modal').classList.add('hidden');
+                document.getElementById('video-access-code').value = '';
+                window.pendingVideoId = null;
+            }
+            
+            // 立即暴露hideVideoAccessModal到全局作用域
+            window.hideVideoAccessModal = hideVideoAccessModal;
+
+            // 取消视频访问
+            function cancelVideoAccess() {
+                console.log('🚫 cancelVideoAccess 函数被调用了！'); // 调试日志
+                hideVideoAccessModal();
+                showToast('已取消视频访问');
+            }
+
+            // 调试功能：重置邀请码验证状态（可在控制台调用）
+            window.resetVideoAccess = function() {
+                sessionStorage.removeItem('aoyou_video_access_verified');
+                sessionStorage.removeItem('aoyou_video_access_tip_shown');
+                sessionStorage.removeItem('aoyou_verified_user_tip_shown');
+                showToast('🔄 邀请码验证状态已重置');
+                console.log('邀请码验证状态已重置');
+            };
+
+            // 验证视频访问邀请码
+            function verifyVideoAccess() {
+                console.log('🔍 verifyVideoAccess 函数被调用了！'); // 调试日志
+                
+                var accessCode = document.getElementById('video-access-code').value.trim();
+                var verifyBtn = document.querySelector('#video-access-modal .login-btn:last-child');
+                
+                console.log('验证邀请码:', accessCode); // 调试日志
+                console.log('找到的按钮:', verifyBtn); // 调试日志
+                
+                // 检查是否输入了邀请码
+                if (!accessCode) {
+                    showToast('请输入邀请码');
+                    return;
+                }
+
+                // 检查是否为数字
+                if (!/^\d+$/.test(accessCode)) {
+                    showToast('邀请码必须为数字');
+                    return;
+                }
+
+                // 显示验证中状态
+                if (verifyBtn) {
+                    verifyBtn.innerHTML = '🔄 验证中...';
+                    verifyBtn.disabled = true;
+                }
+                
+                // 模拟验证过程
+                setTimeout(function() {
+                    // 验证通过，永久保存验证状态
+                    setVideoAccessVerified();
+                    
+                    // 跳转到视频详情页
+                    hideVideoAccessModal();
+                    showToast('🎉 邀请码验证成功！正在进入视频...');
+                    
+                    // 恢复按钮状态
+                    if (verifyBtn) {
+                        verifyBtn.innerHTML = '确认观看';
+                        verifyBtn.disabled = false;
+                    }
+                    
+                    // 显示页面切换动画并跳转
+                    setTimeout(function() {
+                        showPageTransition(function() {
+                            window.location.href = './video-detail.html?id=' + pendingVideoId;
+                        });
+                    }, 800);
+                }, 1000);
+            }
+
+            // 登录处理函数已移除，现在直接通过视频邀请码验证
+
+            // 用户数据管理函数已移除
+
+
+
+
+
+            // 处理分类切换
+            function handleCategoryChange(category) {
+                currentCategory = category;
+                
+                // 更新标签状态
+                var tabs = document.querySelectorAll('.tab-item');
+                tabs.forEach(function(tab) {
+                    tab.classList.remove('active');
+                });
+                document.querySelector('[data-category="' + category + '"]').classList.add('active');
+                
+                // 添加加载动画
+                var videoGrid = document.getElementById('video-grid');
+                videoGrid.style.opacity = '0.5';
+                videoGrid.style.transform = 'translateY(20px)';
+                
+                setTimeout(function() {
+                    // 重新渲染视频
+                    renderVideos();
+                    
+                    // 恢复动画
+                    videoGrid.style.opacity = '1';
+                    videoGrid.style.transform = 'translateY(0)';
+                    
+                    // 重新设置卡片动画
+                    setupCardAnimations();
+                }, 200);
+            }
+
+            // 搜索功能
+            function handleSearch() {
+                var searchTerm = document.getElementById('search-input').value.toLowerCase();
+                if (!searchTerm) {
+                    renderVideos();
+                    return;
+                }
+
+                var filteredVideos = videoData.filter(function(video) {
+                    return video.title.toLowerCase().includes(searchTerm) ||
+                           video.description.toLowerCase().includes(searchTerm) ||
+                           video.instructor.toLowerCase().includes(searchTerm);
+                });
+
+                var videoGrid = document.getElementById('video-grid');
+                var html = '';
+                for (var i = 0; i < filteredVideos.length; i++) {
+                    html += renderVideoCard(filteredVideos[i]);
+                }
+                videoGrid.innerHTML = html;
+            }
+
+            // 暴露全局函数
+            window.playVideo = playVideo;
+            window.cancelVideoAccess = cancelVideoAccess;
+            window.verifyVideoAccess = verifyVideoAccess;
+            
+
+
+            // 页面加载完成处理
+            function hidePageLoader() {
+                var loader = document.getElementById('page-loader');
+                setTimeout(function() {
+                    loader.classList.add('hidden');
+                    setTimeout(function() {
+                        loader.style.display = 'none';
+                    }, 500);
+                }, 1000);
+            }
+
+            // 滚动监听 - 顶部导航栏效果
+            function setupScrollEffects() {
+                var header = document.querySelector('.header');
+                var lastScrollY = window.scrollY;
+                
+                window.addEventListener('scroll', function() {
+                    var currentScrollY = window.scrollY;
+                    
+                    // 添加滚动样式
+                    if (currentScrollY > 10) {
+                        header.classList.add('scrolled');
+                    } else {
+                        header.classList.remove('scrolled');
+                    }
+                    
+                    lastScrollY = currentScrollY;
+                }, { passive: true });
+            }
+
+            // 视频卡片进入动画
+            function setupCardAnimations() {
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }
+                    });
+                }, {
+                    threshold: 0.1,
+                    rootMargin: '50px'
+                });
+
+                // 初始化卡片动画
+                setTimeout(function() {
+                    var cards = document.querySelectorAll('.video-card');
+                    cards.forEach(function(card, index) {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(30px)';
+                        card.style.transition = 'opacity 0.6s ease-out ' + (index * 0.1) + 's, transform 0.6s ease-out ' + (index * 0.1) + 's';
+                        observer.observe(card);
+                    });
+                }, 100);
+            }
+
+            // 分类标签点击动画
+            function animateTabClick(tab) {
+                tab.style.transform = 'scale(0.95)';
+                setTimeout(function() {
+                    tab.style.transform = '';
+                }, 150);
+            }
+
+            // 初始化
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('医学视频平台已加载');
+                
+                // 调试：检查关键元素是否存在
+                console.log('search-input:', document.getElementById('search-input'));
+                console.log('video-access-modal:', document.getElementById('video-access-modal'));
+                console.log('video-access-code:', document.getElementById('video-access-code'));
+                console.log('video-grid:', document.getElementById('video-grid'));
+                
+                // 设置滚动效果
+                setupScrollEffects();
+                
+                // 强制确保导航栏为白色主题
+                var header = document.querySelector('.header');
+                if (header) {
+                    header.style.backgroundColor = '#ffffff';
+                    header.style.borderBottom = '1px solid #e0e0e0';
+                    console.log('强制设置导航栏为白色主题');
+                }
+                
+                // 登录相关事件已移除，现在直接通过视频邀请码验证
+                
+                // 分类标签事件
+                var categoryTabs = document.querySelectorAll('.tab-item');
+                categoryTabs.forEach(function(tab) {
+                    tab.addEventListener('click', function() {
+                        animateTabClick(this);
+                        handleCategoryChange(this.dataset.category);
+                    });
+                });
+
+                // 搜索事件
+                var searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', handleSearch);
+                    searchInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            handleSearch();
+                        }
+                    });
+                }
+
+                // 登录模态框已移除，相关事件监听器也已移除
+
+                // 视频访问弹窗背景点击关闭
+                var videoAccessModal = document.getElementById('video-access-modal');
+                if (videoAccessModal) {
+                    videoAccessModal.addEventListener('click', function(e) {
+                        if (e.target === this) {
+                            hideVideoAccessModal();
+                        }
+                    });
+                }
+
+                // 视频访问邀请码输入框事件
+                var videoAccessInput = document.getElementById('video-access-code');
+                
+                if (videoAccessInput) {
+                    videoAccessInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            verifyVideoAccess();
+                        }
+                    });
+
+                    // 输入实时验证
+                    videoAccessInput.addEventListener('input', function(e) {
+                        var value = e.target.value;
+                        var verifyBtn = document.querySelector('#video-access-modal .login-btn:last-child');
+                        
+                        if (value.length > 0) {
+                            if (/^\d+$/.test(value)) {
+                                e.target.style.borderColor = '#4a9eff';
+                                if (verifyBtn) verifyBtn.style.opacity = '1';
+                            } else {
+                                e.target.style.borderColor = '#ff6b6b';
+                                if (verifyBtn) verifyBtn.style.opacity = '0.6';
+                            }
+                        } else {
+                            e.target.style.borderColor = '#333';
+                            if (verifyBtn) verifyBtn.style.opacity = '0.6';
+                        }
+                    });
+                }
+
+                // 绑定视频访问弹窗按钮事件（使用事件监听器）
+                var cancelBtn = document.querySelector('#video-access-modal .login-btn:first-child');
+                var verifyBtn = document.querySelector('#video-access-modal .login-btn:last-child');
+                
+                if (cancelBtn) {
+                    cancelBtn.addEventListener('click', function() {
+                        cancelVideoAccess();
+                    });
+                }
+                
+                if (verifyBtn) {
+                    verifyBtn.addEventListener('click', function() {
+                        verifyVideoAccess();
+                    });
+                }
+
+                // 用户登录系统已移除，现在直接通过视频邀请码验证访问
+
+                // 初始渲染
+                try {
+                    renderVideos();
+                    console.log('视频渲染完成');
+                } catch (error) {
+                    console.error('视频渲染失败:', error);
+                }
+                
+                // 设置卡片动画
+                setupCardAnimations();
+                
+                // 隐藏加载器
+                try {
+                    hidePageLoader();
+                    console.log('加载器隐藏完成');
+                } catch (error) {
+                    console.error('隐藏加载器失败:', error);
+                }
+                
+                // 页面加载完成后的提示
+                setTimeout(function() {
+                    // 检查邀请码验证状态
+                    if (isVideoAccessVerified()) {
+                        // 已验证用户的欢迎信息
+                        if (!localStorage.getItem('aoyou_verified_user_tip_shown')) {
+                            setTimeout(function() {
+                                showToast('🎉 您已通过邀请码验证，可以观看所有视频！', 3000);
+                                localStorage.setItem('aoyou_verified_user_tip_shown', 'true');
+                            }, 2000);
+                        }
+                    } else {
+                        // 未验证用户的提示信息
+                        if (!localStorage.getItem('aoyou_video_access_tip_shown')) {
+                            setTimeout(function() {
+                                showToast('💡 观看视频需要邀请码验证，请准备好您的数字邀请码', 4000);
+                                localStorage.setItem('aoyou_video_access_tip_shown', 'true');
+                            }, 2000);
+                        }
+                    }
+                }, 1000);
+            });
+
+            console.log('医学视频平台 YouTube 风格版本初始化完成');
+        })();
+    </script>
 </body>
 </html>

@@ -1102,14 +1102,14 @@
             // 视频访问邀请码相关函数
             var pendingVideoId = null;
             
-            // 检查用户是否已经验证过邀请码
+            // 检查用户是否已经验证过邀请码（会话级别）
             function isVideoAccessVerified() {
-                return localStorage.getItem('aoyou_video_access_verified') === 'true';
+                return sessionStorage.getItem('aoyou_video_access_verified') === 'true';
             }
             
-            // 设置邀请码验证状态
+            // 设置邀请码验证状态（会话级别）
             function setVideoAccessVerified() {
-                localStorage.setItem('aoyou_video_access_verified', 'true');
+                sessionStorage.setItem('aoyou_video_access_verified', 'true');
             }
 
             // 显示视频访问邀请码弹窗
@@ -1138,9 +1138,9 @@
 
             // 调试功能：重置邀请码验证状态（可在控制台调用）
             window.resetVideoAccess = function() {
-                localStorage.removeItem('aoyou_video_access_verified');
-                localStorage.removeItem('aoyou_video_access_tip_shown');
-                localStorage.removeItem('aoyou_verified_user_tip_shown');
+                sessionStorage.removeItem('aoyou_video_access_verified');
+                sessionStorage.removeItem('aoyou_video_access_tip_shown');
+                sessionStorage.removeItem('aoyou_verified_user_tip_shown');
                 showToast('🔄 邀请码验证状态已重置');
                 console.log('邀请码验证状态已重置');
             };
